@@ -5,3 +5,5 @@
 __pycache__/*
 */__pycache__/*
 .coverage
+
+hobbit_core.egg-info/*
