@@ -1,0 +1,7 @@
+.DS_Store
+.cache/*
+*.pyc
+*.sw[po]
+__pycache__/*
+*/__pycache__/*
+.coverage
