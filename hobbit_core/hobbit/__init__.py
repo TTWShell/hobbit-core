@@ -27,7 +27,6 @@ class CLI(click.MultiCommand):
 @click.option('--echo/--no-echo', default=False, help='Show cmd run msg.')
 @click.pass_context
 def main(ctx, echo):
-    click.get_current_context()
     if ctx.obj is None:
         ctx.obj = dict()
     ctx.obj['ECHO'] = echo

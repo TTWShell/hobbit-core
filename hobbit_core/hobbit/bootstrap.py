@@ -8,7 +8,7 @@ from .handlers.bootstrap import render_project
 
 @click.group()
 @click.pass_context
-def cli(ctx, echo):
+def cli(ctx, force):
     pass
 
 
@@ -18,8 +18,18 @@ def cli(ctx, echo):
               help='Dir for new project.')
 @click.option('-t', '--template', type=click.Choice(['shire']),
               default='shire', help='Template name.')
-def startproject(name, dist, template):
-    echo('Start init a hobbit project `{}` to `{}`, use template {}.',
+@click.option('-f', '--force', default=False, is_flag=True,
+              help='Force render files, covered if file exist.')
+@click.pass_context
+def startproject(ctx, name, dist, template, force):
+    """Create a new flask project, render from different template.
+    """
+    ctx.obj['FORCE'] = force
+    ctx.obj['JINJIA_CONTEXT'] = {
+        'project_name': name,
+    }
+
+    echo('Start init a hobbit project `{}` to `{}`, use template {}',
          (name, dist, template))
 
     tpl_path = os.path.join(
@@ -29,9 +39,9 @@ def startproject(name, dist, template):
         raise click.UsageError(
             click.style('Tpl `{}` not exists.'.format(template), fg='red'))
 
-    render_project(name, dist, tpl_path)
+    render_project(dist, tpl_path)
 
-    echo('project: `{}` render finished.', (name, ))
+    echo('project `{}` render finished.', (name, ))
 
 
 CMDS = [startproject]
