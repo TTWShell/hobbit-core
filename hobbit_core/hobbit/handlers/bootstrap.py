@@ -24,31 +24,29 @@ def render_project(ctx, dist, tpl_path):
     with chdir(dist):
         for fn in os.listdir(tpl_path):
             origin_path = os.path.join(tpl_path, fn)
-            if os.path.isdir(origin_path):
-                dir_name = Template(fn).render(ctx.obj['JINJIA_CONTEXT'])[:-8] \
-                    if fn.endswith(SUFFIX) else fn
-                render_project(os.path.join(dist, dir_name),
-                               os.path.join(tpl_path, fn))
-                continue
 
             if os.path.isfile(origin_path) and not fn.endswith(SUFFIX):
-                raise click.ClickException(click.style(
-                    'FileTypeError: tpl must endswith `{}`. '
-                    'File is {}'.format(
-                        SUFFIX, os.path.join(tpl_path, fn)), fg='red'))
+                continue
 
-            data = jinjia_env.get_template(fn).render(
-                ctx.obj['JINJIA_CONTEXT'])
-            render_file(dist, fn[:-8], data)
+            if os.path.isfile(origin_path):
+                data = jinjia_env.get_template(fn).render(
+                    ctx.obj['JINJIA_CONTEXT'])
+                render_file(dist, fn[:-8], data)
+                continue
+
+            dir_name = Template(fn).render(ctx.obj['JINJIA_CONTEXT'])
+            render_project(os.path.join(dist, dir_name),
+                           os.path.join(tpl_path, fn))
 
 
 @click.pass_context
 def render_file(ctx, dist, fn, data):
+    target = os.path.join(dist, fn)
     if os.path.isfile(fn) and not ctx.obj['FORCE']:
-        echo('exists {}, ignore ...'.format(fn))
+        echo('exists {}, ignore ...', (target, ))
         return
 
-    echo('render {} ...', (os.path.join(dist, fn), ))
+    echo('render {} ...', (target, ))
 
     with open(fn, 'w') as wf:
         wf.write(data)
