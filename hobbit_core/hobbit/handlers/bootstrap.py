@@ -5,7 +5,7 @@ import click
 from jinja2 import Environment, FileSystemLoader, Template
 from . import echo
 
-SUFFIX = '.jinjia2'
+SUFFIX = '.jinja2'
 
 
 @contextmanager
@@ -31,7 +31,7 @@ def render_project(ctx, dist, tpl_path):
             if os.path.isfile(origin_path):
                 data = jinjia_env.get_template(fn).render(
                     ctx.obj['JINJIA_CONTEXT'])
-                render_file(dist, fn[:-8], data)
+                render_file(dist, fn[:-len(SUFFIX)], data)
                 continue
 
             dir_name = Template(fn).render(ctx.obj['JINJIA_CONTEXT'])

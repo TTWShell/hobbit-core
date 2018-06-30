@@ -1,0 +1,41 @@
+import os
+
+from flask.helpers import get_env
+
+ROOT_PATH = os.path.split(os.path.abspath(__name__))[0]
+
+
+class Config:
+    DEBUG = True
+    ROOT_PATH = ROOT_PATH
+    SECRET_KEY = '{{ secret_key }}'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format('{{ project_name }}.db')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
+class TestConfig(Config):
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format('test-{{ project_name }}.db')
+    # SQLALCHEMY_ECHO = True
+    TESTING = True
+
+
+class DevConfig(Config):
+    pass
+
+
+class ProdConfig(Config):
+    DEBUG = False
+
+
+def get_config():
+    env_choose = ('dev', 'test', 'production', 'prod')
+    env = get_env()
+    if env not in env_choose:
+        raise Exception('env config err, choose from {}'.format(env_choose))
+
+    if env == 'test':
+        return TestConfig
+    if env == 'dev':
+        return DevConfig
+    return ProdConfig
+

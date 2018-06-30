@@ -1,0 +1,42 @@
+import logging
+
+from flask import Flask, request
+
+from {{ project_name }}.exts import db, migrate, ma, hobbit
+from {{ project_name }} import config
+
+
+def register_extensions(app):
+    db.init_app(app)
+    migrate.init_app(app, db)
+    ma.init_app(app)
+    hobbit.init_app(app, db)
+
+
+def register_blueprints(app):
+    pass
+
+
+def register_cmds(app):
+    pass
+
+
+def create_app(config):
+    app = Flask(__name__)
+    app.config.from_object(config)
+
+    register_extensions(app)
+    register_blueprints(app)
+    register_cmds(app)
+
+    @app.before_request
+    def log_request_info():
+        logger = logging.getLogger('werkzeug')
+        if request.method in ['POST', 'PUT']:
+            logger.info('Body: %s', request.get_data())
+
+    return app
+
+
+app = create_app(config.get_config())
+

@@ -1,3 +1,0 @@
-from flask import Flask, request
-
-from {{ project_name }}.exts import db, migrate, ma

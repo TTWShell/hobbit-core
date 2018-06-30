@@ -1,4 +1,6 @@
 import os
+import random
+import string
 
 import click
 
@@ -27,6 +29,8 @@ def startproject(ctx, name, dist, template, force):
     ctx.obj['FORCE'] = force
     ctx.obj['JINJIA_CONTEXT'] = {
         'project_name': name,
+        'secret_key': ''.join(random.choice(
+            string.ascii_letters) for i in range(38)),
     }
 
     echo('Start init a hobbit project `{}` to `{}`, use template {}',

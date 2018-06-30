@@ -22,7 +22,12 @@ setup(
     package_data={"": ['LICENSE'], 'hobbit_core': gen_data()},
     install_requires=[
         'Click==6.7',
-        'Jinja2==2.9.6',
+
+        'Flask==1.0.2',
+        'flask-marshmallow==0.9.0',
+        'Flask-Migrate==2.2.1',
+        'flask-shell-ipython==0.3.1',
+        'Flask-SQLAlchemy==2.3.2',
     ],
     entry_points={
         'console_scripts': 'hobbit = hobbit_core.hobbit:main'
