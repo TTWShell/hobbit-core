@@ -2,6 +2,7 @@ from collections import Mapping
 from flask_sqlalchemy import model
 
 from marshmallow import fields
+from webargs.fields import DelimitedList
 
 
 class ParamsDict(dict):
@@ -19,7 +20,8 @@ class ParamsDict(dict):
 PageParams = ParamsDict(
     page=fields.Int(missing=1, required=False),
     page_size=fields.Int(missing=10, required=False),
-    order_by=fields.Str(missing='id', required=False),
+    order_by=DelimitedList(
+        fields.String(missing='id'), required=False, missing=['id']),
 )
 
 
@@ -48,9 +50,11 @@ def pagination(obj, page, page_size, order_by='id', query_exp=None):
         page, page_size, error_out=False)
 
     class Result:
-        items = items.items
-        page = page
-        page_size = page_size
-        total = items.total
+        pass
+
+    Result.items = items.items
+    Result.page = page
+    Result.opage_size = page_size
+    Result.total = items.total
 
     return Result

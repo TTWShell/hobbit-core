@@ -1,9 +1,25 @@
 from . import BaseTest
 
+from {{ project_name }}.run import db
+from {{ project_name }}.models import User
+
 
 class TestExample(BaseTest):
 
     def test_api(self, client):
-        resp = client.get('/api/url/')
-        assert resp.status_code == 404
+        resp = client.get('/api/ping/')
+        assert resp.status_code == 200
+
+    def test_list_users(self, client):
+        db.session.add(User(username='test', nick='nick'))
+        db.session.commit()
+
+        resp = client.get('/api/users/')
+        assert resp.status_code == 200
+        assert resp.json['page_size'] == 10
+        assert resp.json['total'] == 1
+        assert resp.json['page'] == 1
+        assert len(resp.json['items']) == 1
+        for key in ('id', 'created_at', 'updated_at', 'username', 'nick'):
+            assert key in resp.json['items'][0]
 

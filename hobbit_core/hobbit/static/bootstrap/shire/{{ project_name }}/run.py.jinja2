@@ -10,11 +10,13 @@ def register_extensions(app):
     db.init_app(app)
     migrate.init_app(app, db)
     ma.init_app(app)
-    hobbit.init_app(app, db)
+    hobbit.init_app(app, db, ma)
 
 
 def register_blueprints(app):
-    pass
+    with app.app_context():
+        from {{ project_name }} import views
+        app.register_blueprint(views.bp, url_prefix='/api')
 
 
 def register_cmds(app):
