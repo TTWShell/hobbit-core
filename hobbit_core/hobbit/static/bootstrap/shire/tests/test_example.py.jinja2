@@ -1,0 +1,9 @@
+from . import BaseTest
+
+
+class TestExample(BaseTest):
+
+    def test_api(self, client):
+        resp = client.get('/api/url/')
+        assert resp.status_code == 404
+
