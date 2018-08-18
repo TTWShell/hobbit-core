@@ -6,6 +6,7 @@ import click
 
 from .handlers import echo
 from .handlers.bootstrap import render_project
+from hobbit_core import VERSION
 
 
 @click.group()
@@ -31,6 +32,7 @@ def startproject(ctx, name, dist, template, force):
         'project_name': name,
         'secret_key': ''.join(random.choice(
             string.ascii_letters) for i in range(38)),
+        'version': '.'.join(str(i) for i in VERSION),
     }
 
     echo('Start init a hobbit project `{}` to `{}`, use template {}',
