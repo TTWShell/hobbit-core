@@ -37,8 +37,8 @@ def startproject(ctx, name, dist, template, force):
          (name, dist, template))
 
     tpl_path = os.path.join(
-        os.path.split(os.path.abspath(__name__))[0],
-        'hobbit_core', 'hobbit', 'static', 'bootstrap', template)
+        os.path.dirname(os.path.abspath(__file__)),
+        'static', 'bootstrap', template)
     if not os.path.exists(tpl_path):
         raise click.UsageError(
             click.style('Tpl `{}` not exists.'.format(template), fg='red'))

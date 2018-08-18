@@ -5,11 +5,22 @@ import hobbit_core
 
 
 def gen_data(data_root='hobbit/static/bootstrap'):
-    data = [os.path.join(data_root, '*.jinjia2')]
+    data = [os.path.join(data_root, '*.jinja2')]
     for fn in os.listdir(os.path.join('hobbit_core', data_root)):
         if os.path.isdir(os.path.join('hobbit_core', data_root, fn)):
             data.extend(gen_data(os.path.join(data_root, fn)))
     return data
+
+
+data = [
+    'hobbit/static/bootstrap/*.jinja2',
+    'hobbit/static/bootstrap/shire/*.jinja2',
+    'hobbit/static/bootstrap/shire/{{ project_name }}/*.jinja2',
+    'hobbit/static/bootstrap/shire/tests/*.jinja2',
+    'hobbit/static/bootstrap/shire/docs/*.jinja2',
+    'hobbit/static/bootstrap/shire/configs/*.jinja2',
+    'hobbit/static/bootstrap/shire/configs/conf.d/*.jinja2',
+]
 
 
 setup(
@@ -19,7 +30,7 @@ setup(
     author='Legolas Bloom',
     author_email='zhanhsw@gmail.com',
     packages=find_packages(),
-    package_data={"": ['LICENSE'], 'hobbit_core': gen_data()},
+    package_data={'': ['LICENSE'], 'hobbit_core': data},
     install_requires=[
         'Click==6.7',
 
