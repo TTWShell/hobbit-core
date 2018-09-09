@@ -40,6 +40,8 @@ setup(
         'Flask-Migrate==2.2.1',
         'flask-shell-ipython==0.3.1',
         'Flask-SQLAlchemy==2.3.2',
+        'marshmallow-enum==1.4.1',
+        'marshmallow-sqlalchemy==0.14.1',
         'webargs==4.0.0',
     ],
     entry_points={
