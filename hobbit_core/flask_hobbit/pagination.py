@@ -54,7 +54,7 @@ def pagination(obj, page, page_size, order_by='id', query_exp=None):
 
     Result.items = items.items
     Result.page = page
-    Result.opage_size = page_size
+    Result.page_size = page_size
     Result.total = items.total
 
     return Result

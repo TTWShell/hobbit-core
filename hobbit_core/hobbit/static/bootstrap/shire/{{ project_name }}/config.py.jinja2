@@ -15,7 +15,7 @@ class Config:
 
 class TestConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format('test-{{ project_name }}.db')
-    # SQLALCHEMY_ECHO = True
+    SQLALCHEMY_ECHO = True
     TESTING = True
 
 
