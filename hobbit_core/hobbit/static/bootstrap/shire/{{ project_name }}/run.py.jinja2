@@ -2,6 +2,8 @@ import logging
 
 from flask import Flask, request
 
+from hobbit_core.flask_hobbit.err_handler import ErrHandler
+
 from {{ project_name }}.exts import db, migrate, ma, hobbit
 from {{ project_name }} import config
 
@@ -19,6 +21,10 @@ def register_blueprints(app):
         app.register_blueprint(views.bp, url_prefix='/api')
 
 
+def register_error_handler(app):
+    app.register_error_handler(Exception, ErrHandler.handler)
+
+
 def register_cmds(app):
     pass
 
@@ -29,6 +35,7 @@ def create_app(config):
 
     register_extensions(app)
     register_blueprints(app)
+    register_error_handler(app)
     register_cmds(app)
 
     @app.before_request

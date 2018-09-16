@@ -17,5 +17,6 @@ class PagedUserSchema(PagedSchema):
     items = fields.Nested('UserSchema', many=True)
 
 
+user_schemas = UserSchema()
 paged_user_schemas = PagedUserSchema()
 

@@ -21,3 +21,9 @@ def list_users(page, page_size, order_by):
     paged_ret = pagination(models.User, page, page_size, order_by, qexp)
     return jsonify(schemas.paged_user_schemas.dump(paged_ret).data)
 
+
+@bp.route('/users/<int:pk>/', methods=['GET'])
+def retrieve_user(pk):
+    user = models.User.query.filter(models.User.id == pk).one()
+    return jsonify(schemas.user_schemas.dump(user).data)
+

@@ -4,9 +4,9 @@ from {{ project_name }}.run import db
 from {{ project_name }}.models import User
 
 
-class TestExample(BaseTest):
+class TestAPIExample(BaseTest):
 
-    def test_api(self, client):
+    def test_ping_api(self, client):
         resp = client.get('/api/ping/')
         assert resp.status_code == 200
 
@@ -53,4 +53,22 @@ class TestExample(BaseTest):
         assert resp.status_code == 200
         assert [item['id'] for item in resp.json['items']] == \
             [i for i in range(1, 11)]
+
+
+class TestErrorExample(BaseTest):
+
+    def test_error_handler_url_404(self, client):
+        resp = client.get('/api/not-exist/')
+        assert resp.status_code == 404
+        print(resp.json)
+
+    def test_error_args_not_valid(self, client):
+        resp = client.get('/api/users/?page=h')
+        assert resp.status_code == 422
+        print(resp.json)
+
+    def test_obj_not_exist(self, client):
+        resp = client.get('/api/users/{pk}/'.format(pk=1))
+        print(resp.json)
+        assert resp.status_code == 404
 
