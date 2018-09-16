@@ -17,14 +17,14 @@ class Result(Response):
 class ErrHandler:
 
     @classmethod
-    def handler_werkzeug(cls, e):
+    def handler_werkzeug_exceptions(cls, e):
         return Result({
             'code': e.code, 'message': e.name,
             'detail': None if not hasattr(e, 'data') else e.data['messages'],
         }, status=e.code)
 
     @classmethod
-    def handler_sqlalchemy_orm(cls, e):
+    def handler_sqlalchemy_orm_exc(cls, e):
         code, message, detail = 500, '服务器内部错误', repr(e)
 
         if isinstance(e, orm_exc.NoResultFound):
@@ -34,18 +34,13 @@ class ErrHandler:
             'code': code, 'message': message, 'detail': detail}, status=code)
 
     @classmethod
-    def handler_all(cls, e):
+    def handler_others(cls, e):
         return Result({
             'code': 500, 'message': '服务器内部错误', 'detail': repr(e),
         }, status=500)
 
     @classmethod
     def handler(cls, e):
-        if hasattr(e, '__module__') and e.__module__ == 'werkzeug.exceptions':
-            result = cls.handler_werkzeug(e)
-        elif hasattr(e, '__module__') and e.__module__ == 'sqlalchemy.orm.exc':
-            result = cls.handler_sqlalchemy_orm(e)
-        else:
-            result = cls.handler_all(e)
-
-        return result
+        exc = 'others' if not hasattr(e, '__module__') else \
+            e.__module__.replace('.', '_')
+        return getattr(cls, 'handler_{}'.format(exc))(e)
