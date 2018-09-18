@@ -5,6 +5,8 @@ import hobbit_core
 
 
 def gen_data(data_root='hobbit/static/bootstrap'):
+    """just for collect static files.
+    """
     data = [os.path.join(data_root, '*.jinja2')]
     for fn in os.listdir(os.path.join('hobbit_core', data_root)):
         if os.path.isdir(os.path.join('hobbit_core', data_root, fn)):
@@ -23,12 +25,22 @@ data = [
 ]
 
 
+try:
+    import pypandoc
+    long_description = pypandoc.convert('README.md', 'rst')
+except(IOError, ImportError):
+    long_description = open('README.md').read()
+
+
 setup(
     name='hobbit_core',
     version='.'.join(str(i) for i in hobbit_core.VERSION),
-    description='Hobbit - Change the World.',
+    python_requires='>=3.6',
+    description='Hobbit - A flask project generator.',
+    long_description=long_description,
     author='Legolas Bloom',
     author_email='zhanhsw@gmail.com',
+    url='https://github.com/TTWShell/hobbit-core',
     packages=find_packages(),
     package_data={'': ['LICENSE'], 'hobbit_core': data},
     install_requires=[

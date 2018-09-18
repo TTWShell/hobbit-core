@@ -8,3 +8,4 @@ __pycache__/*
 
 hobbit_core.egg-info/*
 dist/*
+build/*
