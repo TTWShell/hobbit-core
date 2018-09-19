@@ -3,37 +3,29 @@ from setuptools import setup, find_packages
 
 import hobbit_core
 
+ROOT_PATH = os.path.split(os.path.abspath(os.path.join(__file__)))[0]
+src_path = os.path.join(ROOT_PATH, 'hobbit_core')
+
 
 def gen_data(data_root='hobbit/static/bootstrap'):
     """just for collect static files.
     """
     data = [os.path.join(data_root, '*.jinja2')]
-    for fn in os.listdir(os.path.join('hobbit_core', data_root)):
-        if os.path.isdir(os.path.join('hobbit_core', data_root, fn)):
+    for fn in os.listdir(os.path.join(src_path, data_root)):
+        if os.path.isdir(os.path.join(src_path, data_root, fn)):
             data.extend(gen_data(os.path.join(data_root, fn)))
     return data
 
 
-data = [
-    'hobbit/static/bootstrap/*.jinja2',
-    'hobbit/static/bootstrap/shire/*.jinja2',
-    'hobbit/static/bootstrap/shire/{{ project_name }}/*.jinja2',
-    'hobbit/static/bootstrap/shire/tests/*.jinja2',
-    'hobbit/static/bootstrap/shire/docs/*.jinja2',
-    'hobbit/static/bootstrap/shire/configs/*.jinja2',
-    'hobbit/static/bootstrap/shire/configs/conf.d/*.jinja2',
-]
-
-
 try:
     import pypandoc
-    long_description = pypandoc.convert('README.md', 'rst')
-except(IOError, ImportError):
+    long_description = pypandoc.convert_file('README.md', 'rst')
+except(OSError, ImportError):
     long_description = open('README.md').read()
 
 
 setup(
-    name='hobbit_core',
+    name='hobbit-core',
     version='.'.join(str(i) for i in hobbit_core.VERSION),
     python_requires='>=3.6',
     description='Hobbit - A flask project generator.',
@@ -42,7 +34,7 @@ setup(
     author_email='zhanhsw@gmail.com',
     url='https://github.com/TTWShell/hobbit-core',
     packages=find_packages(),
-    package_data={'': ['LICENSE'], 'hobbit_core': data},
+    package_data={'': ['LICENSE'], 'hobbit_core': gen_data()},
     install_requires=[
         'Click==6.7',
         'Jinja2==2.10',

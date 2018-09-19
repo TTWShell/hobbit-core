@@ -17,7 +17,7 @@ def cli(ctx, force):
 
 @cli.command()
 @click.option('-n', '--name', help='Name of project.', required=True)
-@click.option('-d', '--dist', type=click.Path(), default='.',
+@click.option('-d', '--dist', type=click.Path(), default=os.getcwd(),
               help='Dir for new project.')
 @click.option('-t', '--template', type=click.Choice(['shire']),
               default='shire', help='Template name.')

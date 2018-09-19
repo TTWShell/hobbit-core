@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 click = "*"
 jinja2 = "*"
+pypandoc = "*"
 
 [dev-packages]
 
