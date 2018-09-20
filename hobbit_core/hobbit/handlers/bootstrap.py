@@ -11,7 +11,7 @@ SUFFIX = '.jinja2'
 @contextmanager
 def chdir(dist):
     cwd = os.getcwd()
-    echo('mkdir {}', (dist, ))
+    echo('mkdir\t{}', (dist, ))
     os.makedirs(dist, exist_ok=True)
     os.chdir(dist)
     yield dist
@@ -46,7 +46,7 @@ def render_file(ctx, dist, fn, data):
         echo('exists {}, ignore ...', (target, ))
         return
 
-    echo('render {} ...', (target, ))
+    echo('render\t{} ...', (target, ))
 
     with open(fn, 'w') as wf:
         wf.write(data)
