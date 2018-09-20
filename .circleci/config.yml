@@ -4,11 +4,12 @@
 #
 version: 2
 jobs:
-  build:
+  test-py36:
     docker:
       # specify the version you desire here
       # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image: circleci/python:3.6.1
+      - image: circleci/python:3.6
+        user: root
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -19,38 +20,78 @@ jobs:
 
     steps:
       - checkout
-
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "requirements.txt" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
       - run:
           name: install dependencies
           command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install -r requirements.txt
-
-      - save_cache:
-          paths:
-            - ./venv
-          key: v1-dependencies-{{ checksum "requirements.txt" }}
-
-      # run tests!
-      # this example uses Django's built-in test-runner
-      # other common Python testing frameworks include pytest and nose
-      # https://pytest.org
-      # https://nose.readthedocs.io
+            sudo pip install flake8 pytest pytest-cov
+            sudo pip install --editable .
+      - run:
+          name: use flake8 check self
+          command: |
+            flake8 .
+      - run:
+          name: run hobbit cmd
+          command: |
+            hobbit  --echo startproject -n demo -d ~/haha -f
+      - run:
+          name: tree flask project
+          command: |
+            cd ~/haha
+            apt-get install -y tree
+            tree
       - run:
           name: run tests
+          environment:
+            FLASK_APP: demo/run.py
+            FLASK_ENV: test
           command: |
-            . venv/bin/activate
-            python manage.py test
+            cd ~/haha
+            flask db init && flask db migrate && flask db upgrade
+            flake8 . --exclude migrations
+            py.test --cov . --cov-report term-missing -s
+  test-py37:
+    docker:
+      - image: circleci/python:3.7
+        user: root
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: install dependencies
+          command: |
+            sudo pip install flake8 pytest pytest-cov
+            sudo pip install --editable .
+      - run:
+          name: use flake8 check self
+          command: |
+            flake8 .
+      - run:
+          name: run hobbit cmd
+          command: |
+            mkdir ~/haha && cd ~/haha
+            hobbit  --echo startproject -n demo -f
+      - run:
+          name: tree flask project
+          command: |
+            cd ~/haha
+            apt-get install -y tree
+            tree
+      - run:
+          name: run tests
+          environment:
+            FLASK_APP: demo/run.py
+            FLASK_ENV: test
+          command: |
+            cd ~/haha
+            flask db init && flask db migrate && flask db upgrade
+            flake8 . --exclude migrations
+            py.test --cov . --cov-report term-missing -s
 
-      - store_artifacts:
-          path: test-reports
-          destination: test-reports
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test-py36
+      - test-py37
+
 
