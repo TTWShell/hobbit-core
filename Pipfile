@@ -7,6 +7,9 @@ name = "pypi"
 click = "*"
 jinja2 = "*"
 pypandoc = "*"
+tox = "*"
+pytest = "*"
+pytest-cov = "*"
 
 [dev-packages]
 

@@ -17,7 +17,7 @@ def cli(ctx, force):
 
 @cli.command()
 @click.option('-n', '--name', help='Name of project.', required=True)
-@click.option('-d', '--dist', type=click.Path(), default=os.getcwd(),
+@click.option('-d', '--dist', type=click.Path(), required=False,
               help='Dir for new project.')
 @click.option('-t', '--template', type=click.Choice(['shire']),
               default='shire', help='Template name.')
@@ -27,6 +27,7 @@ def cli(ctx, force):
 def startproject(ctx, name, dist, template, force):
     """Create a new flask project, render from different template.
     """
+    dist = os.getcwd() if dist is None else dist
     ctx.obj['FORCE'] = force
     ctx.obj['JINJIA_CONTEXT'] = {
         'project_name': name,

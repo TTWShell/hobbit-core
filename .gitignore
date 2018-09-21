@@ -5,6 +5,8 @@
 __pycache__/*
 */__pycache__/*
 .coverage
+.pytest_cache/*
+.tox/*
 
 hobbit_core.egg-info/*
 dist/*
