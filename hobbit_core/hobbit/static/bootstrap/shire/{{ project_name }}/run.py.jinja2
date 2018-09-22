@@ -6,19 +6,18 @@ from hobbit_core.flask_hobbit.err_handler import ErrHandler
 
 from {{ project_name }}.exts import db, migrate, ma, hobbit
 from {{ project_name }} import config
+from {{ project_name }} import views
 
 
 def register_extensions(app):
     db.init_app(app)
     migrate.init_app(app, db)
     ma.init_app(app)
-    hobbit.init_app(app, db, ma)
+    hobbit.init_app(app)
 
 
 def register_blueprints(app):
-    with app.app_context():
-        from {{ project_name }} import views
-        app.register_blueprint(views.bp, url_prefix='/api')
+    app.register_blueprint(views.bp, url_prefix='/api')
 
 
 def register_error_handler(app):

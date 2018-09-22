@@ -1,24 +1,17 @@
 import enum
 
-from sqlalchemy.orm import relationship
-from flask import current_app
-
-db = current_app.hobbit_manager.db
-
-Column = db.Column
-Model = db.Model
-relationship = relationship
+from sqlalchemy import Integer, Column, ForeignKey, func, DateTime
 
 
 class SurrogatePK:
     __table_args__ = {'extend_existing': True}
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = Column(Integer, primary_key=True)
     created_at = Column(
-        db.DateTime, nullable=False, server_default=db.func.now())
+        DateTime, nullable=False, server_default=func.now())
     updated_at = Column(
-        db.DateTime, nullable=False, server_default=db.func.now(),
-        onupdate=db.func.now())
+        DateTime, nullable=False, server_default=func.now(),
+        onupdate=func.now())
 
     def __repr__(self):
         return '<{classname}({pk}:{label!r})>'.format(
@@ -26,8 +19,8 @@ class SurrogatePK:
 
 
 def reference_col(tablename, nullable=False, pk_name='id', **kwargs):
-    return db.Column(
-        db.ForeignKey('{0}.{1}'.format(tablename, pk_name)),
+    return Column(
+        ForeignKey('{0}.{1}'.format(tablename, pk_name)),
         nullable=nullable, **kwargs)
 
 
