@@ -6,10 +6,19 @@ from webargs.fields import DelimitedList
 
 
 class ParamsDict(dict):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    """Just available update func.
+
+    Example::
+
+        @use_kwargs(PageParams.update({...}))
+        def list_users(page, page_size, order_by):
+            pass
+
+    """
 
     def update(self, other=None):
+        """Update self by other Mapping and return self.
+        """
         ret = self.copy()
         if other is not None:
             for k, v in other.items() if isinstance(other, Mapping) else other:
@@ -17,15 +26,39 @@ class ParamsDict(dict):
         return ret
 
 
+#: Base params for list view func.
 PageParams = ParamsDict(
     page=fields.Int(missing=1, required=False),
     page_size=fields.Int(missing=10, required=False),
     order_by=DelimitedList(
         fields.String(missing='id'), required=False, missing=['id']),
 )
+"""Base params for list view func which contains ``page``、``page_size``、\
+   ``order_by`` params.
+
+    Example::
+
+        @use_kwargs(PageParams)
+        def list_users(page, page_size, order_by):
+            pass
+"""
 
 
 def pagination(obj, page, page_size, order_by='id', query_exp=None):
+    """A pagination for sqlalchemy query.
+
+    Args:
+        obj (db.Model): Model class like User.
+        page (int): Page index.
+        page_size (int): Row's count per page.
+        order_by (str, list): Example: 'id'、['-id', 'column_name'].
+        query_exp (flask_sqlalchemy.BaseQuery): Query like \
+            ``User.query.filter_by(id=1)``.
+
+    Returns:
+        class: Class that contains ``items``、``page``、``page_size`` and \
+            ``total`` fileds.
+    """
     if not isinstance(obj, model.DefaultMeta):
         raise Exception('first arg obj must be model.')
 

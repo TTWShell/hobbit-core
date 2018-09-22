@@ -12,6 +12,18 @@ RESP_MSGS = {
 
 
 def gen_response(code, message='', detail=None):
+    """Func for generate response body.
+
+    Args:
+        code (string, int): Extension to interact with web pages. Default is \
+            http response ``status_code`` like 200、404.
+        message (string): For popup windows.
+        detail (object): For debug, detail server error msg.
+
+    Returns:
+        dict: A dict contains args.
+
+    """
     return {
         'code': str(code),
         'message': message or RESP_MSGS.get(code, '未知错误'),
@@ -20,6 +32,8 @@ def gen_response(code, message='', detail=None):
 
 
 class Result(Response):
+    """Base json response.
+    """
     status = 200
 
     def __init__(self, response=None, status=None, headers=None,
@@ -34,6 +48,8 @@ class Result(Response):
 
 
 class SuccessResult(Result):
+    """Success response. Default status is 200, you can cover it by status arg.
+    """
     status = 200
 
     def __init__(self, code=None, message='', detail=None, status=None):
@@ -43,6 +59,8 @@ class SuccessResult(Result):
 
 
 class FailedResult(Result):
+    """Failed response. status always 400.
+    """
     status = 400
 
     def __init__(self, code=None, message='', detail=None):
