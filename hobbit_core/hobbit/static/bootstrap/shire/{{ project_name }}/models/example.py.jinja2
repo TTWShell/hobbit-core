@@ -1,7 +1,8 @@
-from hobbit_core.flask_hobbit.db import db, SurrogatePK
+from hobbit_core.flask_hobbit.db import SurrogatePK, Column
+from {{ project_name }}.exts import db
 
 
 class User(SurrogatePK, db.Model):
-    username = db.Column(db.String(20), unique=True, nullable=False, doc='用户名')
-    nick = db.Column(db.String(20), unique=True, nullable=False, doc='昵称')
+    username = Column(db.String(20), unique=True, nullable=False, doc='用户名')
+    nick = Column(db.String(20), unique=True, nullable=False, doc='昵称')
 
