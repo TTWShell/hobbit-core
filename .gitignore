@@ -8,6 +8,10 @@ __pycache__/*
 .pytest_cache/*
 .tox/*
 
+docs/_build/*
+docs/_static/*
+docs/_templates/*
+
 hobbit_core.egg-info/*
 dist/*
 build/*

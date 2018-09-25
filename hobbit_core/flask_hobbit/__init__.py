@@ -9,6 +9,8 @@ from flask import Flask
 
 
 class HobbitManager:
+    """Customizable utils management.
+    """
 
     def __init__(self, app=None, **kwargs):
         """
@@ -19,6 +21,9 @@ class HobbitManager:
             self.init_app(app, **kwargs)
 
     def init_app(self, app, **kwargs):
+        """
+        app: The Flask application instance.
+        """
         if not isinstance(app, Flask):
             raise TypeError(
                 'flask_hobbit.HobbitManager.init_app(): '

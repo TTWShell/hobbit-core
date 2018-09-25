@@ -26,6 +26,39 @@ def cli(ctx, force):
 @click.pass_context
 def startproject(ctx, name, dist, template, force):
     """Create a new flask project, render from different template.
+
+    Examples::
+
+        hobbit --echo startproject -n demo -d /tmp/test
+
+    Proj tree::
+
+        .
+        ├── demo
+        │   ├── __init__.py
+        │   ├── config.py
+        │   ├── exts.py
+        │   ├── models
+        │   │   ├── __init__.py
+        │   │   └── example.py
+        │   ├── run.py
+        │   ├── schemas
+        │   │   ├── __init__.py
+        │   │   └── example.py
+        │   ├── utils.py
+        │   └── views
+        │       ├── __init__.py
+        │       └── example.py
+        ├── docs
+        ├── requirements.txt
+        └── tests
+            ├── __init__.py
+            ├── conftest.py
+            └── test_example.py
+
+    Other tips::
+
+        hobbit --help
     """
     dist = os.getcwd() if dist is None else dist
     ctx.obj['FORCE'] = force
