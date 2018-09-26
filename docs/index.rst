@@ -1,6 +1,11 @@
 Welcome to hobbit-core's documentation!
 =======================================
 
+:ref:`changelog <changelog>` //
+`github <https://github.com/TTWShell/hobbit-core>`_ //
+`pypi <https://pypi.org/project/hobbit-core/>`_ //
+`issues <https://github.com/TTWShell/hobbit-core/issues>`_
+
 hobbit_core.hobbit
 ==================
 
@@ -60,7 +65,18 @@ flask_hobbit.utils
    :members:
    :undoc-members:
 
+
 Indices and tables
 ==================
 
 * :ref:`search`
+
+
+Others
+======
+
+.. toctree::
+    :maxdepth: 2
+
+
+    changelog
