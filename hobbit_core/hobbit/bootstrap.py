@@ -60,7 +60,7 @@ def startproject(ctx, name, dist, template, force):
 
         hobbit --help
     """
-    dist = os.getcwd() if dist is None else dist
+    dist = os.getcwd() if dist is None else os.path.abspath(dist)
     ctx.obj['FORCE'] = force
     ctx.obj['JINJIA_CONTEXT'] = {
         'project_name': name,
