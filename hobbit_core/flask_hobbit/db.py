@@ -30,7 +30,8 @@ class SurrogatePK:
             str: ``<{classname}({pk}:{label!r})>``
         """
         return '<{classname}({pk}:{label!r})>'.format(
-            classname=type(self).__name__, pk=self.id, label=self.label or '')
+            classname=type(self).__name__, pk=self.id,
+            label=getattr(self, 'label', ''))
 
 
 def reference_col(tablename, nullable=False, pk_name='id', **kwargs):

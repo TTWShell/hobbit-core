@@ -4,6 +4,8 @@ from flask_sqlalchemy import model
 from marshmallow import fields
 from webargs.fields import DelimitedList
 
+from .utils import dict2object
+
 
 class ParamsDict(dict):
     """Just available update func.
@@ -82,12 +84,7 @@ def pagination(obj, page, page_size, order_by='id', query_exp=None):
     items = qexp.order_by(*order_exp).paginate(
         page, page_size, error_out=False)
 
-    class Result:
-        pass
-
-    Result.items = items.items
-    Result.page = page
-    Result.page_size = page_size
-    Result.total = items.total
-
-    return Result
+    return dict2object({
+        'items': items.items, 'page': page, 'page_size': page_size,
+        'total': items.total,
+    })
