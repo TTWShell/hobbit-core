@@ -53,6 +53,13 @@ flask_hobbit.response
    :members:
    :undoc-members:
 
+flask_hobbit.utils
+------------------
+
+.. automodule:: hobbit_core.flask_hobbit.utils
+   :members:
+   :undoc-members:
+
 Indices and tables
 ==================
 
