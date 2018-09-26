@@ -10,6 +10,10 @@ pypandoc = "*"
 tox = "*"
 pytest = "*"
 pytest-cov = "*"
+flask-sphinx-themes = "*"
+sphinx = "*"
+sphinx-autobuild = "*"
+recommonmark = "*"
 
 [dev-packages]
 
