@@ -54,21 +54,27 @@ If not skip example(Please see --example/--no-example options), you can get proj
     │   │   ├── development.py
     │   │   ├── production.py
     │   │   └── testing.py
+    │   ├── core
+    │   │   └── __init__.py
     │   ├── exts.py
     │   ├── models
-    │   │   └── __init__.py
+    │   │   ├── __init__.py
+    │   │   └── example.py
     │   ├── run.py
     │   ├── schemas
-    │   │   └── __init__.py
+    │   │   ├── __init__.py
+    │   │   └── example.py
     │   ├── utils
     │   │   └── __init__.py
     │   └── views
-    │       └── __init__.py
+    │       ├── __init__.py
+    │       └── example.py
     ├── docs
     ├── requirements.txt
     └── tests
         ├── __init__.py
-        └── conftest.py
+        ├── conftest.py
+        └── test_example.py
 
 app
 ---
