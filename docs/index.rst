@@ -1,7 +1,7 @@
 Welcome to hobbit-core's documentation!
 =======================================
 
-:ref:`changelog <changelog>` //
+`changelog <changelog.html>`_ //
 `github <https://github.com/TTWShell/hobbit-core>`_ //
 `pypi <https://pypi.org/project/hobbit-core/>`_ //
 `issues <https://github.com/TTWShell/hobbit-core/issues>`_
@@ -114,6 +114,5 @@ Others
 
 .. toctree::
     :maxdepth: 2
-
 
     changelog
