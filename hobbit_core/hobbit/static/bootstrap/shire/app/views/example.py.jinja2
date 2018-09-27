@@ -3,10 +3,10 @@ from webargs.flaskparser import use_kwargs
 
 from hobbit_core.flask_hobbit.pagination import PageParams, pagination
 
-from {{ project_name }} import models
-from {{ project_name }} import schemas
+from app import models
+from app import schemas
 
-bp = Blueprint('{{ project_name }}', __name__)
+bp = Blueprint('example', __name__)
 
 
 @bp.route('/ping/', methods=['GET'])

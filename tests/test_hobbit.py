@@ -42,7 +42,7 @@ class TestHobbit(BaseTest):
         assert 'mkdir\t{}'.format(self.wkdir) in result.output
         assert 'render\t{}'.format(self.wkdir) in result.output
         assert os.path.exists(os.path.join(
-            os.getcwd(), 'haha', 'models', '__init__.py'))
+            os.getcwd(), 'app', 'models', '__init__.py'))
 
     def test_startproject_cmd_dist(self):
         runner = CliRunner()
@@ -55,7 +55,7 @@ class TestHobbit(BaseTest):
         assert 'mkdir\t{}'.format(self.wkdir) in result.output
         assert 'render\t{}'.format(self.wkdir) in result.output
         assert os.path.exists(os.path.join(
-            self.wkdir, 'haha', 'models', '__init__.py'))
+            self.wkdir, 'app', 'models', '__init__.py'))
 
     @chdir(wkdir)
     def test_startproject_cmd_curdir(self):
@@ -68,4 +68,4 @@ class TestHobbit(BaseTest):
             obj={})
         assert result.exit_code == 0
         assert os.path.exists(os.path.join(
-            os.getcwd(), 'haha', 'models', '__init__.py'))
+            os.getcwd(), 'app', 'models', '__init__.py'))

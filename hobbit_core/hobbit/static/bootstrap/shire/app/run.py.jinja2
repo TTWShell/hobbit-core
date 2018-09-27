@@ -4,9 +4,9 @@ from flask import Flask, request
 
 from hobbit_core.flask_hobbit.err_handler import ErrHandler
 
-from {{ project_name }}.exts import db, migrate, ma, hobbit
-from {{ project_name }} import config
-from {{ project_name }} import views
+from app.exts import db, migrate, ma, hobbit
+from app import config
+from app import views
 
 
 def register_extensions(app):

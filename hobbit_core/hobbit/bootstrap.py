@@ -34,7 +34,7 @@ def startproject(ctx, name, dist, template, force):
     Proj tree::
 
         .
-        ├── demo
+        ├── app
         │   ├── __init__.py
         │   ├── config.py
         │   ├── exts.py

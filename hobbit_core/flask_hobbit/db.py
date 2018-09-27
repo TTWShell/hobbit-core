@@ -48,6 +48,8 @@ def reference_col(tablename, nullable=False, pk_name='id', **kwargs):
 
     Examples::
 
+        from sqlalchemy.orm import relationship
+
         role_id = reference_col('role')
         role = relationship('Role', backref='users', cascade='all, delete')
     """
