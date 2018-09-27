@@ -7,6 +7,9 @@ Change history
 * Beta release.
 * Fix hobbit create in curdir(.) err.
 * Add dict2object util.
+* Project tree confirmed.
+* Add tutorial、project tree doc.
+* Add example options for startproject cmd.
 
 
 1.0.0 (2018-09-25)
