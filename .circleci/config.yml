@@ -42,7 +42,7 @@ jobs:
       - run:
           name: run hobbit cmd
           command: |
-            hobbit  --echo startproject -n demo -d ~/haha -f
+            hobbit  --echo startproject -n demo -d ~/haha -f --example
       - run:
           name: tree flask project
           command: |
@@ -79,7 +79,7 @@ jobs:
           name: run hobbit cmd
           command: |
             mkdir ~/haha && cd ~/haha
-            hobbit  --echo startproject -n demo -f
+            hobbit  --echo startproject -n demo -f --example
       - run:
           name: tree flask project
           command: |
