@@ -36,7 +36,12 @@ def startproject(ctx, name, dist, template, force):
         .
         ├── app
         │   ├── __init__.py
-        │   ├── config.py
+        │   ├── configs
+        │   │   ├── __init__.py
+        │   │   ├── default.py
+        │   │   ├── development.py
+        │   │   ├── production.py
+        │   │   └── testing.py
         │   ├── exts.py
         │   ├── models
         │   │   ├── __init__.py

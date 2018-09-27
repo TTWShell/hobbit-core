@@ -1,0 +1,6 @@
+from .default import *  # NOQA F401
+
+SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format('test-{{ project_name }}.db')
+# SQLALCHEMY_ECHO = True
+TESTING = True
+

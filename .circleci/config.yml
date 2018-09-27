@@ -52,8 +52,8 @@ jobs:
       - run:
           name: run tests
           environment:
-            FLASK_APP: demo/run.py
-            FLASK_ENV: test
+            FLASK_APP: app/run.py
+            FLASK_ENV: testing
           command: |
             cd ~/haha
             flask db init && flask db migrate && flask db upgrade
@@ -89,8 +89,8 @@ jobs:
       - run:
           name: run tests
           environment:
-            FLASK_APP: demo/run.py
-            FLASK_ENV: test
+            FLASK_APP: app/run.py
+            FLASK_ENV: testing
           command: |
             cd ~/haha
             flask db init && flask db migrate && flask db upgrade

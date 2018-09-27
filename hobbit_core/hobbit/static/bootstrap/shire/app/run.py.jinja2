@@ -1,11 +1,11 @@
 import logging
 
 from flask import Flask, request
+from flask.helpers import get_env
 
 from hobbit_core.flask_hobbit.err_handler import ErrHandler
 
 from app.exts import db, migrate, ma, hobbit
-from app import config
 from app import views
 
 
@@ -28,9 +28,9 @@ def register_cmds(app):
     pass
 
 
-def create_app(config):
-    app = Flask(__name__)
-    app.config.from_object(config)
+def create_app():
+    app = Flask(__name__, instance_relative_config=True)
+    app.config.from_object('app.configs.{}'.format(get_env()))
 
     register_extensions(app)
     register_blueprints(app)
@@ -46,5 +46,5 @@ def create_app(config):
     return app
 
 
-app = create_app(config.get_config())
+app = create_app()
 
