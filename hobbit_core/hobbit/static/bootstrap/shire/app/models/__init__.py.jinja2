@@ -1,4 +1,7 @@
+{%- if example -%}
 from .example import User
 
 __all__ = [User]
-
+{% else %}
+__all__ = []
+{% endif %}

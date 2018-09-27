@@ -45,6 +45,7 @@ def startproject(ctx, name, dist, template, force, example):
         'secret_key': ''.join(random.choice(
             string.ascii_letters) for i in range(38)),
         'version': '.'.join(str(i) for i in VERSION),
+        'example': example,
     }
 
     echo('Start init a hobbit project `{}` to `{}`, use template {}',
