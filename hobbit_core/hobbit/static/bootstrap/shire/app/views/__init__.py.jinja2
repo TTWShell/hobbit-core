@@ -1,4 +1,11 @@
+{%- if example -%}
 from .example import bp
 
 __all__ = [bp]
+{% else %}
+from flask import Blueprint
 
+bp = Blueprint('{{ project_name }}', __name__)
+
+__all__ = []
+{% endif %}
