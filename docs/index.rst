@@ -18,7 +18,7 @@ Get it right now::
 
 Create your flask project::
 
-    hobbit --echo startproject -n demo -d .
+    hobbit --echo startproject -n demo -d . --example
 
 Run flask app::
 
@@ -38,6 +38,52 @@ You can request ``http://127.0.0.1:5000/api/ping/``
 Other tips::
 
     hobbit --help
+
+
+Project Tree
+============
+
+If not skip example(Please see --example/--no-example options), you can get project tree like this::
+
+    .
+    ├── app
+    │   ├── __init__.py
+    │   ├── configs
+    │   │   ├── __init__.py
+    │   │   ├── default.py
+    │   │   ├── development.py
+    │   │   ├── production.py
+    │   │   └── testing.py
+    │   ├── exts.py
+    │   ├── models
+    │   │   └── __init__.py
+    │   ├── run.py
+    │   ├── schemas
+    │   │   └── __init__.py
+    │   ├── utils
+    │   │   └── __init__.py
+    │   └── views
+    │       └── __init__.py
+    ├── docs
+    ├── requirements.txt
+    └── tests
+        ├── __init__.py
+        └── conftest.py
+
+app
+---
+
+App dir saved all business layer codes. You must ensure dir name is app based on *convention over configuration*.
+
+configs
+^^^^^^^
+
+In a hobbit app, we auto load config by FLASK_ENV. If FLASK_ENV=production, used ``configs/production.py`` file.
+
+exts
+^^^^
+
+`Why use exts.py to instance extension? <https://stackoverflow.com/questions/42909816/can-i-avoid-circular-imports-in-flask-and-sqlalchemy/51739367#51739367>`_
 
 
 API
