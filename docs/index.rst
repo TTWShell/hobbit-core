@@ -22,11 +22,11 @@ Create your flask project::
 
 Run flask app::
 
-    FLASK_APP=demo/run.py flask run
+    FLASK_APP=app/run.py flask run
 
 It works::
 
-     * Serving Flask app "demo/run.py"
+     * Serving Flask app "app/run.py"
      * Environment: production
        WARNING: Do not use the development server in a production environment.
        Use a production WSGI server instead.
