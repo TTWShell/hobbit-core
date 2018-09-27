@@ -59,8 +59,8 @@ A flask extension that take care of base utils.
    :members:
    :undoc-members:
 
-flask_hobbit.db
-^^^^^^^^^^^^^^^
+db
+^^
 
 .. automodule:: hobbit_core.flask_hobbit.db
    :members:
@@ -70,15 +70,15 @@ flask_hobbit.db
    .. autoclass:: SurrogatePK
        :members: __repr__
 
-flask_hobbit.pagination
-^^^^^^^^^^^^^^^^^^^^^^^
+pagination
+^^^^^^^^^^
 
 .. automodule:: hobbit_core.flask_hobbit.pagination
    :members:
    :undoc-members:
 
-flask_hobbit.schemas
-^^^^^^^^^^^^^^^^^^^^
+schemas
+^^^^^^^
 
 .. automodule:: hobbit_core.flask_hobbit.schemas
    :members:
@@ -88,19 +88,26 @@ flask_hobbit.schemas
    .. autoclass:: PagedSchema
        :members:
 
-flask_hobbit.response
-^^^^^^^^^^^^^^^^^^^^^
+utils
+^^^^^
+
+.. automodule:: hobbit_core.flask_hobbit.utils
+   :members:
+   :undoc-members:
+
+
+response
+^^^^^^^^
 
 .. automodule:: hobbit_core.flask_hobbit.response
    :members:
    :undoc-members:
 
-flask_hobbit.utils
-^^^^^^^^^^^^^^^^^^
+err_handler
+^^^^^^^^^^^
 
-.. automodule:: hobbit_core.flask_hobbit.utils
+.. automodule:: hobbit_core.flask_hobbit.err_handler
    :members:
-   :undoc-members:
 
 
 Indices and tables

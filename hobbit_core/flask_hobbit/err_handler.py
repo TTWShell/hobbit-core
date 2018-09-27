@@ -4,6 +4,19 @@ from .response import Result, ServerErrorResult, gen_response, RESP_MSGS
 
 
 class ErrHandler:
+    """Base error handler that catch all exceptions. Be sure response is::
+
+        {
+            "code": "404",  # error code, default is http status code, \
+you can change it
+            "message": "Not found",  # for alert in web page
+            "detail": "id number field length must be 18",  # for debug
+        }
+
+    Examples::
+
+        app.register_error_handler(Exception, ErrHandler.handler)
+    """
 
     @classmethod
     def handler_werkzeug_exceptions(cls, e):
