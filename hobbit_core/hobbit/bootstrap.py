@@ -23,43 +23,15 @@ def cli(ctx, force):
               default='shire', help='Template name.')
 @click.option('-f', '--force', default=False, is_flag=True,
               help='Force render files, covered if file exist.')
+@click.option('--example/--no-example', default=False,
+              help='Generate api、test example files or not.')
 @click.pass_context
-def startproject(ctx, name, dist, template, force):
+def startproject(ctx, name, dist, template, force, example):
     """Create a new flask project, render from different template.
 
     Examples::
 
-        hobbit --echo startproject -n demo -d /tmp/test
-
-    Proj tree::
-
-        .
-        ├── app
-        │   ├── __init__.py
-        │   ├── configs
-        │   │   ├── __init__.py
-        │   │   ├── default.py
-        │   │   ├── development.py
-        │   │   ├── production.py
-        │   │   └── testing.py
-        │   ├── exts.py
-        │   ├── models
-        │   │   ├── __init__.py
-        │   │   └── example.py
-        │   ├── run.py
-        │   ├── schemas
-        │   │   ├── __init__.py
-        │   │   └── example.py
-        │   ├── utils.py
-        │   └── views
-        │       ├── __init__.py
-        │       └── example.py
-        ├── docs
-        ├── requirements.txt
-        └── tests
-            ├── __init__.py
-            ├── conftest.py
-            └── test_example.py
+        hobbit --echo startproject -n demo -d /tmp/test --example
 
     Other tips::
 
@@ -67,6 +39,7 @@ def startproject(ctx, name, dist, template, force):
     """
     dist = os.getcwd() if dist is None else os.path.abspath(dist)
     ctx.obj['FORCE'] = force
+    ctx.obj['EXAMPLE'] = example
     ctx.obj['JINJIA_CONTEXT'] = {
         'project_name': name,
         'secret_key': ''.join(random.choice(
