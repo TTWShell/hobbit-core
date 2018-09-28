@@ -42,4 +42,4 @@ you can change it
     def handler(cls, e):
         exc = 'others' if not hasattr(e, '__module__') else \
             e.__module__.replace('.', '_')
-        return getattr(cls, 'handler_{}'.format(exc), 'handler_others')(e)
+        return getattr(cls, 'handler_{}'.format(exc), cls.handler_others)(e)
