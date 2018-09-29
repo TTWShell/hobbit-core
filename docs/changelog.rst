@@ -1,7 +1,7 @@
 Change history
 ==============
 
-1.0.1 (unreleased)
+1.1.0 (2018-09-29)
 ******************
 
 * Beta release.
