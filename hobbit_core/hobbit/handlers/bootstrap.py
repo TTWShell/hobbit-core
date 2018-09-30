@@ -54,3 +54,6 @@ def render_file(ctx, dist, fn, data):
 
     with open(fn, 'w') as wf:
         wf.write(data)
+
+    if fn.endswith('.sh'):
+        os.chmod(fn, 0o755)
