@@ -9,7 +9,7 @@ RUN apt-get update --fix-missing && apt-get install -y \
     zip sshpass
 
 RUN pip install --upgrade pip -i https://pypi.doubanio.com/simple
-RUN pip install flake8 pytest pytest-cov
+RUN pip install flake8 pytest pytest-cov gunicorn gevent
 
 RUN mkdir /app
 WORKDIR /app
