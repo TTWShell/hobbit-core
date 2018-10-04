@@ -4,31 +4,61 @@ Usage:
 
     USER=root PASSWORD=root ./deploy.sh 192.168.x.1,192.168.x.2
 '
+# auto gen by hoobit-core
+PROJECT_NAME='{{ project_name }}'
 
-INSTALL_PATH="/data/{{ project_name }}"
-IMAGE="ttwshell/hobbit-app:latest"
 
-commonExclude="*.pyc* .* /.git/* /.test/* /*/__pycache__/* /.pytest_cache/* /logs/* /tests/* zip.sh"
-commonInclude="/app/* /migrations/* requirements.txt"
-function mzip() {
-    serverInclude="docker-compose.yml Dockerfile /configs/*"
-    zip -r server.zip . --exclude ${commonExclude} -i ${commonInclude} -i ${serverInclude}
+INSTALL_PATH="/data/${PROJECT_NAME}"
+CURRENT_BRANCH=`git branch | grep \* | cut -d ' ' -f2`
+CURRENT_COMMITID=`git rev-parse --verify HEAD`
+ORIGIN=`git remote -v | grep origin | awk '{print $2}' | head -n 1`
+
+function echoo {
+    echo -e "\033[32m$@\033[0m"
 }
+
 
 function mssh() {
     sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no ${USER}@${host} $1
 }
 
+
 function deploy() {
     for host in $(echo $1 | tr "," "\n")
     do
-        echo -e "\033[32mdeploy to ${host} ...\033[0m"
-        mssh "sudo mkdir -p ${INSTALL_PATH} && sudo chown -R ${USER}:${USER} ${INSTALL_PATH}"
-        sshpass -p ${PASSWORD} scp ./server.zip ${USER}@${host}:${INSTALL_PATH}
-        mssh "docker pull ${IMAGE}"
-        mssh "cd ${INSTALL_PATH} && unzip -o server.zip  -d . && docker-compose down && docker-compose up -d"
+        echoo "deploy to ${host} ..."
+
+        isGitRepo=`mssh "[ -d ${INSTALL_PATH} ] && \
+            cd ${INSTALL_PATH} && \
+            git rev-parse --is-inside-work-tree" || echo $?`
+
+        if [[ "${isGitRepo}" != "true" ]]; then
+            echoo "not a git repo, first deploy ..."
+            mssh "sudo rm -rf ${INSTALL_PATH} && \
+                cd /data && \
+                git clone ${ORIGIN} ${INSTALL_PATH}"
+        fi
+
+        REMOTE_BRANCH=`mssh "cd ${INSTALL_PATH} && git branch | grep \* | cut -d ' ' -f2"`
+        if [[ ${REMOTE_BRANCH} != ${CURRENT_BRANCH} ]]; then
+            mssh "cd ${INSTALL_PATH} && \
+                git fetch origin ${CURRENT_BRANCH}:${CURRENT_BRANCH}"
+        else
+            mssh "cd ${INSTALL_PATH} && \
+                git pull origin ${CURRENT_BRANCH}"
+        fi
+
+        mssh "cd ${INSTALL_PATH} && \
+            git checkout ${CURRENT_BRANCH} && git checkout ${CURRENT_COMMITID}"
+
+        REMOTE_COMMITID=`mssh "cd ${INSTALL_PATH} && git rev-parse --verify HEAD"`
+        echoo "remote ${REMOTE_COMMITID}"
+
+        mssh "cd ${INSTALL_PATH} && docker-compose down && docker-compose up -d"
     done
 }
 
-mzip server && deploy $1
 
+echoo "deploy branch: ${CURRENT_BRANCH}, commitid: ${CURRENT_COMMITID}, origin: ${ORIGIN}"
+
+deploy $1
