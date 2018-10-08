@@ -1,6 +1,11 @@
 Change history
 ==============
 
+1.2.0 (unreleased)
+
+* Gitlab CI/CD support.
+* Some useful cmds.
+
 1.1.0 (2018-09-29)
 ******************
 
