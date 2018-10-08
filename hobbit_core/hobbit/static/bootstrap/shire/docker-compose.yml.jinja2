@@ -6,7 +6,7 @@ services:
     image: ttwshell/hobbit-app:latest
     restart: always
     ports:
-      - 5000:5000
+      - {{ port }}:5000
     environment:
       - LANG=C.UTF-8
       - FLASK_APP=app/run.py
