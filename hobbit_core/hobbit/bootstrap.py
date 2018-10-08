@@ -26,7 +26,7 @@ def cli(ctx, force):
 @click.option('-f', '--force', default=False, is_flag=True,
               help='Force render files, covered if file exist.')
 @click.option('--example/--no-example', default=False,
-              help='Generate api、test example files or not.')
+              help='Generate api, test example files or not.')
 @click.pass_context
 def startproject(ctx, name, port, dist, template, force, example):
     """Create a new flask project, render from different template.

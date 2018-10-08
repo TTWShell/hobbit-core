@@ -14,14 +14,18 @@ jobs:
       - run:
           name: install dependencies && tox
           command: |
+            # https://github.com/pyenv/pyenv/wiki/Common-build-problems
+            apt-get install -y make build-essential libssl1.0-dev zlib1g-dev libbz2-dev \
+                libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
+                xz-utils tk-dev libffi-dev liblzma-dev
             curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
             export PATH="/root/.pyenv/bin:$PATH"
             eval "$(pyenv init -)"
             eval "$(pyenv virtualenv-init -)"
-            pyenv install 3.7.0
-            pyenv virtualenv -f 3.7.0 py37
-            pyenv shell py37
-            pip install tox
+            pyenv install 2.7 && pyenv virtualenv -f 2.7 py27
+            pyenv install 3.7.0 && pyenv virtualenv -f 3.7.0 py37
+            pyenv shell py27 py37
+            pip3 install tox
             tox
   test-py36:
     docker:
