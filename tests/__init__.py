@@ -3,7 +3,8 @@ import shutil
 import functools
 
 
-class BaseTest:
+class BaseTest(object):
+    root_path = os.path.split(os.path.abspath(__name__))[0]
 
     def setup_method(self, method):
         print('\n{}::{}'.format(type(self).__name__, method.__name__))
@@ -22,7 +23,8 @@ def chdir(path):
         @functools.wraps(func)
         def inner(*args, **kwargs):
             cwd = os.getcwd()
-            os.makedirs(path, exist_ok=True)
+            if not os.path.exists(path):
+                os.makedirs(path)
             os.chdir(path)
             func(*args, **kwargs)
             os.chdir(cwd)

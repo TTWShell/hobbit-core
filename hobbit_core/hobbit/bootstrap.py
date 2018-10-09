@@ -17,6 +17,8 @@ def cli(ctx, force):
 
 @cli.command()
 @click.option('-n', '--name', help='Name of project.', required=True)
+@click.option('-p', '--port', help='Port of web server.', required=True,
+              type=click.IntRange(1024, 65535))
 @click.option('-d', '--dist', type=click.Path(), required=False,
               help='Dir for new project.')
 @click.option('-t', '--template', type=click.Choice(['shire']),
@@ -24,14 +26,14 @@ def cli(ctx, force):
 @click.option('-f', '--force', default=False, is_flag=True,
               help='Force render files, covered if file exist.')
 @click.option('--example/--no-example', default=False,
-              help='Generate api、test example files or not.')
+              help='Generate api, test example files or not.')
 @click.pass_context
-def startproject(ctx, name, dist, template, force, example):
+def startproject(ctx, name, port, dist, template, force, example):
     """Create a new flask project, render from different template.
 
     Examples::
 
-        hobbit --echo startproject -n demo -d /tmp/test --example
+        hobbit --echo startproject -n demo -d /tmp/test --example -p 1024
 
     Other tips::
 
@@ -42,6 +44,7 @@ def startproject(ctx, name, dist, template, force, example):
     ctx.obj['EXAMPLE'] = example
     ctx.obj['JINJIA_CONTEXT'] = {
         'project_name': name,
+        'port': port,
         'secret_key': ''.join(random.choice(
             string.ascii_letters) for i in range(38)),
         'version': '.'.join(str(i) for i in VERSION),

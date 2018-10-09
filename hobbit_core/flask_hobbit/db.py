@@ -1,9 +1,10 @@
+# -*- encoding: utf-8 -*-
 import enum
 
 from sqlalchemy import Integer, Column, ForeignKey, func, DateTime
 
 
-class SurrogatePK:
+class SurrogatePK(object):
     """A mixin that add ``id``、``created_at`` and ``updated_at`` columns
     to any declarative-mapped class.
 

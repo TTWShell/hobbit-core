@@ -12,11 +12,12 @@ class TestHobbit(BaseTest):
 
     def setup_method(self, method):
         rmdir(self.wkdir)
-        super().setup_method(method)
+        super(TestHobbit, self).setup_method(method)
 
     def teardown_method(self, method):
+        os.chdir(self.root_path)
         rmdir(self.wkdir)
-        super().teardown_method(method)
+        super(TestHobbit, self).teardown_method(method)
 
     def test_hobbit_cmd(self):
         runner = CliRunner()
@@ -37,7 +38,9 @@ class TestHobbit(BaseTest):
         assert 'Error: Missing option "-n" / "--name".' in result.output
 
         result = runner.invoke(
-            hobbit, ['--echo', 'startproject', '-n', 'haha', '-f'], obj={})
+            hobbit, [
+                '--echo', 'startproject', '-n', 'haha', '-f', '-p', '1024',
+            ], obj={})
         assert result.exit_code == 0
         assert 'mkdir\t{}'.format(self.wkdir) in result.output
         assert 'render\t{}'.format(self.wkdir) in result.output
@@ -49,9 +52,10 @@ class TestHobbit(BaseTest):
         runner = CliRunner()
 
         result = runner.invoke(
-            hobbit,
-            ['--echo', 'startproject', '-n', 'haha', '-f', '-d', self.wkdir],
-            obj={})
+            hobbit, [
+                '--echo', 'startproject', '-n', 'haha', '-f', '-d', self.wkdir,
+                '-p', '1024',
+            ], obj={})
         assert result.exit_code == 0
         assert 'mkdir\t{}'.format(self.wkdir) in result.output
         assert 'render\t{}'.format(self.wkdir) in result.output
@@ -65,9 +69,10 @@ class TestHobbit(BaseTest):
         runner = CliRunner()
 
         result = runner.invoke(
-            hobbit,
-            ['--echo', 'startproject', '-n', 'haha', '-f', '-d', '.'],
-            obj={})
+            hobbit, [
+                '--echo', 'startproject', '-n', 'haha', '-f', '-d', '.',
+                '-p', '1024',
+            ], obj={})
         assert result.exit_code == 0
         assert os.path.exists(os.path.join(
             os.getcwd(), 'app', 'models', '__init__.py'))
@@ -79,7 +84,9 @@ class TestHobbit(BaseTest):
         runner = CliRunner()
 
         result = runner.invoke(
-            hobbit,
-            ['--echo', 'startproject', '-n', 'haha', '--example'], obj={})
+            hobbit, [
+                '--echo', 'startproject', '-n', 'haha', '--example',
+                '-p', '1024',
+            ], obj={})
         assert result.exit_code == 0
         assert 'example.py' in result.output

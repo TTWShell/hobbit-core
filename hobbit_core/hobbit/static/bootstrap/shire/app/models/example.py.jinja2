@@ -3,6 +3,7 @@ from app.exts import db
 
 
 class User(SurrogatePK, db.Model):
-    username = Column(db.String(20), unique=True, nullable=False, doc='用户名')
-    nick = Column(db.String(20), unique=True, nullable=False, doc='昵称')
+    username = Column(db.String(20), unique=True, nullable=False,
+                      doc='username')
+    nick = Column(db.String(20), unique=True, nullable=False, doc='nick name')
 

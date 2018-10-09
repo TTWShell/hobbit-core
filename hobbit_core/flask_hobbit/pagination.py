@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from collections import Mapping
 from flask_sqlalchemy import model
 

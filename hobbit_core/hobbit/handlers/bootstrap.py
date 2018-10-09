@@ -13,7 +13,9 @@ EXAMPLE_SUFFIX = 'example.py.jinja2'
 def chdir(dist):
     cwd = os.getcwd()
     echo('mkdir\t{}', (dist, ))
-    os.makedirs(dist, exist_ok=True)
+    # exist_ok py3 only
+    if not os.path.exists(dist):
+        os.makedirs(dist)
     os.chdir(dist)
     yield dist
     os.chdir(cwd)
