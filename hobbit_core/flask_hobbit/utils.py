@@ -1,5 +1,8 @@
 # -*- encoding: utf-8 -*-
+import os
+import re
 import six
+from unicodedata import normalize
 
 
 class dict2object(dict):
@@ -26,3 +29,47 @@ class dict2object(dict):
         if not isinstance(name, six.string_types):
             raise TypeError('key must be string type.')
         self[name] = value
+
+
+def secure_filename(filename):
+    """Borrowed from werkzeug.utils.secure_filename.
+
+    Pass it a filename and it will return a secure version of it. This
+    filename can then safely be stored on a regular file system and passed
+    to :func:`os.path.join`.
+
+    On windows systems the function also makes sure that the file is not
+    named after one of the special device files.
+
+        >>> secure_filename("My cool movie.mov")
+        'My_cool_movie.mov'
+        >>> secure_filename("../../../etc/passwd")
+        'etc_passwd'
+        >>> secure_filename(u'i contain cool \xfcml\xe4uts.txt')
+        'i_contain_cool_umlauts.txt'
+    """
+    if isinstance(filename, six.text_type):
+        filename = normalize('NFKD', filename).encode('utf-8')
+        if not six.PY2:
+            filename = filename.decode('utf-8')
+
+    for sep in os.path.sep, os.path.altsep:
+        if sep:
+            filename = filename.replace(sep, ' ')
+
+    filename = '_'.join(filename.split())
+    filename_strip_re = re.compile(r'[^A-Za-z0-9\u4e00-\u9fa5_.-]')
+    filename = filename_strip_re.sub('', filename).strip('._')
+
+    # on nt a couple of special files are present in each folder.  We
+    # have to ensure that the target file is not such a filename.  In
+    # this case we prepend an underline
+    windows_device_files = (
+        'CON', 'AUX', 'COM1', 'COM2', 'COM3', 'COM4', 'LPT1',
+        'LPT2', 'LPT3', 'PRN', 'NUL',
+    )
+    if os.name == 'nt' and filename and \
+       filename.split('.')[0].upper() in windows_device_files:
+        filename = '_' + filename
+
+    return filename
