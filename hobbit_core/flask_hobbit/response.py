@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from flask.json import dumps
 from werkzeug import Response
 
@@ -41,7 +42,7 @@ class Result(Response):
                  direct_passthrough=False):
         assert sorted(response.keys()) == ['code', 'detail', 'message'], \
             '错误的返回格式'
-        return super().__init__(
+        return super(Result, self).__init__(
             response=dumps(response, indent=0, separators=(',', ':')) + '\n',
             status=status or self.status, headers=headers, mimetype=mimetype,
             content_type=content_type, direct_passthrough=direct_passthrough)
@@ -53,7 +54,7 @@ class SuccessResult(Result):
     status = 200
 
     def __init__(self, code=None, message='', detail=None, status=None):
-        return super().__init__(
+        return super(SuccessResult, self).__init__(
             gen_response(code or self.status, message, detail),
             self.status or status)
 
@@ -64,7 +65,7 @@ class FailedResult(Result):
     status = 400
 
     def __init__(self, code=None, message='', detail=None):
-        return super().__init__(
+        return super(FailedResult, self).__init__(
             gen_response(code or self.status, message, detail), self.status)
 
 

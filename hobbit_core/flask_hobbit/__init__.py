@@ -8,7 +8,7 @@
 from flask import Flask
 
 
-class HobbitManager:
+class HobbitManager(object):
     """Customizable utils management.
     """
 

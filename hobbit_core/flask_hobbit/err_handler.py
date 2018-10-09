@@ -1,9 +1,10 @@
+# -*- encoding: utf-8 -*-
 from sqlalchemy.orm import exc as orm_exc
 
 from .response import Result, ServerErrorResult, gen_response, RESP_MSGS
 
 
-class ErrHandler:
+class ErrHandler(object):
     """Base error handler that catch all exceptions. Be sure response is::
 
         {
