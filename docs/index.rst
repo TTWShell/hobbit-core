@@ -46,6 +46,7 @@ Project Tree
 If not skip example(Please see --example/--no-example options), you can get project tree like this::
 
     .
+    ├── Dockerfile
     ├── app
     │   ├── __init__.py
     │   ├── configs
@@ -69,12 +70,20 @@ If not skip example(Please see --example/--no-example options), you can get proj
     │   └── views
     │       ├── __init__.py
     │       └── example.py
+    ├── deploy.sh
+    ├── docker-compose.yml
     ├── docs
+    ├── logs
     ├── requirements.txt
     └── tests
         ├── __init__.py
         ├── conftest.py
         └── test_example.py
+
+Dockerfile
+----------
+
+Build image for run web server. For more information about dockerfile, please visit : `Dockerfile reference <https://docs.docker.com/engine/reference/builder/#usage>`_.
 
 app
 ---
@@ -86,10 +95,66 @@ configs
 
 In a hobbit app, we auto load config by FLASK_ENV. If FLASK_ENV=production, used ``configs/production.py`` file.
 
-exts
+core
 ^^^^
 
-`Why use exts.py to instance extension? <https://stackoverflow.com/questions/42909816/can-i-avoid-circular-imports-in-flask-and-sqlalchemy/51739367#51739367>`_
+All complicated function, base class etc.
+
+exts.py
+^^^^^^^
+
+To avoid circular imports in Flask and flask extention, exts.py used. `Why use exts.py to instance extension? <https://stackoverflow.com/questions/42909816/can-i-avoid-circular-imports-in-flask-and-sqlalchemy/51739367#51739367>`_
+
+models
+^^^^^^
+
+Create your models here.
+
+run.py
+^^^^^^
+
+schemas
+^^^^^^^
+
+Create your marshmallow scheams here.
+
+utils
+^^^^^
+
+All common utils here.
+
+views
+^^^^^
+
+Create your views here.
+
+deploy.sh
+---------
+
+A script for deploy.
+
+docker-compose.yml
+^^^^^^^^^^^^^^^^^^
+
+Base docker compose file. Run app::
+
+    docker-compose up
+
+docs
+----
+
+API doc etc.
+
+logs
+----
+
+All logs for app, nginx etc.
+
+
+tests
+-----
+
+Create your tests here. Recommended use `pytest <https://docs.pytest.org/en/latest/>`_.
 
 
 API
