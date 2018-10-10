@@ -32,7 +32,7 @@ class dict2object(dict):
 
 
 def secure_filename(filename):
-    """Borrowed from werkzeug.utils.secure_filename.
+    """Borrowed from werkzeug.utils.secure_filename. Python3 only.
 
     Pass it a filename and it will return a secure version of it. This
     filename can then safely be stored on a regular file system and passed
@@ -48,16 +48,17 @@ def secure_filename(filename):
         >>> secure_filename(u'i contain cool \xfcml\xe4uts.txt')
         'i_contain_cool_umlauts.txt'
     """
-    if isinstance(filename, six.text_type):
-        filename = normalize('NFKD', filename).encode('utf-8')
-        if not six.PY2:
-            filename = filename.decode('utf-8')
-
     for sep in os.path.sep, os.path.altsep:
         if sep:
             filename = filename.replace(sep, ' ')
 
     filename = '_'.join(filename.split())
+
+    if isinstance(filename, six.text_type):
+        filename = normalize('NFKD', filename).encode('utf-8')
+        if not six.PY2:
+            filename = filename.decode('utf-8')
+
     filename_strip_re = re.compile(r'[^A-Za-z0-9\u4e00-\u9fa5_.-]')
     filename = filename_strip_re.sub('', filename).strip('._')
 

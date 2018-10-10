@@ -1,6 +1,9 @@
 import os
 import shutil
+import six
 import functools
+
+import pytest
 
 
 class BaseTest(object):
@@ -30,3 +33,6 @@ def chdir(path):
             os.chdir(cwd)
         return inner
     return wrapper
+
+
+python3_only = pytest.mark.skipif(six.PY2, reason='only support Python3')
