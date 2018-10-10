@@ -6,4 +6,4 @@
 
 A flask project generator.
 
-[Readmedocs](https://hobbit-core.readthedocs.io/en/latest/)
+[https://hobbit-core.readthedocs.io/en/latest/](https://hobbit-core.readthedocs.io/en/latest/)

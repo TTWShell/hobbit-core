@@ -1,4 +1,4 @@
-Welcome to hobbit-core's documentation!
+Hobbit-core's documentation
 =======================================
 
 `changelog <changelog.html>`_ //
@@ -18,7 +18,7 @@ Get it right now::
 
 Create your flask project::
 
-    hobbit --echo startproject -n demo -d . --example
+    hobbit --echo startproject -n demo -d . --example -p 5000
 
 Run flask app::
 
