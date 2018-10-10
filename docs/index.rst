@@ -4,7 +4,9 @@ Hobbit-core's documentation
 `changelog <changelog.html>`_ //
 `github <https://github.com/TTWShell/hobbit-core>`_ //
 `pypi <https://pypi.org/project/hobbit-core/>`_ //
-`issues <https://github.com/TTWShell/hobbit-core/issues>`_
+`issues <https://github.com/TTWShell/hobbit-core/issues>`_ //
+`API doc <api.html>`_ //
+`中文文档 <index_cn.html>`_
 
 **Why do we need this project?** Answer is `Convention over configuration. <https://en.wikipedia.org/wiki/Convention_over_configuration>`_
 
@@ -157,76 +159,6 @@ tests
 Create your tests here. Recommended use `pytest <https://docs.pytest.org/en/latest/>`_.
 
 
-API
-===
-
-hobbit_core.hobbit
-------------------
-
-hobbit - A flask project generator.
-
-.. autofunction:: hobbit_core.hobbit.bootstrap.startproject
-
-hobbit_core.flask_hobbit
-------------------------
-
-A flask extension that take care of base utils.
-
-.. automodule:: hobbit_core.flask_hobbit
-   :members:
-   :undoc-members:
-
-db
-^^
-
-.. automodule:: hobbit_core.flask_hobbit.db
-   :members:
-   :undoc-members:
-   :exclude-members: SurrogatePK
-
-   .. autoclass:: SurrogatePK
-       :members: __repr__
-
-pagination
-^^^^^^^^^^
-
-.. automodule:: hobbit_core.flask_hobbit.pagination
-   :members:
-   :undoc-members:
-
-schemas
-^^^^^^^
-
-.. automodule:: hobbit_core.flask_hobbit.schemas
-   :members:
-   :undoc-members:
-   :exclude-members: PagedSchema
-
-   .. autoclass:: PagedSchema
-       :members:
-
-utils
-^^^^^
-
-.. automodule:: hobbit_core.flask_hobbit.utils
-   :members:
-   :undoc-members:
-
-
-response
-^^^^^^^^
-
-.. automodule:: hobbit_core.flask_hobbit.response
-   :members:
-   :undoc-members:
-
-err_handler
-^^^^^^^^^^^
-
-.. automodule:: hobbit_core.flask_hobbit.err_handler
-   :members:
-
-
 Indices and tables
 ==================
 
@@ -240,3 +172,4 @@ Others
     :maxdepth: 2
 
     changelog
+    api
