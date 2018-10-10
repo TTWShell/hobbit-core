@@ -1,10 +1,25 @@
 # -*- encoding: utf-8 -*-
-from hobbit_core.flask_hobbit.utils import secure_filename
+import pytest
+
+from hobbit_core.flask_hobbit import utils
 
 from . import BaseTest, python3_only
 
 
 class TestUtils(BaseTest):
+
+    def test_dict2object(self):
+        obj = utils.dict2object({'a': 2, 'c': 3})
+        assert obj.a == 2
+        assert obj.c == 3
+
+        # test setattr
+        obj.a = 4
+        assert obj.a == 4
+
+        # test getattr
+        with pytest.raises(AttributeError):
+            print(obj.b)
 
     @python3_only
     def test_secure_filename(self):
@@ -19,4 +34,4 @@ class TestUtils(BaseTest):
             'i_contain_cool_umlauts.txt',
         )
         for i, filename in enumerate(filenames):
-            assert secure_filename(filename) == excepted[i]
+            assert utils.secure_filename(filename) == excepted[i]

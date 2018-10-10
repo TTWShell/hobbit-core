@@ -10,7 +10,7 @@ class dict2object(dict):
 
     Examples::
 
-        In [2]: obj = dict2object({'a':2, 'c':3})
+        In [2]: obj = dict2object({'a': 2, 'c': 3})
 
         In [3]: obj.a
         Out[3]: 2
@@ -32,7 +32,7 @@ class dict2object(dict):
 
 
 def secure_filename(filename):
-    """Borrowed from werkzeug.utils.secure_filename. Python3 only.
+    """Borrowed from werkzeug.utils.secure_filename. **Python3 only**.
 
     Pass it a filename and it will return a secure version of it. This
     filename can then safely be stored on a regular file system and passed
@@ -70,7 +70,7 @@ def secure_filename(filename):
         'LPT2', 'LPT3', 'PRN', 'NUL',
     )
     if os.name == 'nt' and filename and \
-       filename.split('.')[0].upper() in windows_device_files:
+            filename.split('.')[0].upper() in windows_device_files:
         filename = '_' + filename
 
     return filename
