@@ -1,5 +1,5 @@
 Hobbit-core's documentation
-=======================================
+===========================
 
 `changelog <changelog.html>`_ //
 `github <https://github.com/TTWShell/hobbit-core>`_ //
@@ -7,6 +7,10 @@ Hobbit-core's documentation
 `issues <https://github.com/TTWShell/hobbit-core/issues>`_ //
 `API doc <api.html>`_ //
 `中文文档 <index_cn.html>`_
+
+A flask project generator. Based on Flask + SQLAlchemy + marshmallow + webargs.
+
+A hobbit app contains RESTful API, unit test, gitlab-ci/cd、docker compose etc.
 
 **Why do we need this project?** Answer is `Convention over configuration. <https://en.wikipedia.org/wiki/Convention_over_configuration>`_
 
@@ -152,17 +156,10 @@ logs
 
 All logs for app, nginx etc.
 
-
 tests
 -----
 
 Create your tests here. Recommended use `pytest <https://docs.pytest.org/en/latest/>`_.
-
-
-Indices and tables
-==================
-
-* :ref:`search`
 
 
 Others

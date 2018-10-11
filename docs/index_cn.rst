@@ -1,5 +1,5 @@
-Hobbit-core's documentation
-=======================================
+Hobbit-core中文文档
+===================
 
 `changelog <changelog.html>`_ //
 `github <https://github.com/TTWShell/hobbit-core>`_ //
@@ -7,6 +7,10 @@ Hobbit-core's documentation
 `issues <https://github.com/TTWShell/hobbit-core/issues>`_ //
 `API文档 <api.html>`_ //
 `EN version <index.html>`_
+
+基于 Flask + SQLAlchemy + marshmallow + webargs 的 flask 项目生成器。
+
+包含 RESTful API、单元测试、gitlab-ci/cd、docker compose 一套解决方案。后续考虑更好的自动文档工具（目前有 apispec ）。
 
 **为什么我开发了这个项目？** 可以参考这一设计范式： `Convention over configuration. <https://en.wikipedia.org/wiki/Convention_over_configuration>`_
 
@@ -153,7 +157,6 @@ logs
 ----
 
 运行时的log文件。
-
 
 tests
 -----

@@ -1,5 +1,5 @@
-API Documentation
-=================
+Hobbit-core's API Documentation
+===============================
 
 hobbit_core.hobbit
 ------------------
