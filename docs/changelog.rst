@@ -1,10 +1,12 @@
 Change history
 ==============
 
-1.2.0 (unreleased)
+1.2.0 (2018-10-10)
 
 * Gitlab CI/CD support.
-* Some useful cmds.
+* Add secure_filename util.
+* Enhance deploy, can deploy to multiple servers.
+* Add --port option for startproject cmd.
 
 1.1.0 (2018-09-29)
 ******************

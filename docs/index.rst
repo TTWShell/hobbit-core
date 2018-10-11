@@ -1,10 +1,16 @@
-Welcome to hobbit-core's documentation!
-=======================================
+Hobbit-core's documentation
+===========================
 
 `changelog <changelog.html>`_ //
 `github <https://github.com/TTWShell/hobbit-core>`_ //
 `pypi <https://pypi.org/project/hobbit-core/>`_ //
-`issues <https://github.com/TTWShell/hobbit-core/issues>`_
+`issues <https://github.com/TTWShell/hobbit-core/issues>`_ //
+`API doc <api.html>`_ //
+`中文文档 <index_cn.html>`_
+
+A flask project generator. Based on Flask + SQLAlchemy + marshmallow + webargs.
+
+A hobbit app contains RESTful API, unit test, gitlab-ci/cd、docker compose etc.
 
 **Why do we need this project?** Answer is `Convention over configuration. <https://en.wikipedia.org/wiki/Convention_over_configuration>`_
 
@@ -18,7 +24,7 @@ Get it right now::
 
 Create your flask project::
 
-    hobbit --echo startproject -n demo -d . --example
+    hobbit --echo startproject -n demo -d . --example -p 5000
 
 Run flask app::
 
@@ -46,6 +52,7 @@ Project Tree
 If not skip example(Please see --example/--no-example options), you can get project tree like this::
 
     .
+    ├── Dockerfile
     ├── app
     │   ├── __init__.py
     │   ├── configs
@@ -69,12 +76,20 @@ If not skip example(Please see --example/--no-example options), you can get proj
     │   └── views
     │       ├── __init__.py
     │       └── example.py
+    ├── deploy.sh
+    ├── docker-compose.yml
     ├── docs
+    ├── logs
     ├── requirements.txt
     └── tests
         ├── __init__.py
         ├── conftest.py
         └── test_example.py
+
+Dockerfile
+----------
+
+Build image for run web server. For more information about dockerfile, please visit : `Dockerfile reference <https://docs.docker.com/engine/reference/builder/#usage>`_.
 
 app
 ---
@@ -86,86 +101,65 @@ configs
 
 In a hobbit app, we auto load config by FLASK_ENV. If FLASK_ENV=production, used ``configs/production.py`` file.
 
-exts
+core
 ^^^^
 
-`Why use exts.py to instance extension? <https://stackoverflow.com/questions/42909816/can-i-avoid-circular-imports-in-flask-and-sqlalchemy/51739367#51739367>`_
+All complicated function, base class etc.
 
+exts.py
+^^^^^^^
 
-API
-===
+To avoid circular imports in Flask and flask extention, exts.py used. `Why use exts.py to instance extension? <https://stackoverflow.com/questions/42909816/can-i-avoid-circular-imports-in-flask-and-sqlalchemy/51739367#51739367>`_
 
-hobbit_core.hobbit
-------------------
+models
+^^^^^^
 
-hobbit - A flask project generator.
+Create your models here.
 
-.. autofunction:: hobbit_core.hobbit.bootstrap.startproject
-
-hobbit_core.flask_hobbit
-------------------------
-
-A flask extension that take care of base utils.
-
-.. automodule:: hobbit_core.flask_hobbit
-   :members:
-   :undoc-members:
-
-db
-^^
-
-.. automodule:: hobbit_core.flask_hobbit.db
-   :members:
-   :undoc-members:
-   :exclude-members: SurrogatePK
-
-   .. autoclass:: SurrogatePK
-       :members: __repr__
-
-pagination
-^^^^^^^^^^
-
-.. automodule:: hobbit_core.flask_hobbit.pagination
-   :members:
-   :undoc-members:
+run.py
+^^^^^^
 
 schemas
 ^^^^^^^
 
-.. automodule:: hobbit_core.flask_hobbit.schemas
-   :members:
-   :undoc-members:
-   :exclude-members: PagedSchema
-
-   .. autoclass:: PagedSchema
-       :members:
+Create your marshmallow scheams here.
 
 utils
 ^^^^^
 
-.. automodule:: hobbit_core.flask_hobbit.utils
-   :members:
-   :undoc-members:
+All common utils here.
 
+views
+^^^^^
 
-response
-^^^^^^^^
+Create your views here.
 
-.. automodule:: hobbit_core.flask_hobbit.response
-   :members:
-   :undoc-members:
+deploy.sh
+---------
 
-err_handler
-^^^^^^^^^^^
+A script for deploy.
 
-.. automodule:: hobbit_core.flask_hobbit.err_handler
-   :members:
+docker-compose.yml
+^^^^^^^^^^^^^^^^^^
 
+Base docker compose file. Run app::
 
-Indices and tables
-==================
+    docker-compose up
 
-* :ref:`search`
+docs
+----
+
+API doc etc.
+
+logs
+----
+
+All logs for app, nginx etc.
+
+tests
+-----
+
+Create your tests here. Recommended use `pytest <https://docs.pytest.org/en/latest/>`_.
 
 
 Others
@@ -175,3 +169,4 @@ Others
     :maxdepth: 2
 
     changelog
+    api

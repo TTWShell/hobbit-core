@@ -4,6 +4,6 @@
 [![Documentation Status](https://readthedocs.org/projects/hobbit-core/badge/?version=latest)](https://hobbit-core.readthedocs.io/en/latest/?badge=latest)
 [![](https://img.shields.io/:license-mit-blue.svg?style=flat-square)](https://hobbit-core.mit-license.org)
 
-A flask project generator.
+A flask project generator. Based on Flask + SQLAlchemy + marshmallow + webargs.
 
-[Readmedocs](https://hobbit-core.readthedocs.io/en/latest/)
+[https://hobbit-core.readthedocs.io/en/latest/](https://hobbit-core.readthedocs.io/en/latest/)
