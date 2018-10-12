@@ -32,7 +32,7 @@ class dict2object(dict):
 
 
 def secure_filename(filename):
-    """Borrowed from werkzeug.utils.secure_filename. **Python3 only**.
+    """Borrowed from werkzeug.utils.secure_filename.
 
     Pass it a filename and it will return a secure version of it. This
     filename can then safely be stored on a regular file system and passed
@@ -41,13 +41,22 @@ def secure_filename(filename):
     On windows systems the function also makes sure that the file is not
     named after one of the special device files.
 
-        >>> secure_filename("My cool movie.mov")
+        >>> secure_filename(u'哈哈.zip')
+        '哈哈.zip'
+        >>> secure_filename('My cool movie.mov')
         'My_cool_movie.mov'
-        >>> secure_filename("../../../etc/passwd")
+        >>> secure_filename('../../../etc/passwd')
         'etc_passwd'
         >>> secure_filename(u'i contain cool \xfcml\xe4uts.txt')
         'i_contain_cool_umlauts.txt'
     """
+    if not isinstance(filename, six.text_type):
+        try:
+            filename = filename.decode('utf-8')
+        except UnicodeDecodeError:
+            raise Exception(
+                'filename must be {}'.format(six.text_type))
+
     for sep in os.path.sep, os.path.altsep:
         if sep:
             filename = filename.replace(sep, ' ')
@@ -59,7 +68,10 @@ def secure_filename(filename):
         if not six.PY2:
             filename = filename.decode('utf-8')
 
-    filename_strip_re = re.compile(r'[^A-Za-z0-9\u4e00-\u9fa5_.-]')
+    if six.PY2 and not isinstance(filename, six.text_type):
+        filename = filename.decode('utf-8', 'replace')
+
+    filename_strip_re = re.compile(u'[^A-Za-z0-9\u4e00-\u9fa5_.-]')
     filename = filename_strip_re.sub('', filename).strip('._')
 
     # on nt a couple of special files are present in each folder.  We

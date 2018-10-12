@@ -3,7 +3,7 @@ import pytest
 
 from hobbit_core.flask_hobbit import utils
 
-from . import BaseTest, python3_only
+from . import BaseTest, python2_only, python3_only
 
 
 class TestUtils(BaseTest):
@@ -21,17 +21,30 @@ class TestUtils(BaseTest):
         with pytest.raises(AttributeError):
             print(obj.b)
 
-    @python3_only
     def test_secure_filename(self):
         filenames = (
-            '哈哈.zip', '../../../etc/passwd', 'My cool movie.mov',
+            u'哈哈.zip', '../../../etc/passwd', 'My cool movie.mov',
             '__filename__', 'foo$&^*)bar',
-            'i contain cool \xfcml\xe4uts.txt',
+            u'i contain cool \xfcml\xe4uts.txt',
         )
         excepted = (
-            '哈哈.zip', 'etc_passwd', 'My_cool_movie.mov',
+            u'哈哈.zip', 'etc_passwd', 'My_cool_movie.mov',
             'filename', 'foobar',
             'i_contain_cool_umlauts.txt',
         )
         for i, filename in enumerate(filenames):
             assert utils.secure_filename(filename) == excepted[i]
+
+    @python2_only
+    def test_secure_filename_py2(self):
+        with pytest.raises(
+                Exception, message="filename must be <type 'unicode'>"):
+            assert utils.secure_filename(
+                'i contain cool \xfcml\xe4uts.txt') == \
+                'i_contain_cool_umlauts.txt'
+
+    @python3_only
+    def test_secure_filename_py3(self):
+        assert utils.secure_filename(
+            'i contain cool \xfcml\xe4uts.txt') == \
+            'i_contain_cool_umlauts.txt'
