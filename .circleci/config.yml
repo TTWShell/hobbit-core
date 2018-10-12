@@ -39,7 +39,7 @@ jobs:
           command: pipenv install
       - run:
           name: make html
-          command: pipenv shell && cd docs && make html
+          command: source $(pipenv --venv)/bin/activate; cd docs; make html
   test-py27:
     docker:
       - image: circleci/python:2.7
@@ -137,8 +137,10 @@ workflows:
   version: 2
   test:
     jobs:
-      - tox
       - make-doc
+      - tox:
+          requires:
+            - make-doc
       - test-py27:
           requires:
             - tox
