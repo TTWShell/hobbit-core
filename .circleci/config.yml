@@ -29,7 +29,7 @@ jobs:
             tox
   make-doc:
     docker:
-      - image: circleci/python:3.6
+      - image: circleci/python:3.7
         user: root
     working_directory: ~/repo
     steps:
