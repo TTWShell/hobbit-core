@@ -27,6 +27,19 @@ jobs:
             pyenv shell py27 py37
             pip3 install tox
             tox
+  make-doc:
+    docker:
+      - image: circleci/python:3.6
+        user: root
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: install dependencies
+          command: pipenv install
+      - run:
+          name: make html
+          command: pipenv shell && cd docs && make html
   test-py27:
     docker:
       - image: circleci/python:2.7
@@ -125,6 +138,7 @@ workflows:
   test:
     jobs:
       - tox
+      - make-doc
       - test-py27:
           requires:
             - tox
