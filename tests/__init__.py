@@ -35,4 +35,5 @@ def chdir(path):
     return wrapper
 
 
-python3_only = pytest.mark.skipif(six.PY2, reason='only support Python3')
+python2_only = pytest.mark.skipif(not six.PY2, reason='only support Python2')
+python3_only = pytest.mark.skipif(not six.PY3, reason='only support Python3')
