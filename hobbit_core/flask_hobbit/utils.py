@@ -53,7 +53,7 @@ def secure_filename(filename):
     if not isinstance(filename, six.text_type):
         try:
             filename = filename.decode('utf-8')
-        except UnicodeDecodeError as e:
+        except UnicodeDecodeError:
             raise Exception(
                 'filename must be {}'.format(six.text_type))
 
