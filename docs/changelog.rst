@@ -1,7 +1,11 @@
 Change history
 ==============
 
-1.2.0 (2018-10-10)
+1.2.1 (2018-10-12)
+
+* secure_filename support py2 & py3.
+
+1.2.0 (2018-10-11)
 
 * Gitlab CI/CD support.
 * Add secure_filename util.
