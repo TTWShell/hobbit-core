@@ -14,6 +14,7 @@ def gen_data(data_root='hobbit/static/bootstrap'):
     data = []
     for fn in os.listdir(os.path.join(src_path, data_root)):
         if os.path.isdir(os.path.join(src_path, data_root, fn)):
+            data.append(os.path.join(data_root, fn))
             data.extend(gen_data(os.path.join(data_root, fn)))
         if fn.endswith(SUFFIX):
             data.append(os.path.join(data_root, fn))
@@ -21,7 +22,7 @@ def gen_data(data_root='hobbit/static/bootstrap'):
 
 
 package_data = gen_data()
-assert len(package_data) == 25, 'nums of tepl files error'
+assert len(package_data) == 25 + 10, 'nums of tepl files or dir error'
 
 
 try:
