@@ -2,6 +2,7 @@ import os
 from setuptools import setup, find_packages
 
 import hobbit_core
+from hobbit_core.hobbit.handlers.bootstrap import SUFFIX
 
 ROOT_PATH = os.path.split(os.path.abspath(os.path.join(__file__)))[0]
 src_path = os.path.join(ROOT_PATH, 'hobbit_core')
@@ -10,11 +11,17 @@ src_path = os.path.join(ROOT_PATH, 'hobbit_core')
 def gen_data(data_root='hobbit/static/bootstrap'):
     """just for collect static files.
     """
-    data = [os.path.join(data_root, '*.jinja2')]
+    data = []
     for fn in os.listdir(os.path.join(src_path, data_root)):
         if os.path.isdir(os.path.join(src_path, data_root, fn)):
             data.extend(gen_data(os.path.join(data_root, fn)))
+        if fn.endswith(SUFFIX):
+            data.append(os.path.join(data_root, fn))
     return data
+
+
+package_data = gen_data()
+assert len(package_data) == 25, 'nums of tepl files error'
 
 
 try:
