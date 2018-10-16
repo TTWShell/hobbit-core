@@ -1,6 +1,12 @@
 Change history
 ==============
 
+1.2.2 (2018-10-16)
+
+* Add SchemaMixin & ORMSchema use in combination with db.SurrogatePK.
+* Now print traceback info when server 500.
+* Fix miss hidden files when sdist.
+
 1.2.1 (2018-10-12)
 
 * secure_filename support py2 & py3.
