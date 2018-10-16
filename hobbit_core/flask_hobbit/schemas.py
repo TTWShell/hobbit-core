@@ -41,7 +41,7 @@ class SchemaMixin(object):
 
         from hobbit_core.flask_hobbit.schemas import SchemaMixin
 
-        class TurbineTypeSchema(Schema, SchemaMixin):
+        class UserSchema(Schema, SchemaMixin):
             pass
     """
 
