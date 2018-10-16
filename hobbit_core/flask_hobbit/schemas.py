@@ -3,6 +3,15 @@ from marshmallow import Schema, fields
 
 
 class SchemaMixin(object):
+    """ add 'id','created_at','updated_at' fields to schema
+    Example::
+        from marshmallow import Schema
+
+        from hobbit_core.flask_hobbit.schemas import SchemaMixin
+
+        class TurbineTypeSchema(Schema, SchemaMixin):
+            pass
+    """
     id = fields.Int(dump_only=True)
     created_at = fields.DateTime('%Y-%m-%d %H:%M:%S', dump_only=True)
     updated_at = fields.DateTime('%Y-%m-%d %H:%M:%S', dump_only=True)
