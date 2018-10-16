@@ -41,7 +41,14 @@ schemas
 .. automodule:: hobbit_core.flask_hobbit.schemas
    :members:
    :undoc-members:
-   :exclude-members: PagedSchema
+   :exclude-members: ORMSchema, SchemaMixin, PagedSchema
+
+   .. autoclass:: ORMSchema
+       :members:
+       :exclude-members: make_instance
+
+   .. autoclass:: SchemaMixin
+       :members:
 
    .. autoclass:: PagedSchema
        :members:
