@@ -1,4 +1,6 @@
 # -*- encoding: utf-8 -*-
+import traceback
+
 from sqlalchemy.orm import exc as orm_exc
 
 from .response import Result, ServerErrorResult, gen_response, RESP_MSGS
@@ -37,6 +39,7 @@ you can change it
 
     @classmethod
     def handler_others(cls, e):
+        traceback.print_exc()
         return ServerErrorResult(500, detail=repr(e))
 
     @classmethod
