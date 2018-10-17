@@ -1,8 +1,30 @@
 # -*- encoding: utf-8 -*-
+from collections import Mapping
 import os
 import re
 import six
 from unicodedata import normalize
+
+
+class ParamsDict(dict):
+    """Just available update func.
+
+    Example::
+
+        @use_kwargs(PageParams.update({...}))
+        def list_users(page, page_size, order_by):
+            pass
+
+    """
+
+    def update(self, other=None):
+        """Update self by other Mapping and return self.
+        """
+        ret = self.copy()
+        if other is not None:
+            for k, v in other.items() if isinstance(other, Mapping) else other:
+                ret[k] = v
+        return ret
 
 
 class dict2object(dict):
@@ -49,6 +71,7 @@ def secure_filename(filename):
         'etc_passwd'
         >>> secure_filename(u'i contain cool \xfcml\xe4uts.txt')
         'i_contain_cool_umlauts.txt'
+
     """
     if not isinstance(filename, six.text_type):
         try:

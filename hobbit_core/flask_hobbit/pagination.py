@@ -1,32 +1,10 @@
 # -*- encoding: utf-8 -*-
-from collections import Mapping
 from flask_sqlalchemy import model
 
 from marshmallow import fields
 from webargs.fields import DelimitedList
 
-from .utils import dict2object
-
-
-class ParamsDict(dict):
-    """Just available update func.
-
-    Example::
-
-        @use_kwargs(PageParams.update({...}))
-        def list_users(page, page_size, order_by):
-            pass
-
-    """
-
-    def update(self, other=None):
-        """Update self by other Mapping and return self.
-        """
-        ret = self.copy()
-        if other is not None:
-            for k, v in other.items() if isinstance(other, Mapping) else other:
-                ret[k] = v
-        return ret
+from .utils import ParamsDict, dict2object
 
 
 #: Base params for list view func.
