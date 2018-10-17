@@ -1,9 +1,13 @@
 # -*- encoding: utf-8 -*-
 from collections import Mapping
+import inspect
 import os
 import re
 import six
 from unicodedata import normalize
+
+from marshmallow import Schema
+from webargs.flaskparser import use_kwargs as base_use_kwargs
 
 
 class ParamsDict(dict):
@@ -109,3 +113,37 @@ def secure_filename(filename):
         filename = '_' + filename
 
     return filename
+
+
+def use_kwargs(argmap, **kwargs):
+    """For fix ``partial=True`` not work when used with
+    ``@webargs.flaskparser.use_kwargs``.
+    """
+
+    def factory(request):
+        if not isinstance(argmap, Schema) and not argmap.partial:
+            return argmap
+
+        getargspec = inspect.getfullargspec
+
+        argspec = getargspec(Schema.__init__)
+        no_defaults = argspec.args[:-len(argspec.defaults)]
+        has_defaults = argspec.args[-len(argspec.defaults):]
+        argmap_kwargs = {k: getattr(argmap, k) for k in no_defaults
+                         if k != 'self' and hasattr(argmap, k)}
+        argmap_kwargs.update({k: getattr(argmap, k, argspec.defaults[i])
+                              for i, k in enumerate(has_defaults)})
+        assert len(argmap_kwargs) == len(argspec.args) - 1, 'exclude `self`'
+
+        # Flask >= 0.10.x use get_json insted of json
+        only = request.get_json().keys() \
+            if hasattr(request, "get_json") else request.json().keys()
+
+        argmap_kwargs.update({
+            'only': only,
+            'context': {"request": request},
+            'strict': True,
+        })
+        return argmap.__class__(**argmap_kwargs)
+
+    return base_use_kwargs(factory, **kwargs)
