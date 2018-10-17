@@ -120,11 +120,15 @@ def use_kwargs(argmap, **kwargs):
     ``@webargs.flaskparser.use_kwargs``.
     """
 
-    def factory(request):
-        if not isinstance(argmap, Schema) and not argmap.partial:
-            return argmap
+    if not isinstance(argmap, Schema) or (
+            isinstance(argmap, Schema) and not argmap.partial):
+        return base_use_kwargs(argmap, **kwargs)
 
-        getargspec = inspect.getfullargspec
+    def factory(request):
+        if six.PY2:
+            getargspec = inspect.getargspec
+        else:
+            getargspec = inspect.getfullargspec
 
         argspec = getargspec(Schema.__init__)
         no_defaults = argspec.args[:-len(argspec.defaults)]
