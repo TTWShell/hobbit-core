@@ -56,7 +56,7 @@ class SuccessResult(Result):
     def __init__(self, code=None, message='', detail=None, status=None):
         return super(SuccessResult, self).__init__(
             gen_response(code or self.status, message, detail),
-            self.status or status)
+            status or self.status)
 
 
 class FailedResult(Result):
