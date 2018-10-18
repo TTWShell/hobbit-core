@@ -48,3 +48,18 @@ class TestUtils(BaseTest):
         assert utils.secure_filename(
             'i contain cool \xfcml\xe4uts.txt') == \
             'i_contain_cool_umlauts.txt'
+
+    def test_use_kwargs(self, client):
+        payload = {'username': 'username', 'email': 'email'}
+        resp = client.post('/use_kwargs_with_partial/', json=payload)
+        assert resp.json == payload
+
+        resp = client.post('/use_kwargs_without_partial/', json=payload)
+        assert resp.json == payload
+
+        payload = {'username': 'username'}
+        resp = client.post('/use_kwargs_with_partial/', json=payload)
+        assert resp.json == payload
+
+        resp = client.post('/use_kwargs_without_partial/', json=payload)
+        assert resp.json == {'username': 'username', 'email': None}
