@@ -115,8 +115,30 @@ def secure_filename(filename):
     return filename
 
 
+def _get_init_args(instance, base_class):
+    """Get instance's __init__ args and it's value when __call__.
+    """
+    if six.PY2:
+        getargspec = inspect.getargspec
+    else:
+        getargspec = inspect.getfullargspec
+
+    argspec = getargspec(base_class.__init__)
+    no_defaults = argspec.args[:-len(argspec.defaults)]
+    has_defaults = argspec.args[-len(argspec.defaults):]
+
+    kwargs = {k: getattr(instance, k) for k in no_defaults
+              if k != 'self' and hasattr(instance, k)}
+    kwargs.update({k: getattr(instance, k, argspec.defaults[i])
+                   for i, k in enumerate(has_defaults)})
+
+    assert len(kwargs) == len(argspec.args) - 1, 'exclude `self`'
+
+    return kwargs
+
+
 def use_kwargs(argmap, **kwargs):
-    """For fix ``partial=True`` not work when used with
+    """For fix ``Schema(partial=True)`` not work when used with
     ``@webargs.flaskparser.use_kwargs``.
     """
 
@@ -125,19 +147,7 @@ def use_kwargs(argmap, **kwargs):
         return base_use_kwargs(argmap, **kwargs)
 
     def factory(request):
-        if six.PY2:
-            getargspec = inspect.getargspec
-        else:
-            getargspec = inspect.getfullargspec
-
-        argspec = getargspec(Schema.__init__)
-        no_defaults = argspec.args[:-len(argspec.defaults)]
-        has_defaults = argspec.args[-len(argspec.defaults):]
-        argmap_kwargs = {k: getattr(argmap, k) for k in no_defaults
-                         if k != 'self' and hasattr(argmap, k)}
-        argmap_kwargs.update({k: getattr(argmap, k, argspec.defaults[i])
-                              for i, k in enumerate(has_defaults)})
-        assert len(argmap_kwargs) == len(argspec.args) - 1, 'exclude `self`'
+        argmap_kwargs = _get_init_args(argmap, Schema)
 
         # Flask >= 0.10.x use get_json insted of json
         only = request.get_json().keys() \
