@@ -1,6 +1,10 @@
 Change history
 ==============
 
+1.2.3 (2018-10-16)
+
+* Add utils.use_kwargs, fix webargs's bug.
+
 1.2.2 (2018-10-16)
 
 * Add SchemaMixin & ORMSchema use in combination with db.SurrogatePK.

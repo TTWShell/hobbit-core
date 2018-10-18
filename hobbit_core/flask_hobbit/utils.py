@@ -1,8 +1,34 @@
 # -*- encoding: utf-8 -*-
+from collections import Mapping
+import inspect
 import os
 import re
 import six
 from unicodedata import normalize
+
+from marshmallow import Schema
+from webargs.flaskparser import use_kwargs as base_use_kwargs, parser
+
+
+class ParamsDict(dict):
+    """Just available update func.
+
+    Example::
+
+        @use_kwargs(PageParams.update({...}))
+        def list_users(page, page_size, order_by):
+            pass
+
+    """
+
+    def update(self, other=None):
+        """Update self by other Mapping and return self.
+        """
+        ret = self.copy()
+        if other is not None:
+            for k, v in other.items() if isinstance(other, Mapping) else other:
+                ret[k] = v
+        return ret
 
 
 class dict2object(dict):
@@ -49,6 +75,7 @@ def secure_filename(filename):
         'etc_passwd'
         >>> secure_filename(u'i contain cool \xfcml\xe4uts.txt')
         'i_contain_cool_umlauts.txt'
+
     """
     if not isinstance(filename, six.text_type):
         try:
@@ -86,3 +113,51 @@ def secure_filename(filename):
         filename = '_' + filename
 
     return filename
+
+
+def _get_init_args(instance, base_class):
+    """Get instance's __init__ args and it's value when __call__.
+    """
+    if six.PY2:
+        getargspec = inspect.getargspec
+    else:
+        getargspec = inspect.getfullargspec
+
+    argspec = getargspec(base_class.__init__)
+    no_defaults = argspec.args[:-len(argspec.defaults)]
+    has_defaults = argspec.args[-len(argspec.defaults):]
+
+    kwargs = {k: getattr(instance, k) for k in no_defaults
+              if k != 'self' and hasattr(instance, k)}
+    kwargs.update({k: getattr(instance, k, argspec.defaults[i])
+                   for i, k in enumerate(has_defaults)})
+
+    assert len(kwargs) == len(argspec.args) - 1, 'exclude `self`'
+
+    return kwargs
+
+
+def use_kwargs(argmap, **kwargs):
+    """For fix ``Schema(partial=True)`` not work when used with
+    ``@webargs.flaskparser.use_kwargs``.
+    """
+
+    if not isinstance(argmap, Schema) or (
+            isinstance(argmap, Schema) and not argmap.partial):
+        return base_use_kwargs(argmap, **kwargs)
+
+    def factory(request):
+        argmap_kwargs = _get_init_args(argmap, Schema)
+
+        # force set force_all=False
+        only = parser.parse(argmap, request).keys()
+
+        argmap_kwargs.update({
+            'only': only or None,
+            'context': {"request": request},
+            'strict': True,
+        })
+
+        return argmap.__class__(**argmap_kwargs)
+
+    return base_use_kwargs(factory, **kwargs)
