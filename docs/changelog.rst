@@ -1,7 +1,11 @@
 Change history
 ==============
 
-1.2.3 (2018-10-16)
+1.2.4 (2018-10-18)
+
+* Fix SuccessResult status arg not used.
+
+1.2.3 (2018-10-18)
 
 * Add utils.use_kwargs, fix webargs's bug.
 
