@@ -7,7 +7,7 @@ import six
 from unicodedata import normalize
 
 from marshmallow import Schema
-from webargs.flaskparser import use_kwargs as base_use_kwargs
+from webargs.flaskparser import use_kwargs as base_use_kwargs, parser
 
 
 class ParamsDict(dict):
@@ -149,15 +149,15 @@ def use_kwargs(argmap, **kwargs):
     def factory(request):
         argmap_kwargs = _get_init_args(argmap, Schema)
 
-        # Flask >= 0.10.x use get_json insted of json
-        only = request.get_json().keys() \
-            if hasattr(request, "get_json") else request.json().keys()
+        # force set force_all=False
+        only = parser.parse(argmap, request).keys()
 
         argmap_kwargs.update({
-            'only': only,
+            'only': only or None,
             'context': {"request": request},
             'strict': True,
         })
+
         return argmap.__class__(**argmap_kwargs)
 
     return base_use_kwargs(factory, **kwargs)
