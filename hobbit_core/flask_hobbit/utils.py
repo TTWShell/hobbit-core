@@ -6,6 +6,7 @@ import re
 import six
 from unicodedata import normalize
 
+from flask import request
 from marshmallow import Schema
 from webargs.flaskparser import use_kwargs as base_use_kwargs, parser
 
@@ -137,22 +138,37 @@ def _get_init_args(instance, base_class):
     return kwargs
 
 
-def use_kwargs(argmap, **kwargs):
+def use_kwargs(argmap, schema_kwargs=None, **kwargs):
     """For fix ``Schema(partial=True)`` not work when used with
-    ``@webargs.flaskparser.use_kwargs``.
-    """
+    ``@webargs.flaskparser.use_kwargs``. More details ``see webargs.core``.
 
-    if not isinstance(argmap, Schema) or (
-            isinstance(argmap, Schema) and not argmap.partial):
+    Args:
+
+        argmap (marshmallow.Schema,dict,callable): Either a `marshmallow.Schema`, `dict`
+            of argname -> `marshmallow.fields.Field` pairs, or a callable that returns
+            a `marshmallow.Schema` instance.
+        schema_kwargs (dict): kwargs for argmap.
+
+    Returns:
+        dict: A dictionary of parsed arguments.
+
+    """
+    schema_kwargs = schema_kwargs or {}
+
+    argmap = parser._get_schema(argmap, request)
+
+    if not (argmap.partial or schema_kwargs.get('partial')):
         return base_use_kwargs(argmap, **kwargs)
 
     def factory(request):
         argmap_kwargs = _get_init_args(argmap, Schema)
+        argmap_kwargs.update(schema_kwargs)
 
         # force set force_all=False
         only = parser.parse(argmap, request).keys()
 
         argmap_kwargs.update({
+            'partial': True,
             'only': only or None,
             'context': {"request": request},
             'strict': True,
