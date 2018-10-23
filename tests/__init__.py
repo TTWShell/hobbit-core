@@ -9,12 +9,6 @@ import pytest
 class BaseTest(object):
     root_path = os.path.split(os.path.abspath(__name__))[0]
 
-    def setup_method(self, method):
-        print('\n{}::{}'.format(type(self).__name__, method.__name__))
-
-    def teardown_method(self, method):
-        pass
-
 
 def rmdir(path):
     if os.path.exists(path):

@@ -19,7 +19,7 @@ class TestUtils(BaseTest):
 
         # test getattr
         with pytest.raises(AttributeError):
-            print(obj.b)
+            obj.b
 
     def test_secure_filename(self):
         filenames = (
