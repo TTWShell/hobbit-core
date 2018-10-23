@@ -65,7 +65,7 @@ jobs:
             cd ~/haha
             flask db init && flask db migrate && flask db upgrade
             flake8 . --exclude migrations
-            py.test --cov . --cov-report term-missing -s
+            py.test
   test-py36:
     docker:
       - image: circleci/python:3.6
@@ -97,7 +97,7 @@ jobs:
             cd ~/haha
             flask db init && flask db migrate && flask db upgrade
             flake8 . --exclude migrations
-            py.test --cov . --cov-report term-missing -s
+            py.test
   test-py37:
     docker:
       - image: circleci/python:3.7
@@ -131,7 +131,7 @@ jobs:
             cd ~/haha
             flask db init && flask db migrate && flask db upgrade
             flake8 . --exclude migrations
-            py.test --cov . --cov-report term-missing -s
+            py.test
 
 workflows:
   version: 2

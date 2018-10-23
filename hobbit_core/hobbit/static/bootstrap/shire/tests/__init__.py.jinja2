@@ -21,7 +21,7 @@ class BaseTest:
             db.drop_all()
 
     def setup_method(self, method):
-        print('\n{}::{}'.format(type(self).__name__, method.__name__))
+        pass
 
     def teardown_method(self, method):
         for m in [m for m in db.Model._decl_class_registry.values()
