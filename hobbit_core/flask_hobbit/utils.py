@@ -144,9 +144,10 @@ def use_kwargs(argmap, schema_kwargs=None, **kwargs):
 
     Args:
 
-        argmap (marshmallow.Schema,dict,callable): Either a `marshmallow.Schema`, `dict`
-            of argname -> `marshmallow.fields.Field` pairs, or a callable that returns
-            a `marshmallow.Schema` instance.
+        argmap (marshmallow.Schema,dict,callable): Either a
+            `marshmallow.Schema`, `dict` of argname ->
+            `marshmallow.fields.Field` pairs, or a callable that returns a
+            `marshmallow.Schema` instance.
         schema_kwargs (dict): kwargs for argmap.
 
     Returns:
