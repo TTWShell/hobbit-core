@@ -1,6 +1,10 @@
 Change history
 ==============
 
+1.2.5a0 (2018-10-22)
+
+* Enhance utils.use_kwargs.
+
 1.2.4 (2018-10-18)
 
 * Fix SuccessResult status arg not used.
