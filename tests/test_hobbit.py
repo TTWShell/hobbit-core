@@ -12,12 +12,10 @@ class TestHobbit(BaseTest):
 
     def setup_method(self, method):
         rmdir(self.wkdir)
-        super(TestHobbit, self).setup_method(method)
 
     def teardown_method(self, method):
         os.chdir(self.root_path)
         rmdir(self.wkdir)
-        super(TestHobbit, self).teardown_method(method)
 
     def test_hobbit_cmd(self):
         runner = CliRunner()
@@ -88,7 +86,7 @@ class TestHobbit(BaseTest):
                 '--echo', 'startproject', '-n', 'haha', '--example',
                 '-p', '1024',
             ], obj={})
-        # start + 26 files + 10 dir + 1 end + empty
-        assert len(result.output.split('\n')) == 1 + 10 + 26 + 1 + 1
+        # start + 27 files + 10 dir + 1 end + empty
+        assert len(result.output.split('\n')) == 1 + 10 + 27 + 1 + 1
         assert result.exit_code == 0
         assert 'example.py' in result.output
