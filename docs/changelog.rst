@@ -1,6 +1,10 @@
 Change history
 ==============
 
+1.2.5a1 (2018-10-25)
+
+* Added EnumExt implementation
+
 1.2.5a0 (2018-10-22)
 
 * Enhance utils.use_kwargs.

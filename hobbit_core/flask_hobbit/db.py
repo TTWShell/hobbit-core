@@ -61,8 +61,33 @@ def reference_col(tablename, nullable=False, pk_name='id', **kwargs):
 
 
 class EnumExt(enum.Enum):
+    """ serialize/deserialize sqlalchemy enum field
     """
-    TODO:
-        * extension.
-    """
-    pass
+    @classmethod
+    def strict_dump(cls, key, verbose=False):
+        pos = 1 if verbose else 0
+        return cls[key].value[pos]
+
+    @classmethod
+    def dump(cls, key, verbose=False):
+        ret = {'key': cls[key].value[0], 'value': cls[key].value[1]}
+        if verbose:
+            ret.update({'label': key})
+        return ret
+
+    @classmethod
+    def load(cls, val):
+        pos = 1 if isinstance(val, str) else 0
+        for elem in cls:
+            if elem.value[pos] == val:
+                return elem.name
+
+    @classmethod
+    def to_opts(cls, verbose=False):
+        opts = []
+        for elem in cls:
+            opt = {'key': elem.value[0], 'value': elem.value[1]}
+            if verbose:
+                opt.update({'label': elem.name})
+            opts.append(opt)
+        return opts
