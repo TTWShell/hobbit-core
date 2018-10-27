@@ -15,15 +15,19 @@ class TestEnumExt(BaseTest):
             FINISHED = (1, u'已完成')
         return _TaskState
 
-    def test_enumext_dump(self, TaskState):
+    def test_strict_dump(self, TaskState):
+        assert 0 == TaskState.strict_dump('CREATED')
+        assert u'新建' == TaskState.strict_dump('CREATED', True)
+
+    def test_dump(self, TaskState):
         assert {'key': 0, 'value': u'新建'} == TaskState.dump('CREATED')
 
-    def test_enumext_load(self, TaskState):
+    def test_load(self, TaskState):
         assert 'FINISHED' == TaskState.load(1)
         assert 'CREATED' == TaskState.load(u'新建')
         assert TaskState.load(100) is None
 
-    def test_enumext_to_opts(self, TaskState):
+    def test_to_opts(self, TaskState):
         opts = TaskState.to_opts()
         assert opts == [
             {'key': 0, 'value': u'新建'},

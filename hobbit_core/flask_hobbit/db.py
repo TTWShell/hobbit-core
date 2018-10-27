@@ -80,9 +80,19 @@ class EnumExt(enum.Enum):
     """
 
     @classmethod
-    def strict_dump(cls, key, verbose=False):
-        pos = 1 if verbose else 0
-        return cls[key].value[pos]
+    def strict_dump(cls, label, verbose=False):
+        """Get key or value by label.
+
+        Examples::
+
+            TaskState.strict_dump('CREATED')  # 0
+            TaskState.strict_dump('CREATED', verbose=True)  # '新建'
+
+        Returns:
+            int|str: Key or value, If label not exist, raise ``KeyError``.
+        """
+
+        return cls[label].value[1 if verbose else 0]
 
     @classmethod
     def dump(cls, label, verbose=False):
