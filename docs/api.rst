@@ -23,10 +23,15 @@ db
 .. automodule:: hobbit_core.flask_hobbit.db
    :members:
    :undoc-members:
-   :exclude-members: SurrogatePK
+   :exclude-members: SurrogatePK, EnumExt
 
    .. autoclass:: SurrogatePK
        :members: __repr__
+
+   .. autoclass:: EnumExt
+       :members:
+
+       .. automethod:: to_opts
 
 pagination
 ^^^^^^^^^^

@@ -61,8 +61,20 @@ def reference_col(tablename, nullable=False, pk_name='id', **kwargs):
 
 
 class EnumExt(enum.Enum):
-    """ serialize/deserialize sqlalchemy enum field
+    """ Serialize/Deserialize sqlalchemy enum field.
+
+    Examples::
+
+        class TaskState(EnumExt):
+            CREATED = (0, '新建')
+            PENDING = (1, '等待')
+            STARTING = (2, '开始')
+            RUNNING = (3, '运行中')
+            FINISHED = (4, '已完成')
+            FAILED = (5, '失败')
+
     """
+
     @classmethod
     def strict_dump(cls, key, verbose=False):
         pos = 1 if verbose else 0
@@ -84,6 +96,18 @@ class EnumExt(enum.Enum):
 
     @classmethod
     def to_opts(cls, verbose=False):
+        """Enum to options.
+
+        Examples::
+
+            opts = TaskState.to_opts(verbose=True)
+            print(opts)
+
+            [{'key': 0, 'label': 'CREATED', 'value': u'新建'}, ...]
+
+        Returns:
+            list: List of dict which key is `key`, `value`, label.
+        """
         opts = []
         for elem in cls:
             opt = {'key': elem.value[0], 'value': elem.value[1]}
