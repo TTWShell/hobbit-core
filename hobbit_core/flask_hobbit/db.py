@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 import enum
+import six
 
 from sqlalchemy import Integer, Column, ForeignKey, func, DateTime
 
@@ -61,11 +62,15 @@ def reference_col(tablename, nullable=False, pk_name='id', **kwargs):
 
 
 class EnumExt(enum.Enum):
-    """ Serialize/Deserialize sqlalchemy enum field.
+    """ Extension for serialize/deserialize sqlalchemy enum field.
+
+    Be sure ``type(key)`` is ``int`` and ``type(value)`` is ``str``
+    (``label = (key, value)``).
 
     Examples::
 
         class TaskState(EnumExt):
+            # label = (key, value)
             CREATED = (0, '新建')
             PENDING = (1, '等待')
             STARTING = (2, '开始')
@@ -89,7 +94,18 @@ class EnumExt(enum.Enum):
 
     @classmethod
     def load(cls, val):
-        pos = 1 if isinstance(val, str) else 0
+        """Get label by key or value.
+
+        Examples::
+
+            TaskState.load(4)  # 'FINISHED'
+            TaskState.load('新建')  # 'CREATED'
+
+        Returns:
+            str|None: Label.
+        """
+
+        pos = 1 if isinstance(val, six.string_types) else 0
         for elem in cls:
             if elem.value[pos] == val:
                 return elem.name
@@ -108,6 +124,7 @@ class EnumExt(enum.Enum):
         Returns:
             list: List of dict which key is `key`, `value`, label.
         """
+
         opts = []
         for elem in cls:
             opt = {'key': elem.value[0], 'value': elem.value[1]}

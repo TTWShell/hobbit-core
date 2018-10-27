@@ -15,6 +15,11 @@ class TestDB(BaseTest):
             FINISHED = (1, u'已完成')
         return _TaskState
 
+    def test_enumext_load(self, TaskState):
+        assert 'FINISHED' == TaskState.load(1)
+        assert 'CREATED' == TaskState.load(u'新建')
+        assert TaskState.load(100) is None
+
     def test_enumext_to_opts(self, TaskState):
         opts = TaskState.to_opts()
         assert opts == [
