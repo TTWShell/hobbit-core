@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 import enum
+import six
 
 from sqlalchemy import Integer, Column, ForeignKey, func, DateTime
 
@@ -61,29 +62,90 @@ def reference_col(tablename, nullable=False, pk_name='id', **kwargs):
 
 
 class EnumExt(enum.Enum):
-    """ serialize/deserialize sqlalchemy enum field
+    """ Extension for serialize/deserialize sqlalchemy enum field.
+
+    Be sure ``type(key)`` is ``int`` and ``type(value)`` is ``str``
+    (``label = (key, value)``).
+
+    Examples::
+
+        class TaskState(EnumExt):
+            # label = (key, value)
+            CREATED = (0, '新建')
+            PENDING = (1, '等待')
+            STARTING = (2, '开始')
+            RUNNING = (3, '运行中')
+            FINISHED = (4, '已完成')
+            FAILED = (5, '失败')
     """
-    @classmethod
-    def strict_dump(cls, key, verbose=False):
-        pos = 1 if verbose else 0
-        return cls[key].value[pos]
 
     @classmethod
-    def dump(cls, key, verbose=False):
-        ret = {'key': cls[key].value[0], 'value': cls[key].value[1]}
+    def strict_dump(cls, label, verbose=False):
+        """Get key or value by label.
+
+        Examples::
+
+            TaskState.strict_dump('CREATED')  # 0
+            TaskState.strict_dump('CREATED', verbose=True)  # '新建'
+
+        Returns:
+            int|str: Key or value, If label not exist, raise ``KeyError``.
+        """
+
+        return cls[label].value[1 if verbose else 0]
+
+    @classmethod
+    def dump(cls, label, verbose=False):
+        """Dump one label to option.
+
+        Examples::
+
+            TaskState.dump('CREATED')  # {'key': 0, 'value': '新建'}
+
+        Returns:
+
+            dict: Dict of label's key and value. If label not exist,
+            raise ``KeyError``.
+        """
+
+        ret = {'key': cls[label].value[0], 'value': cls[label].value[1]}
         if verbose:
-            ret.update({'label': key})
+            ret.update({'label': label})
         return ret
 
     @classmethod
     def load(cls, val):
-        pos = 1 if isinstance(val, str) else 0
+        """Get label by key or value.
+
+        Examples::
+
+            TaskState.load(4)  # 'FINISHED'
+            TaskState.load('新建')  # 'CREATED'
+
+        Returns:
+            str|None: Label.
+        """
+
+        pos = 1 if isinstance(val, six.string_types) else 0
         for elem in cls:
             if elem.value[pos] == val:
                 return elem.name
 
     @classmethod
     def to_opts(cls, verbose=False):
+        """Enum to options.
+
+        Examples::
+
+            opts = TaskState.to_opts(verbose=True)
+            print(opts)
+
+            [{'key': 0, 'label': 'CREATED', 'value': u'新建'}, ...]
+
+        Returns:
+            list: List of dict which key is `key`, `value`, label.
+        """
+
         opts = []
         for elem in cls:
             opt = {'key': elem.value[0], 'value': elem.value[1]}
