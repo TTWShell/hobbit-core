@@ -6,7 +6,7 @@ from hobbit_core.flask_hobbit import db
 from . import BaseTest
 
 
-class TestDB(BaseTest):
+class TestEnumExt(BaseTest):
 
     @pytest.fixture
     def TaskState(self):
@@ -14,6 +14,9 @@ class TestDB(BaseTest):
             CREATED = (0, u'新建')
             FINISHED = (1, u'已完成')
         return _TaskState
+
+    def test_enumext_dump(self, TaskState):
+        assert {'key': 0, 'value': u'新建'} == TaskState.dump('CREATED')
 
     def test_enumext_load(self, TaskState):
         assert 'FINISHED' == TaskState.load(1)

@@ -31,6 +31,7 @@ db
    .. autoclass:: EnumExt
        :members:
 
+       .. automethod:: dump
        .. automethod:: load
        .. automethod:: to_opts
 

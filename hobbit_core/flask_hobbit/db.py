@@ -77,7 +77,6 @@ class EnumExt(enum.Enum):
             RUNNING = (3, '运行中')
             FINISHED = (4, '已完成')
             FAILED = (5, '失败')
-
     """
 
     @classmethod
@@ -86,10 +85,22 @@ class EnumExt(enum.Enum):
         return cls[key].value[pos]
 
     @classmethod
-    def dump(cls, key, verbose=False):
-        ret = {'key': cls[key].value[0], 'value': cls[key].value[1]}
+    def dump(cls, label, verbose=False):
+        """Dump one label to option.
+
+        Examples::
+
+            TaskState.dump('CREATED')  # {'key': 0, 'value': '新建'}
+
+        Returns:
+
+            dict: Dict of label's key and value. If label not exist,
+            raise ``KeyError``.
+        """
+
+        ret = {'key': cls[label].value[0], 'value': cls[label].value[1]}
         if verbose:
-            ret.update({'label': key})
+            ret.update({'label': label})
         return ret
 
     @classmethod
