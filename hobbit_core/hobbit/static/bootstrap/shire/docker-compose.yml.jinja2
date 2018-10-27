@@ -17,7 +17,8 @@ services:
     networks:
       - web_nw
     command:
-      bash -c "flask db upgrade && gunicorn -k gevent -w 4 -b 0.0.0.0:5000 app.run:app"
+      bash -c "flask db upgrade &&
+      gunicorn --log-config configs/gunicorn-logging.ini -k gevent -w 4 -b 0.0.0.0:5000 app.run:app"
 
 networks:
   web_nw:
