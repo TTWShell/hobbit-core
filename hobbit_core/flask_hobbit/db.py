@@ -115,16 +115,20 @@ class EnumExt(enum.Enum):
 
     @classmethod
     def load(cls, val):
-        """Get label by key or value.
+        """Get label by key or value. Return val when val is label.
 
         Examples::
 
+            TaskState.load('FINISHED')  # 'FINISHED'
             TaskState.load(4)  # 'FINISHED'
             TaskState.load('新建')  # 'CREATED'
 
         Returns:
             str|None: Label.
         """
+
+        if val in cls.__members__:
+            return val
 
         pos = 1 if isinstance(val, six.string_types) else 0
         for elem in cls:
