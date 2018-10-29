@@ -8,12 +8,12 @@ bp = Blueprint('test', __name__)
 
 
 @bp.route('/use_kwargs_with_partial/', methods=['POST'])
-@use_kwargs(UserSchema(partial=True))
+@use_kwargs(UserSchema(partial=True, exclude=['role']))
 def use_kwargs_with_partial(**kwargs):
     return jsonify({k: v or None for k, v in kwargs.items()})
 
 
 @bp.route('/use_kwargs_without_partial/', methods=['POST'])
-@use_kwargs(UserSchema())
+@use_kwargs(UserSchema(exclude=['role']))
 def use_kwargs_without_partial(**kwargs):
     return jsonify({k: v or None for k, v in kwargs.items()})

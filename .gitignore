@@ -15,3 +15,5 @@ docs/_templates/*
 hobbit_core.egg-info/*
 dist/*
 build/*
+
+tests/tst_app.sqlite

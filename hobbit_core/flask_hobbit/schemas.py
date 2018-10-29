@@ -106,9 +106,9 @@ class EnumSetMeta(ModelSchemaMeta):
                 return data
 
             if decorator is pre_load:
-                data[field_name] = enum.load(data['label'])
+                data[field_name] = enum.load(data[field_name])
             if decorator is post_dump:
-                data[field_name] = enum.dump(data['label'], verbose)
+                data[field_name] = enum.dump(data[field_name], verbose)
             else:
                 raise Exception(
                     'hobbit_core: decorator `{}` not support'.format(
