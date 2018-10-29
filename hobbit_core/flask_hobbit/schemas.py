@@ -98,7 +98,7 @@ class EnumSetMeta(ModelSchemaMeta):
     """
 
     @classmethod
-    def gen_func(cls, decorator, field_name, enum):
+    def gen_func(cls, decorator, field_name, enum, verbose=True):
 
         @decorator
         def wrapper(self, data):
@@ -108,7 +108,7 @@ class EnumSetMeta(ModelSchemaMeta):
             if decorator is pre_load:
                 data[field_name] = enum.load(data['label'])
             if decorator is post_dump:
-                data[field_name] = enum.dump(data['label'])
+                data[field_name] = enum.dump(data['label'], verbose)
             else:
                 raise Exception(
                     'hobbit_core: decorator `{}` not support'.format(
@@ -127,7 +127,9 @@ class EnumSetMeta(ModelSchemaMeta):
             setattr(schema, 'load_{}'.format(field_name),
                     cls.gen_func(pre_load, field_name, declared.enum))
             setattr(schema, 'dump_{}'.format(field_name),
-                    cls.gen_func(post_dump, field_name, declared.enum))
+                    cls.gen_func(
+                        post_dump, field_name, declared.enum,
+                        verbose=getattr(schema.Meta, 'verbose', True)))
 
         setattr(schema.Meta, 'dateformat', '%Y-%m-%d %H:%M:%S')
 
