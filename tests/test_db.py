@@ -23,6 +23,7 @@ class TestEnumExt(BaseTest):
         assert {'key': 0, 'value': u'新建'} == TaskState.dump('CREATED')
 
     def test_load(self, TaskState):
+        assert 'FINISHED' == TaskState.load('FINISHED')
         assert 'FINISHED' == TaskState.load(1)
         assert 'CREATED' == TaskState.load(u'新建')
         assert TaskState.load(100) is None
