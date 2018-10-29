@@ -129,6 +129,8 @@ class EnumSetMeta(ModelSchemaMeta):
             setattr(schema, 'dump_{}'.format(field_name),
                     cls.gen_func(post_dump, field_name, declared.enum))
 
+        setattr(schema.Meta, 'dateformat', '%Y-%m-%d %H:%M:%S')
+
         return schema
 
 
