@@ -86,7 +86,7 @@ class TestHobbit(BaseTest):
                 '--echo', 'startproject', '-n', 'haha', '--example',
                 '-p', '1024',
             ], obj={})
-        # start + 27 files + 10 dir + 1 end + empty
-        assert len(result.output.split('\n')) == 1 + 10 + 27 + 1 + 1
+        # start + 28 files + 11 dir + 1 end + empty
+        assert len(result.output.split('\n')) == 1 + 28 + 11 + 1 + 1
         assert result.exit_code == 0
         assert 'example.py' in result.output
