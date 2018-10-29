@@ -94,7 +94,8 @@ class PagedSchema(Schema):
 
 
 class EnumSetMeta(ModelSchemaMeta):
-    """Auto generate load and dump func for EnumField.
+    """EnumSetMeta is a metaclass that can be used to auto generate load and
+    dump func for EnumField.
     """
 
     @classmethod
@@ -138,4 +139,24 @@ class EnumSetMeta(ModelSchemaMeta):
 
 @six.add_metaclass(EnumSetMeta)
 class ModelSchema(ORMSchema, SchemaMixin):
+    """Base ModelSchema for ``class Model(db.SurrogatePK)``.
+
+    * Auto generate load and dump func for EnumField.
+    * Auto dump_only for ``id``, ``created_at``, ``updated_at`` fields.
+    * Auto set dateformat to ``'%Y-%m-%d %H:%M:%S'``.
+    * Auto use verbose for dump EnumField. See ``db.EnumExt``. You can define
+      verbose in ``Meta``.
+
+    Example::
+
+        class UserSchema(ModelSchema):
+            role = EnumField(RoleEnum)
+
+            class Meta:
+                model = User
+
+        data = UserSchema().dump(user).data
+        assert data['role'] == {'key': 1, 'label': 'admin', 'value': '管理员'}
+
+    """
     pass
