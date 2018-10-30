@@ -8,6 +8,19 @@ from . import BaseTest
 
 class TestEnumExt(BaseTest):
 
+    def test_key_index(self):
+        msg = "EnumExt member must be tuple type and length equal 2."
+        with pytest.raises(TypeError, message=msg):
+            class ErrTypeEnum(db.EnumExt):
+                CREATED = (0, u'新建', 'dda')
+
+        msg = "ValueError: duplicate values found: `(0, '已完成')`, " + \
+            "please check key or value."
+        with pytest.raises(ValueError, message=msg):
+            class ErrEnum(db.EnumExt):
+                CREATED = (0, u'新建')
+                FINISHED = (0, u'已完成')
+
     @pytest.fixture
     def TaskState(self):
         class _TaskState(db.EnumExt):
