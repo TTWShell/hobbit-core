@@ -1,10 +1,11 @@
 Change history
 ==============
 
-1.2.5a2 (2018-10-29)
+1.2.5a2 (2018-10-30)
 
 * Add ModelSchema(Auto generate load and dump func for EnumField).
 * Add logging config file.
+* Fix use_kwargs with fileds.missing=None.
 
 1.2.5a1 (2018-10-25)
 
