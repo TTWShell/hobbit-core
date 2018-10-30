@@ -14,6 +14,7 @@ flask-sphinx-themes = "*"
 sphinx = "*"
 sphinx-autobuild = "*"
 recommonmark = "*"
+pytest-env = "*"
 
 [dev-packages]
 

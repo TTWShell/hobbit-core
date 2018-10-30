@@ -49,7 +49,7 @@ jobs:
       - checkout
       - run:
           name: install dependencies
-          command: pip install flake8 pytest pytest-cov && pip install --editable .
+          command: pip install flake8 pytest pytest-cov pytest-env && pip install --editable .
       - run:
           name: use flake8 check self
           command: flake8 .
@@ -58,9 +58,6 @@ jobs:
           command: hobbit --echo startproject -n demo -d ~/haha -f --example -p 1024
       - run:
           name: run tests
-          environment:
-            FLASK_APP: app/run.py
-            FLASK_ENV: testing
           command: |
             cd ~/haha
             flask db init && flask db migrate && flask db upgrade
@@ -75,7 +72,7 @@ jobs:
       - checkout
       - run:
           name: install dependencies
-          command: pip install flake8 pytest pytest-cov && pip install --editable .
+          command: pip install flake8 pytest pytest-cov pytest-env && pip install --editable .
       - run:
           name: use flake8 check self
           command: flake8 .
@@ -90,9 +87,6 @@ jobs:
             tree
       - run:
           name: run tests
-          environment:
-            FLASK_APP: app/run.py
-            FLASK_ENV: testing
           command: |
             cd ~/haha
             flask db init && flask db migrate && flask db upgrade
@@ -107,7 +101,7 @@ jobs:
       - checkout
       - run:
           name: install dependencies
-          command: pip install flake8 pytest pytest-cov && pip install --editable .
+          command: pip install flake8 pytest pytest-cov pytest-env && pip install --editable .
       - run:
           name: use flake8 check self
           command: flake8 .
@@ -124,9 +118,6 @@ jobs:
             tree
       - run:
           name: run tests
-          environment:
-            FLASK_APP: app/run.py
-            FLASK_ENV: testing
           command: |
             cd ~/haha
             flask db init && flask db migrate && flask db upgrade
