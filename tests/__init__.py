@@ -4,10 +4,30 @@ import six
 import functools
 
 import pytest
+from flask_sqlalchemy import model
+
+from .run import app, db
 
 
 class BaseTest(object):
     root_path = os.path.split(os.path.abspath(__name__))[0]
+
+    @classmethod
+    def setup_class(cls):
+        with app.app_context():
+            db.create_all()
+
+    @classmethod
+    def teardown_class(cls):
+        with app.app_context():
+            db.drop_all()
+
+    def teardown_method(self, method):
+        with app.app_context():
+            for m in [m for m in db.Model._decl_class_registry.values()
+                      if isinstance(m, model.DefaultMeta)]:
+                db.session.query(m).delete()
+                db.session.commit()
 
 
 def rmdir(path):

@@ -49,17 +49,38 @@ class TestUtils(BaseTest):
             'i contain cool \xfcml\xe4uts.txt') == \
             'i_contain_cool_umlauts.txt'
 
-    def test_use_kwargs(self, client):
+
+class TestUseKwargs(BaseTest):
+
+    def test_use_kwargs_with_partial(self, client):
         payload = {'username': 'username', 'email': 'email'}
         resp = client.post('/use_kwargs_with_partial/', json=payload)
         assert resp.json == payload
 
+    def test_use_kwargs_without_partial(self, client):
+        payload = {'username': 'username', 'email': 'email'}
         resp = client.post('/use_kwargs_without_partial/', json=payload)
         assert resp.json == payload
 
+    def test_use_kwargs_with_partial2(self, client):
         payload = {'username': 'username'}
         resp = client.post('/use_kwargs_with_partial/', json=payload)
         assert resp.json == payload
 
+    def test_use_kwargs_without_partial2(self, client):
+        payload = {'username': 'username'}
         resp = client.post('/use_kwargs_without_partial/', json=payload)
-        assert resp.json == {'username': 'username', 'email': None}
+        assert resp.json == {'username': 'username', 'email': 'missing'}
+
+    def test_use_kwargs_dictargmap_partial(self, client):
+        resp = client.post('/use_kwargs_dictargmap_partial/', json={})
+        assert resp.json == {'username': None}
+
+    def test_use_kwargs_dictargmap_partial2(self, client):
+        resp = client.post('/use_kwargs_dictargmap_partial/', json={
+            'username': None})
+        assert resp.json == {'username': None}
+
+    def test_base_use_kwargs_dictargmap_whitout_partial(self, client):
+        resp = client.post('/base_use_kwargs_dictargmap_partial/', json={})
+        assert resp.json == {'username': None, 'password': 'missing'}

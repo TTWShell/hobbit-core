@@ -1,6 +1,10 @@
 # -*- encoding: utf-8 -*-
-from marshmallow import Schema, fields, post_load
+import six
+
+from marshmallow import Schema, fields, pre_load, post_load, post_dump
+from marshmallow_sqlalchemy.schema import ModelSchemaMeta
 from flask_marshmallow.sqla import ModelSchema
+from marshmallow_enum import EnumField
 
 
 class ORMSchema(ModelSchema):
@@ -87,3 +91,71 @@ class PagedSchema(Schema):
 
     class Meta:
         strict = True
+
+
+class EnumSetMeta(ModelSchemaMeta):
+    """EnumSetMeta is a metaclass that can be used to auto generate load and
+    dump func for EnumField.
+    """
+
+    @classmethod
+    def gen_func(cls, decorator, field_name, enum, verbose=True):
+
+        @decorator
+        def wrapper(self, data):
+            if data.get(field_name) is None:
+                return data
+
+            if decorator is pre_load:
+                data[field_name] = enum.load(data[field_name])
+            elif decorator is post_dump:
+                data[field_name] = enum.dump(data[field_name], verbose)
+            else:
+                raise Exception(
+                    'hobbit_core: decorator `{}` not support'.format(
+                        decorator))
+
+            return data
+        return wrapper
+
+    def __new__(cls, name, bases, attrs):
+        schema = ModelSchemaMeta.__new__(cls, name, tuple(bases), attrs)
+        verbose = getattr(schema.Meta, 'verbose', True)
+
+        setattr(schema.Meta, 'dateformat', '%Y-%m-%d %H:%M:%S')
+
+        for field_name, declared in schema._declared_fields.items():
+            if not isinstance(declared, EnumField):
+                continue
+
+            setattr(schema, 'load_{}'.format(field_name), cls.gen_func(
+                pre_load, field_name, declared.enum))
+            setattr(schema, 'dump_{}'.format(field_name), cls.gen_func(
+                post_dump, field_name, declared.enum, verbose=verbose))
+
+        return schema
+
+
+@six.add_metaclass(EnumSetMeta)
+class ModelSchema(ORMSchema, SchemaMixin):
+    """Base ModelSchema for ``class Model(db.SurrogatePK)``.
+
+    * Auto generate load and dump func for EnumField.
+    * Auto dump_only for ``id``, ``created_at``, ``updated_at`` fields.
+    * Auto set dateformat to ``'%Y-%m-%d %H:%M:%S'``.
+    * Auto use verbose for dump EnumField. See ``db.EnumExt``. You can define
+      verbose in ``Meta``.
+
+    Example::
+
+        class UserSchema(ModelSchema):
+            role = EnumField(RoleEnum)
+
+            class Meta:
+                model = User
+
+        data = UserSchema().dump(user).data
+        assert data['role'] == {'key': 1, 'label': 'admin', 'value': '管理员'}
+
+    """
+    pass

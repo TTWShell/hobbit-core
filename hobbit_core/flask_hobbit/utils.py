@@ -130,7 +130,8 @@ def _get_init_args(instance, base_class):
 
     kwargs = {k: getattr(instance, k) for k in no_defaults
               if k != 'self' and hasattr(instance, k)}
-    kwargs.update({k: getattr(instance, k, argspec.defaults[i])
+    kwargs.update({k: getattr(instance, k) if hasattr(instance, k) else
+                   getattr(instance, k, argspec.defaults[i])
                    for i, k in enumerate(has_defaults)})
 
     assert len(kwargs) == len(argspec.args) - 1, 'exclude `self`'
@@ -169,7 +170,7 @@ def use_kwargs(argmap, schema_kwargs=None, **kwargs):
         only = parser.parse(argmap, request).keys()
 
         argmap_kwargs.update({
-            'partial': True,
+            'partial': False,  # fix missing=None not work
             'only': only or None,
             'context': {"request": request},
             'strict': True,
