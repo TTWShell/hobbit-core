@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-import enum
+from enum import Enum, EnumMeta
 import six
 
 from sqlalchemy import Integer, Column, ForeignKey, func, DateTime
@@ -61,7 +61,28 @@ def reference_col(tablename, nullable=False, pk_name='id', **kwargs):
         nullable=nullable, **kwargs)
 
 
-class EnumExt(enum.Enum):
+class EnumExtMeta(EnumMeta):
+
+    def __new__(cls, name, bases, attrs):
+        obj = super(EnumExtMeta, cls).__new__(cls, name, bases, attrs)
+
+        keys, values = set(), set()
+        for name, member in obj.__members__.items():
+            member = member.value
+            if not isinstance(member, tuple) or len(member) != 2:
+                raise TypeError(
+                    'EnumExt member must be tuple type and length equal 2.')
+            key, value = member
+            if key in keys or value in values:
+                raise ValueError('duplicate values found: `{}`, please check '
+                                 'key or value.'.format(member))
+            keys.add(key)
+            values.add(key)
+
+        return obj
+
+
+class EnumExt(six.with_metaclass(EnumExtMeta, Enum)):
     """ Extension for serialize/deserialize sqlalchemy enum field.
 
     Be sure ``type(key)`` is ``int`` and ``type(value)`` is ``str``
