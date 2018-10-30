@@ -23,7 +23,7 @@ db
 .. automodule:: hobbit_core.flask_hobbit.db
    :members:
    :undoc-members:
-   :exclude-members: SurrogatePK, EnumExt
+   :exclude-members: SurrogatePK, EnumExt, EnumExtMeta
 
    .. autoclass:: SurrogatePK
        :members: __repr__
@@ -49,7 +49,7 @@ schemas
 .. automodule:: hobbit_core.flask_hobbit.schemas
    :members:
    :undoc-members:
-   :exclude-members: ORMSchema, SchemaMixin, PagedSchema
+   :exclude-members: ORMSchema, SchemaMixin, PagedSchema, EnumSetMeta
 
    .. autoclass:: ORMSchema
        :members:
