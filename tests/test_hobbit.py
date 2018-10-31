@@ -87,6 +87,7 @@ class TestHobbit(BaseTest):
                 '-p', '1024',
             ], obj={})
         # start + 28 files + 11 dir + 1 end + empty
-        assert len(result.output.split('\n')) == 1 + 28 + 11 + 1 + 1
+        # in this test case. main dir exists, so mkdir - 1
+        assert len(result.output.split('\n')) == 1 + 28 + 11 + 1 + 1 - 1
         assert result.exit_code == 0
         assert 'example.py' in result.output
