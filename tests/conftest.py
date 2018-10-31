@@ -1,4 +1,8 @@
 import pytest
+from unittest import mock
+
+from webargs.core import Parser, get_value
+
 from .run import app as tapp
 
 
@@ -17,3 +21,30 @@ def app(request):
 @pytest.fixture(scope='session')
 def client(app, request):
     return app.test_client()
+
+
+#  borrowed from webargs
+class MockRequestParser(Parser):
+    """A minimal parser implementation that parses mock requests."""
+
+    def parse_querystring(self, req, name, field):
+        return get_value(req.query, name, field)
+
+    def parse_json(self, req, name, field):
+        return get_value(req.json, name, field)
+
+    def parse_cookies(self, req, name, field):
+        return get_value(req.cookies, name, field)
+
+
+@pytest.yield_fixture(scope="function")
+def web_request():
+    req = mock.Mock()
+    req.query = {}
+    yield req
+    req.query = {}
+
+
+@pytest.fixture
+def parser():
+    return MockRequestParser()

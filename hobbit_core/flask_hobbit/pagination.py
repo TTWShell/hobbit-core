@@ -2,6 +2,7 @@
 from flask_sqlalchemy import model
 
 from marshmallow import fields
+from marshmallow import validate
 from webargs.fields import DelimitedList
 
 from .utils import ParamsDict, dict2object
@@ -9,10 +10,12 @@ from .utils import ParamsDict, dict2object
 
 #: Base params for list view func.
 PageParams = ParamsDict(
-    page=fields.Int(missing=1, required=False),
-    page_size=fields.Int(missing=10, required=False),
+    page=fields.Int(missing=1, required=False,
+                    validate=validate.Range(min=1, max=2**31)),
+    page_size=fields.Int(
+        missing=10, required=False, validate=validate.Range(min=10, max=100)),
     order_by=DelimitedList(
-        fields.String(missing='id'), required=False, missing=['id']),
+        fields.String(missing='-id'), required=False, missing=['-id']),
 )
 """Base params for list view func which contains ``page``、``page_size``、\
    ``order_by`` params.
