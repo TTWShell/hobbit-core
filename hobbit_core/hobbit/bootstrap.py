@@ -66,4 +66,25 @@ def startproject(ctx, name, port, dist, template, force, example):
     echo('project `{}` render finished.', (name, ))
 
 
-CMDS = [startproject]
+@cli.command()
+@click.option('-n', '--name', help='Name of feature.', required=True)
+@click.option('-d', '--dist', type=click.Path(), required=False,
+              help='Dir for new project.')
+@click.pass_context
+def gen(ctx, name, dist):
+    """Generator models/{name}.py, schemas/{name}.py, views/{name}.py etc.
+    """
+    dist = os.getcwd() if dist is None else os.path.abspath(dist)
+
+    ctx.obj['FORCE'] = False
+    ctx.obj['EXAMPLE'] = True
+    ctx.obj['JINJIA_CONTEXT'] = {'name': name}
+
+    tpl_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'static', 'bootstrap', 'feature')
+
+    render_project(dist, tpl_path)
+
+
+CMDS = [startproject, gen]
