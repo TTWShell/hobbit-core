@@ -15,7 +15,8 @@ PageParams = ParamsDict(
     page_size=fields.Int(
         missing=10, required=False, validate=validate.Range(min=10, max=100)),
     order_by=DelimitedList(
-        fields.String(missing='-id'), required=False, missing=['-id']),
+        fields.String(validate=validate.Regexp(r'^-?[a-zA-Z_]*$')),
+        required=False, missing=['-id']),
 )
 """Base params for list view func which contains ``page``、``page_size``、\
    ``order_by`` params.
@@ -48,6 +49,8 @@ def pagination(obj, page, page_size, order_by='id', query_exp=None):
 
     if not isinstance(order_by, list):
         order_by = [order_by]
+
+    order_by = [i for i in order_by if i]  # exclude ''
 
     columns = {i.name for i in obj.__table__.columns}
     diff = {c.lstrip('-') for c in order_by} - columns
