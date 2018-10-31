@@ -5,7 +5,7 @@ from marshmallow import fields
 from marshmallow import validate
 from webargs.fields import DelimitedList
 
-from .utils import ParamsDict, dict2object
+from .utils import ParamsDict
 
 
 #: Base params for list view func.
@@ -41,7 +41,7 @@ def pagination(obj, page, page_size, order_by='id', query_exp=None):
             ``User.query.filter_by(id=1)``.
 
     Returns:
-        class: Class that contains ``items``、``page``、``page_size`` and \
+        dict: Dict contains ``items``、``page``、``page_size`` and \
             ``total`` fileds.
     """
     if not isinstance(obj, model.DefaultMeta):
@@ -69,7 +69,7 @@ def pagination(obj, page, page_size, order_by='id', query_exp=None):
     items = qexp.order_by(*order_exp).paginate(
         page, page_size, error_out=False)
 
-    return dict2object({
+    return {
         'items': items.items, 'page': page, 'page_size': page_size,
         'total': items.total,
-    })
+    }
