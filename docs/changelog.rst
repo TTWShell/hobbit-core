@@ -1,6 +1,13 @@
 Change history
 ==============
 
+1.3.0a0 (2018-11-1)
+
+* Add validate for PageParams.
+* pagination return dict instead of class.
+* Add transaction decorator.
+* Add hobbit gen cmd for auto render views.py, models.py, schemas.py etc when start a feature dev.
+
 1.2.5 (2018-10-30)
 
 * Add ModelSchema(Auto generate load and dump func for EnumField).
