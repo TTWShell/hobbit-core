@@ -12,9 +12,9 @@ EXAMPLE_SUFFIX = 'example.py.jinja2'
 @contextmanager
 def chdir(dist):
     cwd = os.getcwd()
-    echo('mkdir\t{}', (dist, ))
     # exist_ok py3 only
     if not os.path.exists(dist):
+        echo('mkdir\t{}', (dist, ))
         os.makedirs(dist)
     os.chdir(dist)
     yield dist
@@ -24,7 +24,10 @@ def chdir(dist):
 @click.pass_context
 def render_project(ctx, dist, tpl_path):
     example = ctx.obj['EXAMPLE']
+    context = ctx.obj['JINJIA_CONTEXT']
+
     jinjia_env = Environment(loader=FileSystemLoader(tpl_path))
+
     with chdir(dist):
         for fn in os.listdir(tpl_path):
             origin_path = os.path.join(tpl_path, fn)
@@ -35,12 +38,12 @@ def render_project(ctx, dist, tpl_path):
                 continue
 
             if os.path.isfile(origin_path):
-                data = jinjia_env.get_template(fn).render(
-                    ctx.obj['JINJIA_CONTEXT'])
+                data = jinjia_env.get_template(fn).render(context)
+                fn = Template(fn).render(context)
                 render_file(dist, fn[:-len(SUFFIX)], data)
                 continue
 
-            dir_name = Template(fn).render(ctx.obj['JINJIA_CONTEXT'])
+            dir_name = Template(fn).render(context)
             render_project(os.path.join(dist, dir_name),
                            os.path.join(tpl_path, fn))
 
