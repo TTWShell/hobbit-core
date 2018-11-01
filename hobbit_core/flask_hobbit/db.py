@@ -71,11 +71,11 @@ class EnumExtMeta(EnumMeta):
             member = member.value
             if not isinstance(member, tuple) or len(member) != 2:
                 raise TypeError(
-                    'EnumExt member must be tuple type and length equal 2.')
+                    u'EnumExt member must be tuple type and length equal 2.')
             key, value = member
             if key in keys or value in values:
-                raise ValueError('duplicate values found: `{}`, please check '
-                                 'key or value.'.format(member))
+                raise ValueError(u'duplicate values found: `{}`, please check '
+                                 u'key or value.'.format(member))
             keys.add(key)
             values.add(key)
 
