@@ -11,7 +11,7 @@ class RoleEnum(EnumExt):
 
 
 class User(SurrogatePK, db.Model):
-    username = Column(db.String(50), nullable=True, unique=True)
-    email = Column(db.String(50), nullable=True, unique=True)
+    username = Column(db.String(50), nullable=False, unique=True)
+    email = Column(db.String(50), nullable=False, unique=True)
     password = Column(db.String(255), nullable=False, server_default='')
-    role = Column(db.Enum(RoleEnum), doc='角色')
+    role = Column(db.Enum(RoleEnum), doc='角色', default=RoleEnum.admin)
