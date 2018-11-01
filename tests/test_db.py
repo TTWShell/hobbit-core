@@ -9,14 +9,13 @@ from . import BaseTest
 class TestEnumExt(BaseTest):
 
     def test_key_index(self):
-        msg = "EnumExt member must be tuple type and length equal 2."
-        with pytest.raises(TypeError, message=msg):
+        msg = u"EnumExt member must be tuple type and length equal 2."
+        with pytest.raises(TypeError, match=msg):
             class ErrTypeEnum(db.EnumExt):
                 CREATED = (0, u'新建', 'dda')
 
-        msg = "ValueError: duplicate values found: `(0, '已完成')`, " + \
-            "please check key or value."
-        with pytest.raises(ValueError, message=msg):
+        msg = r"duplicate values found: .*, please check key or value."
+        with pytest.raises(ValueError, match=msg):
             class ErrEnum(db.EnumExt):
                 CREATED = (0, u'新建')
                 FINISHED = (0, u'已完成')

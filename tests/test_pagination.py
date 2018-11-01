@@ -20,16 +20,14 @@ class TestPagination(BaseTest):
 
         # test page_size_range
         web_request.query = {'page_size': 101}
-        msg = "webargs.core.ValidationError: {'page_size': " + \
-            "['Must be between 10 and 100.']}"
-        with pytest.raises(ValidationError, message=msg):
+        msg = r".*page_size': .*Must be between 5 and 100.*"
+        with pytest.raises(ValidationError, match=msg):
             viewfunc()
 
         # test order_by
         web_request.query = {'order_by': 'id,-11'}
-        msg = "webargs.core.ValidationError: {'order_by': " + \
-            "{1: ['String does not match expected pattern.']}}"
-        with pytest.raises(ValidationError, message=msg):
+        msg = r".*order_by': .*String does not match expected pattern.*"
+        with pytest.raises(ValidationError, match=msg):
             viewfunc()
 
         web_request.query = {'order_by': 'id,-aaa'}
@@ -54,7 +52,8 @@ class TestPagination(BaseTest):
         assert resp['page'] == 1
         assert [i.id for i in resp['items']] == [1, 2]
 
-        resp = pagination(User, 1, 10, order_by=['role'])
+        # test order_by: str
+        resp = pagination(User, 1, 10, order_by='role')
         assert [i.id for i in resp['items']] == [1, 2]
 
         resp = pagination(User, 1, 10, order_by=['role', '-id'])
@@ -62,3 +61,10 @@ class TestPagination(BaseTest):
 
         resp = pagination(User, 1, 10, order_by=['role', 'username'])
         assert [i.id for i in resp['items']] == [1, 2]
+
+        with pytest.raises(Exception, match='first arg obj must be model.'):
+            pagination('User', 1, 10, order_by='role')
+
+        msg = r'columns .*roles.* not exist in {} model'.format(User)
+        with pytest.raises(Exception, match=msg):
+            pagination(User, 1, 10, order_by='roles')
