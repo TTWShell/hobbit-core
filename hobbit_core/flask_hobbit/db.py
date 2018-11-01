@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+from functools import wraps
 from enum import Enum, EnumMeta
 import six
 
@@ -178,3 +179,21 @@ class EnumExt(six.with_metaclass(EnumExtMeta, Enum)):
                 opt.update({'label': elem.name})
             opts.append(opt)
         return opts
+
+
+def transaction(db):
+    """Auto transaction commit or rollback.
+    """
+    def wrapper(func):
+        @wraps(func)
+        def inner(*args, **kwargs):
+            db.session.begin(subtransactions=True)
+            try:
+                resp = func(*args, **kwargs)
+                db.session.commit()
+                return resp
+            except Exception as e:
+                db.session.rollback()
+                raise e
+        return inner
+    return wrapper
