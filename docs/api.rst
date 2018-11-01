@@ -1,12 +1,13 @@
 Hobbit-core's API Documentation
 ===============================
 
-hobbit_core.hobbit
+hobbit cmd
 ------------------
 
 hobbit - A flask project generator.
 
 .. autofunction:: hobbit_core.hobbit.bootstrap.startproject
+.. autofunction:: hobbit_core.hobbit.bootstrap.gen
 
 hobbit_core.flask_hobbit
 ------------------------
