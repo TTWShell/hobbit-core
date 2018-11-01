@@ -13,7 +13,7 @@ PageParams = ParamsDict(
     page=fields.Int(missing=1, required=False,
                     validate=validate.Range(min=1, max=2**31)),
     page_size=fields.Int(
-        missing=10, required=False, validate=validate.Range(min=10, max=100)),
+        missing=10, required=False, validate=validate.Range(min=5, max=100)),
     order_by=DelimitedList(
         fields.String(validate=validate.Regexp(r'^-?[a-zA-Z_]*$')),
         required=False, missing=['-id']),
