@@ -59,13 +59,47 @@ class TestTransaction(BaseTest):
 
     def test_transaction_decorator(self, client):
         @transaction(db)
-        def create_user():
+        def create_user(raise_exception=True):
             user = User(username='test1', email='1@b.com', password='1')
             db.session.add(user)
-            raise Exception('')
+            if raise_exception:
+                raise Exception('')
 
         with pytest.raises(Exception):
             create_user()
-        db.session.remove()  # must start
-        db.session.remove()
+
         assert User.query.all() == []
+
+        create_user(raise_exception=False)
+        assert User.query.first() is not None
+
+    def test_transaction_decorator_nested(self, client):
+        @transaction(db)
+        def create_user1():
+            user = User(username='test1', email='1@b.com', password='1')
+            db.session.add(user)
+
+        @transaction(db)
+        def create_user2():
+            user = User(username='test2', email='2@b.com', password='1')
+            db.session.add(user)
+            raise Exception('')
+
+        @transaction(db)
+        def view_func():
+            create_user1()
+            assert User.query.first() is not None
+            create_user2()
+
+        with pytest.raises(Exception):
+            view_func()
+        assert len(User.query.all()) == 0
+
+        def view_func2():
+            create_user1()
+            assert User.query.first() is not None
+            create_user2()
+
+        with pytest.raises(Exception):
+            view_func2()
+        assert len(User.query.all()) == 0
