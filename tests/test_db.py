@@ -73,7 +73,7 @@ class TestTransaction(BaseTest):
         create_user(raise_exception=False)
         assert User.query.first() is not None
 
-    def test_transaction_decorator_nested(self, client):
+    def test_transaction_decorator_subtransactions(self, client):
         @transaction(db)
         def create_user1():
             user = User(username='test1', email='1@b.com', password='1')
@@ -103,3 +103,34 @@ class TestTransaction(BaseTest):
         with pytest.raises(Exception):
             view_func2()
         assert len(User.query.all()) == 0
+
+    def test_transaction_decorator_nested(self, client):
+        @transaction(db, subtransactions=False, nested=True)
+        def create_user1():
+            user = User(username='test1', email='1@b.com', password='1')
+            db.session.add(user)
+
+        @transaction(db, subtransactions=False, nested=True)
+        def create_user2():
+            user = User(username='test2', email='2@b.com', password='1')
+            db.session.add(user)
+            raise Exception('')
+
+        @transaction(db, subtransactions=False, nested=True)
+        def view_func():
+            create_user1()
+            assert User.query.first() is not None
+            create_user2()
+
+        with pytest.raises(Exception):
+            view_func()
+        assert len(User.query.all()) == 0
+
+        def view_func2():
+            create_user1()
+            assert User.query.first() is not None
+            create_user2()
+
+        with pytest.raises(Exception):
+            view_func2()
+        assert len(User.query.all()) == 1

@@ -181,13 +181,13 @@ class EnumExt(six.with_metaclass(EnumExtMeta, Enum)):
         return opts
 
 
-def transaction(db):
+def transaction(db, subtransactions=True, nested=False):
     """Auto transaction commit or rollback.
     """
     def wrapper(func):
         @wraps(func)
         def inner(*args, **kwargs):
-            db.session.begin(subtransactions=True)
+            db.session.begin(subtransactions, nested)
             try:
                 resp = func(*args, **kwargs)
                 db.session.commit()
