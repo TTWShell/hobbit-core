@@ -43,7 +43,7 @@ setup(
     author_email='zhanhsw@gmail.com',
     url='https://github.com/TTWShell/hobbit-core',
     packages=find_packages(),
-    package_data={'': ['LICENSE'], 'hobbit_core': package_data},
+    package_data={'hobbit_core': package_data},
     install_requires=[
         'Click>=6.7',
         'Jinja2>=2.10',
