@@ -193,6 +193,7 @@ def transaction(db):
                 db.session.commit()
                 return resp
             except Exception as e:
+                print(e, '<<<<<')
                 db.session.rollback()
                 raise e
         return inner

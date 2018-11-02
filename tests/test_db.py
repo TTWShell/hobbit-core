@@ -1,9 +1,11 @@
 # -*- encoding: utf-8 -*-
 import pytest
 
-from hobbit_core.flask_hobbit import db
+from hobbit_core.flask_hobbit.db import EnumExt, transaction
 
 from . import BaseTest
+from .exts import db
+from .models import User
 
 
 class TestEnumExt(BaseTest):
@@ -11,18 +13,18 @@ class TestEnumExt(BaseTest):
     def test_key_index(self):
         msg = u"EnumExt member must be tuple type and length equal 2."
         with pytest.raises(TypeError, match=msg):
-            class ErrTypeEnum(db.EnumExt):
+            class ErrTypeEnum(EnumExt):
                 CREATED = (0, u'新建', 'dda')
 
         msg = r"duplicate values found: .*, please check key or value."
         with pytest.raises(ValueError, match=msg):
-            class ErrEnum(db.EnumExt):
+            class ErrEnum(EnumExt):
                 CREATED = (0, u'新建')
                 FINISHED = (0, u'已完成')
 
     @pytest.fixture
     def TaskState(self):
-        class _TaskState(db.EnumExt):
+        class _TaskState(EnumExt):
             CREATED = (0, u'新建')
             FINISHED = (1, u'已完成')
         return _TaskState
@@ -51,3 +53,19 @@ class TestEnumExt(BaseTest):
             {'key': 0, 'label': 'CREATED', 'value': u'新建'},
             {'key': 1, 'label': 'FINISHED', 'value': u'已完成'},
         ]
+
+
+class TestTransaction(BaseTest):
+
+    def test_transaction_decorator(self, client):
+        @transaction(db)
+        def create_user():
+            user = User(username='test1', email='1@b.com', password='1')
+            db.session.add(user)
+            raise Exception('')
+
+        with pytest.raises(Exception):
+            create_user()
+        db.session.remove()  # must start
+        db.session.remove()
+        assert User.query.all() == []
