@@ -81,13 +81,16 @@ class TestHobbit(BaseTest):
         assert os.getcwd() == self.wkdir
         runner = CliRunner()
 
-        result = runner.invoke(
-            hobbit, [
-                '--echo', 'startproject', '-n', 'haha', '--example',
-                '-p', '1024',
-            ], obj={})
+        cmd = [
+            '--echo', 'startproject', '-n', 'haha', '--example', '-p', '1024']
+        result = runner.invoke(hobbit, cmd, obj={})
         # start + 28 files + 11 dir + 1 end + empty
         # in this test case. main dir exists, so mkdir - 1
         assert len(result.output.split('\n')) == 1 + 28 + 11 + 1 + 1 - 1
         assert result.exit_code == 0
         assert 'example.py' in result.output
+
+        # test no -f worked
+        result = runner.invoke(hobbit, cmd, obj={})
+        assert result.exit_code == 0
+        assert ', ignore' in result.output
