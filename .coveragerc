@@ -1,0 +1,8 @@
+[report]
+include =
+    hobbit_core/*
+    tests/*
+omit =
+    */static/bootstrap/*
+show_missing = true
+precision = 2
