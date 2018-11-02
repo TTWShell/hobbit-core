@@ -4,9 +4,10 @@ import string
 
 import click
 
+from hobbit_core import VERSION
+
 from .handlers import echo
 from .handlers.bootstrap import render_project
-from hobbit_core import VERSION
 
 
 @click.group()

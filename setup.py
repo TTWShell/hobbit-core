@@ -45,17 +45,17 @@ setup(
     packages=find_packages(),
     package_data={'': ['LICENSE'], 'hobbit_core': package_data},
     install_requires=[
-        'Click==6.7',
-        'Jinja2==2.10',
+        'Click>=6.7',
+        'Jinja2>=2.10',
 
-        'Flask==1.0.2',
-        'flask-marshmallow==0.9.0',
-        'Flask-Migrate==2.2.1',
-        'flask-shell-ipython==0.3.1',
-        'Flask-SQLAlchemy==2.3.2',
-        'marshmallow-enum==1.4.1',
-        'marshmallow-sqlalchemy==0.14.1',
-        'webargs==4.0.0',
+        'Flask>=1.0.2',
+        'flask-marshmallow>=0.9.0',
+        'Flask-Migrate>=2.2.1',
+        'flask-shell-ipython>=0.3.1',
+        'Flask-SQLAlchemy>=2.3.2',
+        'marshmallow-enum>=1.4.1',
+        'marshmallow-sqlalchemy>=0.14.1',
+        'webargs>=4.0.0',
     ],
     entry_points={
         'console_scripts': 'hobbit = hobbit_core.hobbit:main'

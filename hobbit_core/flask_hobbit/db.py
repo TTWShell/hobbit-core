@@ -68,7 +68,7 @@ class EnumExtMeta(EnumMeta):
         obj = super(EnumExtMeta, cls).__new__(cls, name, bases, attrs)
 
         keys, values = set(), set()
-        for name, member in obj.__members__.items():
+        for _, member in obj.__members__.items():
             member = member.value
             if not isinstance(member, tuple) or len(member) != 2:
                 raise TypeError(
