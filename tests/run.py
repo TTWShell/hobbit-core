@@ -9,7 +9,7 @@ ROOT_PATH = os.path.split(os.path.abspath(__file__))[0]
 
 class ConfigClass(object):
     SECRET_KEY = 'test secret key'
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///{}/tst_app.sqlite'.format(ROOT_PATH)
+    SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/hobbit_core'.format(ROOT_PATH)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     TESTING = True
 

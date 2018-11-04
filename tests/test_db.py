@@ -133,4 +133,4 @@ class TestTransaction(BaseTest):
 
         with pytest.raises(Exception):
             view_func2()
-        assert len(User.query.all()) == 1
+        assert len(User.query.all()) == 0

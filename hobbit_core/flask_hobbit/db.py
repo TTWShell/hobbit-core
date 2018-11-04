@@ -194,7 +194,7 @@ def transaction(db, subtransactions=True, nested=False):
                 return resp
             except Exception as e:
                 db.session.rollback()
-                db.session.close()
+                db.session.remove()
                 raise e
         return inner
     return wrapper
