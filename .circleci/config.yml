@@ -8,9 +8,17 @@ jobs:
     docker:
       - image: themattrix/tox-base
         user: root
+      - image: circleci/postgres:alpine
+        environment:
+          POSTGRES_USER: root
+          POSTGRES_DB: hobbit_core
+
     working_directory: ~/repo
     steps:
       - checkout
+      - run:
+          name: Waiting for Postgres to be ready
+          command: sleep 10
       - run:
           command: tox
   test-py27:

@@ -31,7 +31,7 @@ class TestResponse(BaseTest):
 
     def test_success_result(self):
         # assert status can rewrite
-        excepted = b'{\n"code":"200",\n"detail":null,\n"message":"message"\n}\n'
+        excepted = b'{\n"code":"200",\n"detail":null,\n"message":"message"\n}\n'  # NOQA
         result = SuccessResult('message', status=301)
         assert result.status_code == 301
         assert excepted == result.data
