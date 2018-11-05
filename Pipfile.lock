@@ -127,10 +127,10 @@
         },
         "filelock": {
             "hashes": [
-                "sha256:86fe6af56ae08ebc9c66d54ba3398c35b98916d0862d782b276a65816ff39392",
-                "sha256:97694f181bdf58f213cca0a7cb556dc7bf90e2f8eb9aa3151260adac56701afb"
+                "sha256:b8d5ca5ca1c815e1574aee746650ea7301de63d87935b3463d26368b76e31633",
+                "sha256:d610c1bb404daf85976d7a82eb2ada120f04671007266b708606565dd03b5be6"
             ],
-            "version": "==3.0.9"
+            "version": "==3.0.10"
         },
         "flask-sphinx-themes": {
             "hashes": [
@@ -232,11 +232,11 @@
         },
         "pyparsing": {
             "hashes": [
-                "sha256:bc6c7146b91af3f567cf6daeaec360bc07d45ffec4cf5353f4d7a208ce7ca30a",
-                "sha256:d29593d8ebe7b57d6967b62494f8c72b03ac0262b1eed63826c6f788b3606401"
+                "sha256:40856e74d4987de5d01761a22d1621ae1c7f8774585acae358aa5c5936c6c90b",
+                "sha256:f353aab21fd474459d97b709e527b5571314ee5f067441dc9f88e33eecd96592"
             ],
             "markers": "python_version != '3.1.*' and python_version != '3.2.*' and python_version >= '2.6' and python_version != '3.0.*'",
-            "version": "==2.2.2"
+            "version": "==2.3.0"
         },
         "pytest": {
             "hashes": [
@@ -373,10 +373,11 @@
         },
         "virtualenv": {
             "hashes": [
-                "sha256:2ce32cd126117ce2c539f0134eb89de91a8413a29baac49cbab3eb50e2026669",
-                "sha256:ca07b4c0b54e14a91af9f34d0919790b016923d157afda5efdde55c96718f752"
+                "sha256:686176c23a538ecc56d27ed9d5217abd34644823d6391cbeb232f42bf722baad",
+                "sha256:f899fafcd92e1150f40c8215328be38ff24b519cd95357fa6e78e006c7638208"
             ],
-            "version": "==16.0.0"
+            "markers": "python_version >= '2.7' and python_version != '3.3.*' and python_version != '3.2.*' and python_version != '3.1.*' and python_version != '3.0.*'",
+            "version": "==16.1.0"
         },
         "watchdog": {
             "hashes": [

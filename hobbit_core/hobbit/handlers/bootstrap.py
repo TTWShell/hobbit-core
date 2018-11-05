@@ -3,6 +3,7 @@ import os
 
 import click
 from jinja2 import Environment, FileSystemLoader, Template
+
 from . import echo
 
 SUFFIX = '.jinja2'

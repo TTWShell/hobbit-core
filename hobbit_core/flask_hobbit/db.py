@@ -68,7 +68,7 @@ class EnumExtMeta(EnumMeta):
         obj = super(EnumExtMeta, cls).__new__(cls, name, bases, attrs)
 
         keys, values = set(), set()
-        for name, member in obj.__members__.items():
+        for _, member in obj.__members__.items():
             member = member.value
             if not isinstance(member, tuple) or len(member) != 2:
                 raise TypeError(
@@ -184,16 +184,22 @@ class EnumExt(six.with_metaclass(EnumExtMeta, Enum)):
 def transaction(db):
     """Auto transaction commit or rollback.
     """
+    session = db.session
+
     def wrapper(func):
         @wraps(func)
         def inner(*args, **kwargs):
-            db.session.begin(subtransactions=True)
+            session.begin_nested()
             try:
                 resp = func(*args, **kwargs)
-                db.session.commit()
+                unflushed = (session.new, session.dirty, session.deleted)
+                if any(unflushed):
+                    session.commit()  # commit - begin_nested()
+                session.commit()  # commit - begin(), transaction finished
                 return resp
             except Exception as e:
-                db.session.rollback()
+                session.rollback()
+                session.remove()
                 raise e
         return inner
     return wrapper

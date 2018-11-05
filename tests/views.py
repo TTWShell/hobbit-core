@@ -38,7 +38,6 @@ def use_kwargs_without_partial(**kwargs):
     'password': fields.Str(allow_none=True),
 }, schema_kwargs={'partial': True})
 def use_kwargs_dictargmap_partial(**kwargs):
-    print(kwargs)
     return jsonify(wrapper_kwargs(kwargs))
 
 

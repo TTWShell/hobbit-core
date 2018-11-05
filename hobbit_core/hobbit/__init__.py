@@ -33,4 +33,4 @@ def main(ctx, echo):
 
 
 if __name__ == '__main__':
-    main(obj={})
+    main()
