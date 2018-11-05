@@ -181,20 +181,25 @@ class EnumExt(six.with_metaclass(EnumExtMeta, Enum)):
         return opts
 
 
-def transaction(db, subtransactions=True, nested=False):
+def transaction(db):
     """Auto transaction commit or rollback.
     """
+    session = db.session
+
     def wrapper(func):
         @wraps(func)
         def inner(*args, **kwargs):
-            db.session.begin(subtransactions, nested)
+            session.begin_nested()
             try:
                 resp = func(*args, **kwargs)
-                db.session.commit()
+                unflushed = (session.new, session.dirty, session.deleted)
+                if any(unflushed):
+                    session.commit()  # commit - begin_nested()
+                session.commit()  # commit - begin(), transaction finished
                 return resp
             except Exception as e:
-                db.session.rollback()
-                db.session.remove()
+                session.rollback()
+                session.remove()
                 raise e
         return inner
     return wrapper

@@ -60,77 +60,112 @@ class TestTransaction(BaseTest):
     def test_transaction_decorator(self, client):
         @transaction(db)
         def create_user(raise_exception=True):
+            user1 = User(username='test1', email='1@b.com', password='1')
+            db.session.add(user1)
+            user2 = User(username='test2', email='2@b.com', password='1')
+            db.session.add(user2)
+            db.session.commit()
+            if raise_exception:
+                raise Exception('')
+
+        # assert user1 and user2 all rollback
+        with pytest.raises(Exception):
+            create_user()
+        assert User.query.all() == []
+
+        create_user(raise_exception=False)
+        assert len(User.query.all()) == 2
+
+        # assert user1 and user2 all created
+        User.query.delete()
+        db.session.commit()
+        assert User.query.all() == []
+        with pytest.raises(Exception):
+            create_user(raise_exception=False)
+            assert len(User.query.all()) == 2
+            create_user(raise_exception=False)
+        assert len(User.query.all()) == 2
+
+    def test_transaction_decorator_nested(self, client):
+        @transaction(db)
+        def create_user1():
             user = User(username='test1', email='1@b.com', password='1')
+            db.session.add(user)
+
+        @transaction(db)
+        def create_user2(raise_exception=True):
+            user = User(username='test2', email='2@b.com', password='1')
             db.session.add(user)
             if raise_exception:
                 raise Exception('')
 
-        with pytest.raises(Exception):
-            create_user()
-
-        assert User.query.all() == []
-
-        create_user(raise_exception=False)
-        assert User.query.first() is not None
-
-    def test_transaction_decorator_subtransactions(self, client):
         @transaction(db)
-        def create_user1():
-            user = User(username='test1', email='1@b.com', password='1')
-            db.session.add(user)
-
-        @transaction(db)
-        def create_user2():
-            user = User(username='test2', email='2@b.com', password='1')
-            db.session.add(user)
-            raise Exception('')
-
-        @transaction(db)
-        def view_func():
+        def view_func(raise_exception=True):
             create_user1()
             assert User.query.first() is not None
-            create_user2()
+            create_user2(raise_exception=raise_exception)
 
+        # assert user1 and user2 all rollback
         with pytest.raises(Exception):
             view_func()
         assert len(User.query.all()) == 0
+
+        # assert user1 and user2 all created
+        view_func(raise_exception=False)
+        assert len(User.query.all()) == 2
 
         def view_func2():
             create_user1()
             assert User.query.first() is not None
             create_user2()
 
+        # assert user1 created and user2 rollback
+        User.query.delete()
+        db.session.commit()
+        assert len(User.query.all()) == 0
         with pytest.raises(Exception):
             view_func2()
-        assert len(User.query.all()) == 0
+        assert len(User.query.all()) == 1
 
-    def test_transaction_decorator_nested(self, client):
-        @transaction(db, subtransactions=False, nested=True)
+    def test_transaction_decorator_nested_2(self, client):
+        @transaction(db)
         def create_user1():
             user = User(username='test1', email='1@b.com', password='1')
             db.session.add(user)
+            db.session.commit()
 
-        @transaction(db, subtransactions=False, nested=True)
-        def create_user2():
+        @transaction(db)
+        def create_user2(raise_exception=True):
             user = User(username='test2', email='2@b.com', password='1')
             db.session.add(user)
-            raise Exception('')
+            db.session.commit()
+            if raise_exception:
+                raise Exception('')
 
-        @transaction(db, subtransactions=False, nested=True)
-        def view_func():
+        @transaction(db)
+        def view_func(raise_exception=True):
             create_user1()
             assert User.query.first() is not None
-            create_user2()
+            create_user2(raise_exception=raise_exception)
 
+        # assert user1 and user2 all rollback
         with pytest.raises(Exception):
             view_func()
         assert len(User.query.all()) == 0
+
+        # assert ser1 and user2 all created
+        view_func(raise_exception=False)
+        assert len(User.query.all()) == 2
 
         def view_func2():
             create_user1()
             assert User.query.first() is not None
             create_user2()
 
+        # assert user1 created and user2 rollback
+        User.query.delete()
+        db.session.commit()
+        assert len(User.query.all()) == 0
         with pytest.raises(Exception):
             view_func2()
-        assert len(User.query.all()) == 0
+        assert len(User.query.all()) == 1
