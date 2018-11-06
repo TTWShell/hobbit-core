@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+import time
 import pytest
 
 from hobbit_core.flask_hobbit.db import EnumExt, transaction
@@ -6,6 +7,28 @@ from hobbit_core.flask_hobbit.db import EnumExt, transaction
 from . import BaseTest
 from .exts import db
 from .models import User
+
+
+class TestSurrogatePK(BaseTest):
+
+    def test_surrogate_pk(self, client):
+        user = User(username='test1', email='1@b.com', password='1')
+        db.session.add(user)
+        db.session.commit()
+        user_id = user.id
+
+        db.session.remove()
+        user = User.query.get(user_id)
+        assert user.created_at == user.updated_at
+
+        time.sleep(1)
+        user.email = '2@b.com'
+        db.session.merge(user)
+        db.session.commit()
+
+        db.session.remove()
+        user = User.query.get(user_id)
+        assert user.created_at < user.updated_at
 
 
 class TestEnumExt(BaseTest):
