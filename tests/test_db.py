@@ -80,7 +80,33 @@ class TestEnumExt(BaseTest):
 
 class TestTransaction(BaseTest):
 
-    def test_transaction_decorator(self, client):
+    def test_session(self, session):
+        """assert session is isolated from db.session
+        """
+        assert session is not db.session
+
+        user = User(username='test1', email='1@b.com', password='1')
+        db.session.add(user)
+        assert User.query.first() is not None
+        assert session.query(User).first() is None
+
+        db.session.commit()
+        assert User.query.first() is not None
+        db.session.remove()
+        assert User.query.first() is not None
+        assert session.query(User).first() is not None
+
+        User.query.delete()
+        assert User.query.first() is None
+        assert session.query(User).first() is not None
+
+        db.session.commit()
+        assert User.query.first() is None
+        db.session.remove()
+        assert User.query.first() is None
+        assert session.query(User).first() is None
+
+    def test_transaction_decorator(self, session):
         @transaction(db)
         def create_user(raise_exception=True):
             user1 = User(username='test1', email='1@b.com', password='1')
@@ -95,21 +121,26 @@ class TestTransaction(BaseTest):
         with pytest.raises(Exception):
             create_user()
         assert User.query.all() == []
+        assert session.query(User).all() == []
 
         create_user(raise_exception=False)
         assert len(User.query.all()) == 2
+        assert len(session.query(User).all()) == 2
 
         # assert user1 and user2 all created
         User.query.delete()
         db.session.commit()
         assert User.query.all() == []
+        assert session.query(User).all() == []
+
         with pytest.raises(Exception):
             create_user(raise_exception=False)
             assert len(User.query.all()) == 2
             create_user(raise_exception=False)
         assert len(User.query.all()) == 2
+        assert len(session.query(User).all()) == 2
 
-    def test_transaction_decorator_nested(self, client):
+    def test_transaction_decorator_nested(self, session):
         @transaction(db)
         def create_user1():
             user = User(username='test1', email='1@b.com', password='1')
@@ -132,10 +163,12 @@ class TestTransaction(BaseTest):
         with pytest.raises(Exception):
             view_func()
         assert len(User.query.all()) == 0
+        assert len(session.query(User).all()) == 0
 
         # assert user1 and user2 all created
         view_func(raise_exception=False)
         assert len(User.query.all()) == 2
+        assert len(session.query(User).all()) == 2
 
         def view_func2():
             create_user1()
@@ -149,8 +182,9 @@ class TestTransaction(BaseTest):
         with pytest.raises(Exception):
             view_func2()
         assert len(User.query.all()) == 1
+        assert len(session.query(User).all()) == 1
 
-    def test_transaction_decorator_nested_2(self, client):
+    def test_transaction_decorator_nested_2(self, session):
         @transaction(db)
         def create_user1():
             user = User(username='test1', email='1@b.com', password='1')
@@ -175,10 +209,12 @@ class TestTransaction(BaseTest):
         with pytest.raises(Exception):
             view_func()
         assert len(User.query.all()) == 0
+        assert len(session.query(User).all()) == 0
 
-        # assert ser1 and user2 all created
+        # assert user1 and user2 all created
         view_func(raise_exception=False)
         assert len(User.query.all()) == 2
+        assert len(session.query(User).all()) == 2
 
         def view_func2():
             create_user1()
@@ -192,3 +228,4 @@ class TestTransaction(BaseTest):
         with pytest.raises(Exception):
             view_func2()
         assert len(User.query.all()) == 1
+        assert len(session.query(User).all()) == 1
