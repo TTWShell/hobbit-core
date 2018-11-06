@@ -11,7 +11,7 @@ from .models import User
 
 class TestSurrogatePK(BaseTest):
 
-    def test_surrogate_pk(self, client):
+    def test_surrogate_pk(self, session):
         user = User(username='test1', email='1@b.com', password='1')
         db.session.add(user)
         db.session.commit()
@@ -26,8 +26,7 @@ class TestSurrogatePK(BaseTest):
         db.session.merge(user)
         db.session.commit()
 
-        db.session.remove()
-        user = User.query.get(user_id)
+        user = session.query(User).get(user_id)
         assert user.created_at < user.updated_at
 
 
@@ -79,32 +78,6 @@ class TestEnumExt(BaseTest):
 
 
 class TestTransaction(BaseTest):
-
-    def test_session(self, session):
-        """assert session is isolated from db.session
-        """
-        assert session is not db.session
-
-        user = User(username='test1', email='1@b.com', password='1')
-        db.session.add(user)
-        assert User.query.first() is not None
-        assert session.query(User).first() is None
-
-        db.session.commit()
-        assert User.query.first() is not None
-        db.session.remove()
-        assert User.query.first() is not None
-        assert session.query(User).first() is not None
-
-        User.query.delete()
-        assert User.query.first() is None
-        assert session.query(User).first() is not None
-
-        db.session.commit()
-        assert User.query.first() is None
-        db.session.remove()
-        assert User.query.first() is None
-        assert session.query(User).first() is None
 
     def test_transaction_decorator(self, session):
         @transaction(db)
