@@ -1,6 +1,14 @@
 Change history
 ==============
 
+1.3.0a2 (2018-11-06)
+
+* Foreign key fields support ondelete, onupdate.
+
+1.3.0a1 (2018-11-05)
+
+* Refactor transaction decorator.
+
 1.3.0a0 (2018-11-1)
 
 * Add validate for PageParams.
@@ -9,6 +17,7 @@ Change history
 * Add hobbit gen cmd for auto render views.py, models.py, schemas.py etc when start a feature dev.
 
 1.2.5 (2018-10-30)
+******************
 
 * Add ModelSchema(Auto generate load and dump func for EnumField).
 * Add logging config file.
@@ -16,24 +25,29 @@ Change history
 * Fix use_kwargs with fileds.missing=None and enhanced.
 
 1.2.4 (2018-10-18)
+******************
 
 * Fix SuccessResult status arg not used.
 
 1.2.3 (2018-10-18)
+******************
 
 * Add utils.use_kwargs, fix webargs's bug.
 
 1.2.2 (2018-10-16)
+******************
 
 * Add SchemaMixin & ORMSchema use in combination with db.SurrogatePK.
 * Now print traceback info when server 500.
 * Fix miss hidden files when sdist.
 
 1.2.1 (2018-10-12)
+******************
 
 * secure_filename support py2 & py3.
 
 1.2.0 (2018-10-11)
+******************
 
 * Gitlab CI/CD support.
 * Add secure_filename util.
