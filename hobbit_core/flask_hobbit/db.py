@@ -58,7 +58,7 @@ def reference_col(tablename, nullable=False, pk_name='id', **kwargs):
     """
 
     return Column(
-        ForeignKey('{0}.{1}'.format(tablename, pk_name)),
+        ForeignKey('{0}.{1}'.format(tablename, pk_name), ondelete='CASCADE', onupdate='CASCADE'),
         nullable=nullable, **kwargs)
 
 
