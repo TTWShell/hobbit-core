@@ -37,13 +37,20 @@ class SurrogatePK(object):
             label=getattr(self, 'label', ''))
 
 
-def reference_col(tablename, nullable=False, pk_name='id', **kwargs):
+def reference_col(tablename, nullable=False, pk_name='id',
+                  onupdate=None, ondelete=None, **kwargs):
     """Column that adds primary key foreign key reference.
 
     Args:
         tablename (str): Model.__table_name__.
         nullable (bool): Default is False.
         pk_name (str): Primary column's name.
+        onupdate (str): If Set, emit ON UPDATE <value> when
+          issuing DDL for this constraint. Typical values include CASCADE,
+          DELETE and RESTRICT.
+        ondelete (str): If set, emit ON DELETE <value> when
+          issuing DDL for this constraint. Typical values include CASCADE,
+          DELETE and RESTRICT.
 
     Others:
 
@@ -58,7 +65,8 @@ def reference_col(tablename, nullable=False, pk_name='id', **kwargs):
     """
 
     return Column(
-        ForeignKey('{0}.{1}'.format(tablename, pk_name)),
+        ForeignKey('{0}.{1}'.format(tablename, pk_name),
+                   onupdate=onupdate, ondelete=ondelete),
         nullable=nullable, **kwargs)
 
 
