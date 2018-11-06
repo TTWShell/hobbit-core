@@ -37,7 +37,8 @@ class SurrogatePK(object):
             label=getattr(self, 'label', ''))
 
 
-def reference_col(tablename, nullable=False, pk_name='id', **kwargs):
+def reference_col(tablename, nullable=False, pk_name='id',
+                  onupdate=None, ondelete=None, **kwargs):
     """Column that adds primary key foreign key reference.
 
     Args:
@@ -58,7 +59,8 @@ def reference_col(tablename, nullable=False, pk_name='id', **kwargs):
     """
 
     return Column(
-        ForeignKey('{0}.{1}'.format(tablename, pk_name), ondelete='CASCADE', onupdate='CASCADE'),
+        ForeignKey('{0}.{1}'.format(tablename, pk_name),
+                   onupdate=onupdate, ondelete=ondelete),
         nullable=nullable, **kwargs)
 
 
