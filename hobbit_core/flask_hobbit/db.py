@@ -45,6 +45,12 @@ def reference_col(tablename, nullable=False, pk_name='id',
         tablename (str): Model.__table_name__.
         nullable (bool): Default is False.
         pk_name (str): Primary column's name.
+        onupdate (str): If Set, emit ON UPDATE <value> when
+          issuing DDL for this constraint. Typical values include CASCADE,
+          DELETE and RESTRICT.
+        ondelete (str): If set, emit ON DELETE <value> when
+          issuing DDL for this constraint. Typical values include CASCADE,
+          DELETE and RESTRICT.
 
     Others:
 
