@@ -7,6 +7,7 @@ except ImportError:
 from webargs.core import Parser, get_value
 
 from .run import app as tapp
+from .exts import db as tdb
 
 
 @pytest.fixture(scope='session')
@@ -24,6 +25,16 @@ def app(request):
 @pytest.fixture(scope='session')
 def client(app, request):
     return app.test_client()
+
+
+@pytest.fixture(scope='function')
+def session(app):
+    with app.app_context():
+        conn = tdb.engine.connect()
+        options = dict(bind=conn, binds={})
+        sess = tdb.create_scoped_session(options=options)
+        yield sess
+        sess.remove()
 
 
 #  borrowed from webargs
