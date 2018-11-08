@@ -1,0 +1,7 @@
+from app.exts import celery
+
+
+@celery.task
+def add(x, y):
+    return x + y
+

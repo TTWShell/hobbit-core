@@ -18,4 +18,19 @@ def app(request):
 @pytest.fixture(scope='session')
 def client(app, request):
     return app.test_client()
+{% if celery %}
 
+@pytest.fixture(scope='session')
+def celery_config(app):
+    return {
+        'broker_url': 'sqla+sqlite:///.test/celerydb.sqlite',
+        'result_backend': 'db+sqlite:///.test/celeryresults.sqlite'
+    }
+
+
+@pytest.fixture(scope='session')
+def celery_app(app):
+    from app.run import celery
+    from celery.contrib.testing import tasks  # NOQA
+    return celery
+{% endif %}

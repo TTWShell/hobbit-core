@@ -30,7 +30,10 @@ jobs:
       - checkout
       - run:
           name: install dependencies
-          command: pip install flake8 pytest pytest-cov pytest-env && pip install --editable .
+          command: |
+            pip install flake8 pytest pytest-cov pytest-env
+            pip install --editable .
+            pip install celery
       - run:
           name: use flake8 check self
           command: flake8 .
@@ -53,7 +56,10 @@ jobs:
       - checkout
       - run:
           name: install dependencies
-          command: pip install flake8 pytest pytest-cov pytest-env && pip install --editable .
+          command: |
+            pip install flake8 pytest pytest-cov pytest-env
+            pip install --editable .
+            pip install celery
       - run:
           name: use flake8 check self
           command: flake8 .
@@ -82,7 +88,10 @@ jobs:
       - checkout
       - run:
           name: install dependencies
-          command: pip install flake8 pytest pytest-cov pytest-env && pip install --editable .
+          command: |
+            pip install flake8 pytest pytest-cov pytest-env
+            pip install --editable .
+            pip install celery
       - run:
           name: use flake8 check self
           command: flake8 .

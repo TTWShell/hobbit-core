@@ -1,0 +1,7 @@
+{%- if example -%}
+from .example import add
+
+__all__ = [add]
+{% else %}
+__all__ = []
+{% endif %}

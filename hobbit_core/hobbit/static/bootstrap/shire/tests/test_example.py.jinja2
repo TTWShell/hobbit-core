@@ -71,4 +71,11 @@ class TestErrorExample(BaseTest):
         resp = client.get('/api/users/{pk}/'.format(pk=1))
         print(resp.json)
         assert resp.status_code == 404
+{% if celery %}
 
+class TestTask(BaseTest):
+
+    def test_add(self, celery_app, celery_worker):
+        from app.tasks import add
+        assert add.delay(1, 2).get() == 3
+{% endif %}
