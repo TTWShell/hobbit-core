@@ -10,7 +10,7 @@ Hobbit-core中文文档
 
 基于 Flask + SQLAlchemy + marshmallow + webargs 的 flask 项目生成器。
 
-包含 RESTful API、单元测试、gitlab-ci/cd、docker compose 一套解决方案。后续考虑更好的自动文档工具（目前有 apispec ）。
+包含 RESTful API、celery集成、单元测试、gitlab-ci/cd、docker compose 一套解决方案。后续考虑更好的自动文档工具（目前有 apispec ）。
 
 **为什么我开发了这个项目？** 可以参考这一设计范式： `Convention over configuration. <https://en.wikipedia.org/wiki/Convention_over_configuration>`_
 
@@ -24,7 +24,7 @@ Hobbit-core中文文档
 
 使用 ``hobbit`` 命令自动生成你的flask项目::
 
-    hobbit --echo startproject -n demo -d . --example -p 5000
+    hobbit --echo startproject -n demo -d . --example -p 5000 --celery
 
 参数 ``--example`` 会同时生成一个完整的api及其测试范例，使用以下项目启动server::
 
@@ -69,6 +69,9 @@ Hobbit-core中文文档
     │   │   └── example.py
     │   ├── run.py
     │   ├── schemas
+    │   │   ├── __init__.py
+    │   │   └── example.py
+    │   ├── tasks
     │   │   ├── __init__.py
     │   │   └── example.py
     │   ├── utils
