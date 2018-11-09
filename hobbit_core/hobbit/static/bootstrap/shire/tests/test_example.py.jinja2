@@ -78,4 +78,18 @@ class TestTask(BaseTest):
     def test_add(self, celery_app, celery_worker):
         from app.tasks import add
         assert add.delay(1, 2).get() == 3
+
+    def test_update_user(self, celery_app, celery_worker):
+        user = User(username='test', nick='nick')
+        db.session.add(user)
+        db.session.commit()
+        user_id = user.id
+
+        from app.tasks import update_user
+
+        new_nick = 'new nick'
+        assert update_user.delay(user_id, new_nick).get() is None
+
+        db.session.remove()
+        assert User.query.get(user_id).nick == new_nick
 {% endif %}

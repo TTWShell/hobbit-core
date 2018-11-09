@@ -1,7 +1,7 @@
 {%- if example -%}
-from .example import add
+from .example import add, update_user
 
-__all__ = [add]
+__all__ = [add, update_user]
 {% else %}
 __all__ = []
 {% endif %}
