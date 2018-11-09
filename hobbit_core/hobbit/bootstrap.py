@@ -28,8 +28,10 @@ def cli(ctx, force):
               help='Force render files, covered if file exist.')
 @click.option('--example/--no-example', default=False,
               help='Generate api, test example files or not.')
+@click.option('--celery/--no-celery', default=False,
+              help='Generate celery files or not.')
 @click.pass_context
-def startproject(ctx, name, port, dist, template, force, example):
+def startproject(ctx, name, port, dist, template, force, example, celery):
     """Create a new flask project, render from different template.
 
     Examples::
@@ -43,6 +45,7 @@ def startproject(ctx, name, port, dist, template, force, example):
     dist = os.getcwd() if dist is None else os.path.abspath(dist)
     ctx.obj['FORCE'] = force
     ctx.obj['EXAMPLE'] = example
+    ctx.obj['CELERY'] = celery
     ctx.obj['JINJIA_CONTEXT'] = {
         'project_name': name,
         'port': port,
@@ -50,6 +53,7 @@ def startproject(ctx, name, port, dist, template, force, example):
             string.ascii_letters) for i in range(38)),
         'version': '.'.join(str(i) for i in VERSION),
         'example': example,
+        'celery': celery,
     }
 
     echo('Start init a hobbit project `{}` to `{}`, use template {}',

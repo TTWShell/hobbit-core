@@ -1,4 +1,5 @@
 import os
+from subprocess import call
 
 from click.testing import CliRunner
 
@@ -94,3 +95,18 @@ class TestHobbit(BaseTest):
         result = runner.invoke(hobbit, cmd, obj={})
         assert result.exit_code == 0
         assert ', ignore' in result.output
+        assert call(['flake8', '.']) == 0
+
+    @chdir(wkdir)
+    def test_startproject_cmd_example_celery(self):
+        assert os.getcwd() == self.wkdir
+        runner = CliRunner()
+        cmd = [
+            '--echo', 'startproject', '-n', 'haha', '--example', '-p', '1024',
+            '--celery']
+        result = runner.invoke(hobbit, cmd, obj={})
+        assert len(result.output.split('\n')) == \
+            1 + (28 + 2) + (11 + 1) + 1 + 1 - 1
+        assert result.exit_code == 0
+        assert '/tasks' in result.output
+        assert call(['flake8', '.']) == 0

@@ -30,7 +30,10 @@ jobs:
       - checkout
       - run:
           name: install dependencies
-          command: pip install flake8 pytest pytest-cov pytest-env && pip install --editable .
+          command: |
+            pip install flake8 pytest pytest-cov pytest-env
+            pip install --editable .
+            pip install celery
       - run:
           name: use flake8 check self
           command: flake8 .
@@ -53,13 +56,16 @@ jobs:
       - checkout
       - run:
           name: install dependencies
-          command: pip install flake8 pytest pytest-cov pytest-env && pip install --editable .
+          command: |
+            pip install flake8 pytest pytest-cov pytest-env
+            pip install --editable .
+            pip install celery
       - run:
           name: use flake8 check self
           command: flake8 .
       - run:
           name: run hobbit cmd
-          command: hobbit --echo startproject -n demo -d ~/haha -f --example -p 1024
+          command: hobbit --echo startproject -n demo -d ~/haha -f --example -p 1024 --no-celery
       - run:
           name: tree flask project
           command: |
@@ -82,7 +88,10 @@ jobs:
       - checkout
       - run:
           name: install dependencies
-          command: pip install flake8 pytest pytest-cov pytest-env && pip install --editable .
+          command: |
+            pip install flake8 pytest pytest-cov pytest-env
+            pip install --editable .
+            pip install celery
       - run:
           name: use flake8 check self
           command: flake8 .
@@ -90,7 +99,7 @@ jobs:
           name: run hobbit cmd
           command: |
             mkdir ~/haha && cd ~/haha
-            hobbit --echo startproject -n demo -f --example -p 1024
+            hobbit --echo startproject -n demo -f --example -p 1024 --celery
       - run:
           name: tree flask project
           command: |
