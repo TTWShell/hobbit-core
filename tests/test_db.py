@@ -105,6 +105,7 @@ class TestTransaction(BaseTest):
         create_user(raise_exception=False)
         assert len(assert_session.query(User).all()) == 2
 
+        self.clear_user()
         with pytest.raises(Exception, match=''):
             create_user(raise_exception=False)
             assert len(assert_session.query(User).all()) == 2
@@ -169,7 +170,6 @@ class TestTransaction(BaseTest):
         def view_func2():
             create_user1()
             raise Exception('')
-            create_user2()
 
         with pytest.raises(Exception, match=''):
             view_func2()
@@ -230,7 +230,7 @@ class TestTransaction(BaseTest):
         with pytest.raises(ResourceClosedError, match=msg):
             view_func()
 
-    def test_notautocommit_use_nested_alone_raise(self, db_session):
+    def test_notautocommit_use_nested_alone_commit_raise(self, db_session):
         @transaction(db_session, nested=True)
         def create_user():
             user = User(username='test1', email='1@b.com', password='1')
@@ -259,4 +259,5 @@ class TestTransaction(BaseTest):
                 auto_session.add(user)
                 auto_session.commit()
 
+        # assert not rollback. Our transaction decorator worked as excepted. 😊
         assert len(assert_session.query(User).all()) == 1
