@@ -250,10 +250,11 @@ def transaction(session, nested=False):
                 if not nested:
                     # commit - begin(), transaction finished
                     session.commit()
-                return resp
             except Exception as e:
-                session.rollback()
-                session.remove()
+                if not nested:
+                    session.rollback()
+                    session.remove()
                 raise e
+            return resp
         return inner
     return wrapper
