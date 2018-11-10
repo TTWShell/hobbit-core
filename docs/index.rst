@@ -10,7 +10,7 @@ Hobbit-core's documentation
 
 A flask project generator. Based on Flask + SQLAlchemy + marshmallow + webargs.
 
-A hobbit app contains RESTful API, unit test, gitlab-ci/cd、docker compose etc.
+A hobbit app contains RESTful API, celery, unit test, gitlab-ci/cd、docker compose etc.
 
 **Why do we need this project?** Answer is `Convention over configuration. <https://en.wikipedia.org/wiki/Convention_over_configuration>`_
 
@@ -24,7 +24,7 @@ Get it right now::
 
 Create your flask project::
 
-    hobbit --echo startproject -n demo -d . --example -p 5000
+    hobbit --echo startproject -n demo -d . --example -p 5000 --celery
 
 Run flask app::
 
@@ -69,6 +69,9 @@ If not skip example(Please see --example/--no-example options), you can get proj
     │   │   └── example.py
     │   ├── run.py
     │   ├── schemas
+    │   │   ├── __init__.py
+    │   │   └── example.py
+    │   ├── tasks
     │   │   ├── __init__.py
     │   │   └── example.py
     │   ├── utils
@@ -123,6 +126,11 @@ schemas
 ^^^^^^^
 
 Create your marshmallow scheams here.
+
+tasks
+^^^^^
+
+Celery tasks here.
 
 utils
 ^^^^^

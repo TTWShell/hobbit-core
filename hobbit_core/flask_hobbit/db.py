@@ -190,7 +190,27 @@ class EnumExt(six.with_metaclass(EnumExtMeta, Enum)):
 
 
 def transaction(db):
-    """Auto transaction commit or rollback.
+    """Auto transaction commit or rollback. This worked with
+    ``session.autocommit=False``, the default behavior of ``flask-sqlalchemy``.
+    See more: http://flask-sqlalchemy.pocoo.org/2.3/api/#sessions
+
+    Just use for view func and **don't use nested**.
+    **Once and only once commit in view func end.**
+
+    Examples::
+
+        from hobbit_core.flask_hobbit.db import transaction
+
+        from app.exts import db
+
+
+        @bp.route('/users/', methods=['POST'])
+        @transaction(db)
+        def create(username, password):
+            user = User(username=username, password=password)
+            db.session.add(user)
+            # db.session.commit() and do others may error occurred
+            db.session.commit()  # end view function, commit once and only once
     """
     session = db.session
 

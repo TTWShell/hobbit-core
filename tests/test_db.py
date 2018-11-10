@@ -114,6 +114,8 @@ class TestTransaction(BaseTest):
         assert len(session.query(User).all()) == 2
 
     def test_transaction_decorator_nested(self, session):
+        """It's not recommended.
+        """
         @transaction(db)
         def create_user1():
             user = User(username='test1', email='1@b.com', password='1')
@@ -158,6 +160,8 @@ class TestTransaction(BaseTest):
         assert len(session.query(User).all()) == 1
 
     def test_transaction_decorator_nested_2(self, session):
+        """It's not recommended.
+        """
         @transaction(db)
         def create_user1():
             user = User(username='test1', email='1@b.com', password='1')
