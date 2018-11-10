@@ -189,7 +189,7 @@ class EnumExt(six.with_metaclass(EnumExtMeta, Enum)):
         return opts
 
 
-def transaction(db):
+def transaction(db, nested=False):
     """Auto transaction commit or rollback. This worked with
     ``session.autocommit=False``, the default behavior of ``flask-sqlalchemy``.
     See more: http://flask-sqlalchemy.pocoo.org/2.3/api/#sessions
@@ -212,22 +212,20 @@ def transaction(db):
             # db.session.commit() and do others may error occurred
             db.session.commit()  # end view function, commit once and only once
     """
-    session = db.session
 
     def wrapper(func):
         @wraps(func)
         def inner(*args, **kwargs):
-            session.begin_nested()
             try:
-                resp = func(*args, **kwargs)
-                unflushed = (session.new, session.dirty, session.deleted)
-                if any(unflushed):
-                    session.commit()  # commit - begin_nested()
-                session.commit()  # commit - begin(), transaction finished
+                with db.session.begin_nested():
+                    resp = func(*args, **kwargs)
+                if not nested:
+                    # commit - begin(), transaction finished
+                    db.session.commit()
                 return resp
             except Exception as e:
-                session.rollback()
-                session.remove()
+                db.session.rollback()
+                db.session.remove()
                 raise e
         return inner
     return wrapper

@@ -2,6 +2,7 @@
 import time
 import pytest
 
+from sqlalchemy.exc import ResourceClosedError
 from hobbit_core.flask_hobbit.db import EnumExt, transaction
 
 from . import BaseTest
@@ -79,32 +80,31 @@ class TestEnumExt(BaseTest):
 
 class TestTransaction(BaseTest):
 
+    def clear_user(self):
+        User.query.delete()
+        db.session.commit()
+        db.session.remove()
+        assert User.query.all() == []
+
     def test_transaction_decorator(self, session):
         @transaction(db)
-        def create_user(raise_exception=True):
+        def create_user(raise_exception):
             user1 = User(username='test1', email='1@b.com', password='1')
             db.session.add(user1)
             user2 = User(username='test2', email='2@b.com', password='1')
             db.session.add(user2)
-            db.session.commit()
             if raise_exception:
                 raise Exception('')
 
         # assert user1 and user2 all rollback
         with pytest.raises(Exception):
-            create_user()
+            create_user(raise_exception=True)
         assert User.query.all() == []
         assert session.query(User).all() == []
 
         create_user(raise_exception=False)
         assert len(User.query.all()) == 2
         assert len(session.query(User).all()) == 2
-
-        # assert user1 and user2 all created
-        User.query.delete()
-        db.session.commit()
-        assert User.query.all() == []
-        assert session.query(User).all() == []
 
         with pytest.raises(Exception):
             create_user(raise_exception=False)
@@ -113,9 +113,21 @@ class TestTransaction(BaseTest):
         assert len(User.query.all()) == 2
         assert len(session.query(User).all()) == 2
 
-    def test_transaction_decorator2(self, session):
+    def test_can_not_used_with_commit_raised(self, app):
         @transaction(db)
-        def create_user1(commit_inner=True):
+        def create_user():
+            user = User(username='test1', email='1@b.com', password='1')
+            db.session.add(user)
+            db.session.commit()
+
+        msg = 'This transaction is closed'
+        with pytest.raises(ResourceClosedError, match=msg):
+            create_user()
+        assert User.query.all() == []
+
+    def test_used_with_begin_nested(self, session):
+        @transaction(db)
+        def create_user(commit_inner):
             with db.session.begin_nested():
                 user = User(username='test1', email='1@b.com', password='1')
                 db.session.add(user)
@@ -126,129 +138,87 @@ class TestTransaction(BaseTest):
             if commit_inner:
                 db.session.commit()
 
-        create_user1(commit_inner=False)
+        create_user(commit_inner=False)
+        assert len(session.query(User).all()) == 2
+
+        self.clear_user()
+        msg = 'This transaction is closed'
+        with pytest.raises(ResourceClosedError, match=msg):
+            create_user(commit_inner=True)
         assert len(session.query(User).all()) == 0
 
-        db.session.remove()
-        create_user1(commit_inner=True)
-        assert len(session.query(User).all()) == 2
-        session.query(User).delete()
-        session.commit()
-        db.session.remove()
-
-        # assert use db.session.commit() in begin_nested may error occurred.
-        @transaction(db)
-        def create_user2(count=0):
-            with db.session.begin_nested():
-                user = User(username='test1', email='1@b.com', password='1')
-                db.session.add(user)
-                for i in range(count):
-                    db.session.commit()
-
-            with db.session.begin_nested():
-                user = User(username='test1', email='1@b.com', password='1')
-                db.session.add(user)
-            db.session.commit()
-
-        for count in range(3):
-            with pytest.raises(Exception):
-                create_user2(count)
-            assert len(session.query(User).all()) == 0
-
-        with pytest.raises(Exception):
-            create_user2(3)
-        assert len(session.query(User).all()) == 1
-
-    def test_transaction_decorator_nested(self, session):
-        """It's not recommended.
-        """
+    def test_fall_used(self, session):
         @transaction(db)
         def create_user1():
             user = User(username='test1', email='1@b.com', password='1')
             db.session.add(user)
 
         @transaction(db)
-        def create_user2(raise_exception=True):
+        def create_user2():
             user = User(username='test2', email='2@b.com', password='1')
             db.session.add(user)
-            if raise_exception:
-                raise Exception('')
 
-        @transaction(db)
-        def view_func(raise_exception=True):
+        def view_func1():
             create_user1()
-            assert User.query.first() is not None
-            create_user2(raise_exception=raise_exception)
+            create_user2()
 
-        # assert user1 and user2 all rollback
-        with pytest.raises(Exception):
-            view_func()
-        assert len(User.query.all()) == 0
-        assert len(session.query(User).all()) == 0
-
-        # assert user1 and user2 all created
-        view_func(raise_exception=False)
-        assert len(User.query.all()) == 2
+        view_func1()
         assert len(session.query(User).all()) == 2
+
+        # test exception
+        self.clear_user()
 
         def view_func2():
             create_user1()
-            assert User.query.first() is not None
+            raise Exception('')
             create_user2()
 
-        # assert user1 created and user2 rollback
-        User.query.delete()
-        db.session.commit()
-        assert len(User.query.all()) == 0
-        with pytest.raises(Exception):
+        with pytest.raises(Exception, match=''):
             view_func2()
-        assert len(User.query.all()) == 1
+
+        assert len(session.query(User).all()) == 1
+        assert session.query(User).first().username == 'test1'
+
+    def test_nested_self_raise(self, session):
+        @transaction(db)
+        def create_user():
+            user = User(username='test1', email='1@b.com', password='1')
+            db.session.add(user)
+
+        @transaction(db)
+        def view_func():
+            create_user()
+
+        msg = 'This transaction is closed'
+        with pytest.raises(ResourceClosedError, match=msg):
+            view_func()
+        assert len(session.query(User).all()) == 0
+
+    def test_nested_self_with_nested_arg_is_true(self, session):
+        @transaction(db, nested=True)
+        def create_user():
+            user = User(username='test1', email='1@b.com', password='1')
+            db.session.add(user)
+
+        @transaction(db)
+        def view_func():
+            create_user()
+            assert User.query.first() is not None
+
+        create_user()
+        assert len(session.query(User).all()) == 0
+        self.clear_user()
+
+        view_func()
         assert len(session.query(User).all()) == 1
 
-    def test_transaction_decorator_nested_2(self, session):
-        """It's not recommended.
-        """
-        @transaction(db)
-        def create_user1():
+    def test_nested_self_with_nested_arg_is_true_commit_raise(self, session):
+        @transaction(db, nested=True)
+        def create_user():
             user = User(username='test1', email='1@b.com', password='1')
             db.session.add(user)
             db.session.commit()
 
-        @transaction(db)
-        def create_user2(raise_exception=True):
-            user = User(username='test2', email='2@b.com', password='1')
-            db.session.add(user)
-            db.session.commit()
-            if raise_exception:
-                raise Exception('')
-
-        @transaction(db)
-        def view_func(raise_exception=True):
-            create_user1()
-            assert User.query.first() is not None
-            create_user2(raise_exception=raise_exception)
-
-        # assert user1 and user2 all rollback
-        with pytest.raises(Exception):
-            view_func()
-        assert len(User.query.all()) == 0
-        assert len(session.query(User).all()) == 0
-
-        # assert user1 and user2 all created
-        view_func(raise_exception=False)
-        assert len(User.query.all()) == 2
-        assert len(session.query(User).all()) == 2
-
-        def view_func2():
-            create_user1()
-            assert User.query.first() is not None
-            create_user2()
-
-        # assert user1 created and user2 rollback
-        User.query.delete()
-        db.session.commit()
-        assert len(User.query.all()) == 0
-        with pytest.raises(Exception):
-            view_func2()
-        assert len(User.query.all()) == 1
-        assert len(session.query(User).all()) == 1
+        msg = 'This transaction is closed'
+        with pytest.raises(ResourceClosedError, match=msg):
+            create_user()
