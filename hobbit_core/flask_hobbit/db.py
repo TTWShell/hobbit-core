@@ -197,6 +197,8 @@ def transaction(session, nested=False):
     **Can't** do ``session.commit()`` **in func**, **otherwise raise**
     ``sqlalchemy.exc.ResourceClosedError``: `This transaction is closed`.
 
+    **Must use the same session in decorator and decorated function**.
+
     Examples::
 
         from hobbit_core.flask_hobbit.db import transaction
@@ -218,6 +220,7 @@ def transaction(session, nested=False):
         def set_role(user, role):
             user.role = role
             # db.session.commit() error occurred
+
 
         @bp.route('/users/', methods=['POST'])
         @transaction(db.session)
