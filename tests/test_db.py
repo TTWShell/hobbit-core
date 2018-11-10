@@ -113,6 +113,52 @@ class TestTransaction(BaseTest):
         assert len(User.query.all()) == 2
         assert len(session.query(User).all()) == 2
 
+    def test_transaction_decorator2(self, session):
+        @transaction(db)
+        def create_user1(commit_inner=True):
+            with db.session.begin_nested():
+                user = User(username='test1', email='1@b.com', password='1')
+                db.session.add(user)
+
+            with db.session.begin_nested():
+                user = User(username='test2', email='2@b.com', password='1')
+                db.session.add(user)
+            if commit_inner:
+                db.session.commit()
+
+        create_user1(commit_inner=False)
+        assert len(session.query(User).all()) == 0
+
+        db.session.remove()
+        create_user1(commit_inner=True)
+        assert len(session.query(User).all()) == 2
+        session.query(User).delete()
+        session.commit()
+        db.session.remove()
+
+        # assert use db.session.commit() in begin_nested may error occurred.
+        @transaction(db)
+        def create_user2(count=0):
+            with db.session.begin_nested():
+                user = User(username='test1', email='1@b.com', password='1')
+                db.session.add(user)
+                for i in range(count):
+                    db.session.commit()
+
+            with db.session.begin_nested():
+                user = User(username='test1', email='1@b.com', password='1')
+                db.session.add(user)
+            db.session.commit()
+
+        for count in range(3):
+            with pytest.raises(Exception):
+                create_user2(count)
+            assert len(session.query(User).all()) == 0
+
+        with pytest.raises(Exception):
+            create_user2(3)
+        assert len(session.query(User).all()) == 1
+
     def test_transaction_decorator_nested(self, session):
         """It's not recommended.
         """

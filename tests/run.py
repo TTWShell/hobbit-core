@@ -11,6 +11,7 @@ class ConfigClass(object):
     SECRET_KEY = 'test secret key'
     SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/hobbit_core'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # SQLALCHEMY_ECHO = True
     TESTING = True
 
 
