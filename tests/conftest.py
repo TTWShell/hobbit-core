@@ -37,6 +37,16 @@ def session(app):
         sess.remove()
 
 
+@pytest.fixture(scope='function')
+def auto_session(app):
+    with app.app_context():
+        conn = tdb.engine.connect()
+        options = dict(bind=conn, binds={}, autocommit=True)
+        sess = tdb.create_scoped_session(options=options)
+        yield sess
+        sess.remove()
+
+
 #  borrowed from webargs
 class MockRequestParser(Parser):
     """A minimal parser implementation that parses mock requests."""

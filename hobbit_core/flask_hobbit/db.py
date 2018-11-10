@@ -189,12 +189,12 @@ class EnumExt(six.with_metaclass(EnumExtMeta, Enum)):
         return opts
 
 
-def transaction(db, nested=False):
+def transaction(session, nested=False):
     """Auto transaction commit or rollback. This worked with
     ``session.autocommit=False``, the default behavior of ``flask-sqlalchemy``.
     See more: http://flask-sqlalchemy.pocoo.org/2.3/api/#sessions
 
-    **Can't** do ``db.session.commit()`` **in func**, **otherwise raise**
+    **Can't** do ``session.commit()`` **in func**, **otherwise raise**
     ``sqlalchemy.exc.ResourceClosedError``: `This transaction is closed`.
 
     Examples::
@@ -205,7 +205,7 @@ def transaction(db, nested=False):
 
 
         @bp.route('/users/', methods=['POST'])
-        @transaction(db)
+        @transaction(db.session)
         def create(username, password):
             user = User(username=username, password=password)
             db.session.add(user)
@@ -214,13 +214,13 @@ def transaction(db, nested=False):
     You can nested use this decorator. Must set ``nested=True`` otherwise
     raise ``sqlalchemy.exc.ResourceClosedError``::
 
-        @transaction(db, nested=True)
+        @transaction(db.session, nested=True)
         def set_role(user, role):
             user.role = role
             # db.session.commit() error occurred
 
         @bp.route('/users/', methods=['POST'])
-        @transaction(db)
+        @transaction(db.session)
         def create(username, password):
             user = User(username=username, password=password)
             db.session.add(user)
@@ -228,19 +228,23 @@ def transaction(db, nested=False):
             set_role(user, 'admin')
     """
 
+    msg = 'May not as excepted when autocommit=True, please see: {}'.format(
+        'tests/test_db.py::TestTransaction::test_autocommittrue_not_excepted')
+    assert session.autocommit is False, msg
+
     def wrapper(func):
         @wraps(func)
         def inner(*args, **kwargs):
             try:
-                with db.session.begin_nested():
+                with session.begin_nested():
                     resp = func(*args, **kwargs)
                 if not nested:
                     # commit - begin(), transaction finished
-                    db.session.commit()
+                    session.commit()
                 return resp
             except Exception as e:
-                db.session.rollback()
-                db.session.remove()
+                session.rollback()
+                session.remove()
                 raise e
         return inner
     return wrapper

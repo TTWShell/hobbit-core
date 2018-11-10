@@ -87,7 +87,7 @@ class TestTransaction(BaseTest):
         assert User.query.all() == []
 
     def test_transaction_decorator(self, session):
-        @transaction(db)
+        @transaction(db.session)
         def create_user(raise_exception):
             user1 = User(username='test1', email='1@b.com', password='1')
             db.session.add(user1)
@@ -114,7 +114,7 @@ class TestTransaction(BaseTest):
         assert len(session.query(User).all()) == 2
 
     def test_can_not_used_with_commit_raised(self, app):
-        @transaction(db)
+        @transaction(db.session)
         def create_user():
             user = User(username='test1', email='1@b.com', password='1')
             db.session.add(user)
@@ -126,7 +126,7 @@ class TestTransaction(BaseTest):
         assert User.query.all() == []
 
     def test_used_with_begin_nested(self, session):
-        @transaction(db)
+        @transaction(db.session)
         def create_user(commit_inner):
             with db.session.begin_nested():
                 user = User(username='test1', email='1@b.com', password='1')
@@ -148,12 +148,12 @@ class TestTransaction(BaseTest):
         assert len(session.query(User).all()) == 0
 
     def test_fall_used(self, session):
-        @transaction(db)
+        @transaction(db.session)
         def create_user1():
             user = User(username='test1', email='1@b.com', password='1')
             db.session.add(user)
 
-        @transaction(db)
+        @transaction(db.session)
         def create_user2():
             user = User(username='test2', email='2@b.com', password='1')
             db.session.add(user)
@@ -180,12 +180,12 @@ class TestTransaction(BaseTest):
         assert session.query(User).first().username == 'test1'
 
     def test_nested_self_raise(self, session):
-        @transaction(db)
+        @transaction(db.session)
         def create_user():
             user = User(username='test1', email='1@b.com', password='1')
             db.session.add(user)
 
-        @transaction(db)
+        @transaction(db.session)
         def view_func():
             create_user()
 
@@ -195,12 +195,12 @@ class TestTransaction(BaseTest):
         assert len(session.query(User).all()) == 0
 
     def test_nested_self_with_nested_arg_is_true(self, session):
-        @transaction(db, nested=True)
+        @transaction(db.session, nested=True)
         def create_user():
             user = User(username='test1', email='1@b.com', password='1')
             db.session.add(user)
 
-        @transaction(db)
+        @transaction(db.session)
         def view_func():
             create_user()
             assert User.query.first() is not None
@@ -213,7 +213,7 @@ class TestTransaction(BaseTest):
         assert len(session.query(User).all()) == 1
 
     def test_nested_self_with_nested_arg_is_true_commit_raise(self, session):
-        @transaction(db, nested=True)
+        @transaction(db.session, nested=True)
         def create_user():
             user = User(username='test1', email='1@b.com', password='1')
             db.session.add(user)
@@ -222,3 +222,13 @@ class TestTransaction(BaseTest):
         msg = 'This transaction is closed'
         with pytest.raises(ResourceClosedError, match=msg):
             create_user()
+
+    def test_autocommittrue_not_excepted(self, auto_session, session):
+        msg = 'This transaction is closed'
+        with pytest.raises(ResourceClosedError, match=msg):
+            with auto_session.begin():  # start a transaction
+                user = User(username='test1', email='1@b.com', password='1')
+                auto_session.add(user)
+                auto_session.commit()
+
+        assert len(session.query(User).all()) == 1
