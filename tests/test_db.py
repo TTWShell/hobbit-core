@@ -232,3 +232,10 @@ class TestTransaction(BaseTest):
                 auto_session.commit()
 
         assert len(session.query(User).all()) == 1
+
+    def test_assert_autocommit_is_false_raised(self, auto_session):
+        msg = r'May not as excepted when autocommit=True.*'
+        with pytest.raises(AssertionError, match=msg):
+            @transaction(auto_session)
+            def create_user():
+                pass
