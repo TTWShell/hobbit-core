@@ -194,8 +194,8 @@ def transaction(db, nested=False):
     ``session.autocommit=False``, the default behavior of ``flask-sqlalchemy``.
     See more: http://flask-sqlalchemy.pocoo.org/2.3/api/#sessions
 
-    Just use for view func and **don't use nested**.
-    **Once and only once commit in view func end.**
+    **Can't** do ``db.session.commit()`` **in func**, **otherwise raise**
+    ``sqlalchemy.exc.ResourceClosedError``: `This transaction is closed`.
 
     Examples::
 
@@ -209,8 +209,23 @@ def transaction(db, nested=False):
         def create(username, password):
             user = User(username=username, password=password)
             db.session.add(user)
-            # db.session.commit() and do others may error occurred
-            db.session.commit()  # end view function, commit once and only once
+            # db.session.commit() error occurred
+
+    You can nested use this decorator. Must set ``nested=True`` otherwise
+    raise ``sqlalchemy.exc.ResourceClosedError``::
+
+        @transaction(db, nested=True)
+        def set_role(user, role):
+            user.role = role
+            # db.session.commit() error occurred
+
+        @bp.route('/users/', methods=['POST'])
+        @transaction(db)
+        def create(username, password):
+            user = User(username=username, password=password)
+            db.session.add(user)
+            db.session.flush()
+            set_role(user, 'admin')
     """
 
     def wrapper(func):
