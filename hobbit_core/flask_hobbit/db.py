@@ -191,13 +191,19 @@ class EnumExt(six.with_metaclass(EnumExtMeta, Enum)):
 
 def transaction(session, nested=False):
     """Auto transaction commit or rollback. This worked with
-    ``session.autocommit=False``, the default behavior of ``flask-sqlalchemy``.
+    ``session.autocommit=False`` (the default behavior of ``flask-sqlalchemy``)
+    or ``session.autocommit=True``.
     See more: http://flask-sqlalchemy.pocoo.org/2.3/api/#sessions
 
-    **Can't** do ``session.commit()`` **in func**, **otherwise raise**
-    ``sqlalchemy.exc.ResourceClosedError``: `This transaction is closed`.
+    Tips:
+        * **Can't** do ``session.commit()`` **in func**, **otherwise raise**
+          ``sqlalchemy.exc.ResourceClosedError``: `This transaction is closed`.
 
-    **Must use the same session in decorator and decorated function**.
+        * **Must use the same session in decorator and decorated function**.
+
+        * **We can use nested** if keep top decorated
+          by ``@transaction(session, nested=False)`` and all subs decorated
+          by ``@transaction(session, nested=True)``.
 
     Examples::
 
@@ -213,8 +219,9 @@ def transaction(session, nested=False):
             db.session.add(user)
             # db.session.commit() error occurred
 
-    You can nested use this decorator. Must set ``nested=True`` otherwise
-    raise ``sqlalchemy.exc.ResourceClosedError``::
+    We can nested use this decorator. Must set ``nested=True`` otherwise
+    raise ``ResourceClosedError`` (session.autocommit=False) or
+    raise ``InvalidRequestError`` (session.autocommit=True)::
 
         @transaction(db.session, nested=True)
         def set_role(user, role):
@@ -231,13 +238,12 @@ def transaction(session, nested=False):
             set_role(user, 'admin')
     """
 
-    msg = 'May not as excepted when autocommit=True, please see: {}'.format(
-        'tests/test_db.py::TestTransaction::test_autocommittrue_not_excepted')
-    assert session.autocommit is False, msg
-
     def wrapper(func):
         @wraps(func)
         def inner(*args, **kwargs):
+            if session.autocommit is True and nested is False:
+                session.begin()  # start a transaction
+
             try:
                 with session.begin_nested():
                     resp = func(*args, **kwargs)

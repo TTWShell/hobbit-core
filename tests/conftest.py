@@ -28,7 +28,7 @@ def client(app, request):
 
 
 @pytest.fixture(scope='function')
-def session(app):
+def assert_session(app):
     with app.app_context():
         conn = tdb.engine.connect()
         options = dict(bind=conn, binds={})
@@ -38,13 +38,27 @@ def session(app):
 
 
 @pytest.fixture(scope='function')
+def db_session(app):
+    with app.app_context():
+        sess = tdb.session
+        assert sess.autocommit is False
+        return sess
+
+
+@pytest.fixture(scope='function')
 def auto_session(app):
     with app.app_context():
         conn = tdb.engine.connect()
         options = dict(bind=conn, binds={}, autocommit=True)
         sess = tdb.create_scoped_session(options=options)
+        assert sess.autocommit is True
         yield sess
         sess.remove()
+
+
+@pytest.fixture(scope='function', params=['db_session', 'auto_session'])
+def session(request):
+    return request.getfixturevalue(request.param)
 
 
 #  borrowed from webargs
