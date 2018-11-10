@@ -97,7 +97,7 @@ class TestTransaction(BaseTest):
                 raise Exception('')
 
         # assert user1 and user2 all rollback
-        with pytest.raises(Exception):
+        with pytest.raises(Exception, match=''):
             create_user(raise_exception=True)
         assert User.query.all() == []
         assert session.query(User).all() == []
@@ -106,7 +106,7 @@ class TestTransaction(BaseTest):
         assert len(User.query.all()) == 2
         assert len(session.query(User).all()) == 2
 
-        with pytest.raises(Exception):
+        with pytest.raises(Exception, match=''):
             create_user(raise_exception=False)
             assert len(User.query.all()) == 2
             create_user(raise_exception=False)
