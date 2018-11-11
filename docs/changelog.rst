@@ -1,6 +1,11 @@
 Change history
 ==============
 
+1.3.0a3 (2018-11-11)
+
+* Hobbit startproject cmd support celery option.
+* Refactor db.transaction decorator, worked either autocommit True or False.
+
 1.3.0a2 (2018-11-06)
 
 * Foreign key fields support ondelete, onupdate.

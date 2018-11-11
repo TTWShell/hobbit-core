@@ -189,13 +189,21 @@ class EnumExt(six.with_metaclass(EnumExtMeta, Enum)):
         return opts
 
 
-def transaction(db):
+def transaction(session, nested=False):
     """Auto transaction commit or rollback. This worked with
-    ``session.autocommit=False``, the default behavior of ``flask-sqlalchemy``.
+    ``session.autocommit=False`` (the default behavior of ``flask-sqlalchemy``)
+    or ``session.autocommit=True``.
     See more: http://flask-sqlalchemy.pocoo.org/2.3/api/#sessions
 
-    Just use for view func and **don't use nested**.
-    **Once and only once commit in view func end.**
+    Tips:
+        * **Can't** do ``session.commit()`` **in func**, **otherwise raise**
+          ``sqlalchemy.exc.ResourceClosedError``: `This transaction is closed`.
+
+        * **Must use the same session in decorator and decorated function**.
+
+        * **We can use nested** if keep top decorated
+          by ``@transaction(session, nested=False)`` and all subs decorated
+          by ``@transaction(session, nested=True)``.
 
     Examples::
 
@@ -205,29 +213,48 @@ def transaction(db):
 
 
         @bp.route('/users/', methods=['POST'])
-        @transaction(db)
+        @transaction(db.session)
         def create(username, password):
             user = User(username=username, password=password)
             db.session.add(user)
-            # db.session.commit() and do others may error occurred
-            db.session.commit()  # end view function, commit once and only once
+            # db.session.commit() error occurred
+
+    We can nested use this decorator. Must set ``nested=True`` otherwise
+    raise ``ResourceClosedError`` (session.autocommit=False) or
+    raise ``InvalidRequestError`` (session.autocommit=True)::
+
+        @transaction(db.session, nested=True)
+        def set_role(user, role):
+            user.role = role
+            # db.session.commit() error occurred
+
+
+        @bp.route('/users/', methods=['POST'])
+        @transaction(db.session)
+        def create(username, password):
+            user = User(username=username, password=password)
+            db.session.add(user)
+            db.session.flush()
+            set_role(user, 'admin')
     """
-    session = db.session
 
     def wrapper(func):
         @wraps(func)
         def inner(*args, **kwargs):
-            session.begin_nested()
+            if session.autocommit is True and nested is False:
+                session.begin()  # start a transaction
+
             try:
-                resp = func(*args, **kwargs)
-                unflushed = (session.new, session.dirty, session.deleted)
-                if any(unflushed):
-                    session.commit()  # commit - begin_nested()
-                session.commit()  # commit - begin(), transaction finished
-                return resp
+                with session.begin_nested():
+                    resp = func(*args, **kwargs)
+                if not nested:
+                    # commit - begin(), transaction finished
+                    session.commit()
             except Exception as e:
-                session.rollback()
-                session.remove()
+                if not nested:
+                    session.rollback()
+                    session.remove()
                 raise e
+            return resp
         return inner
     return wrapper
