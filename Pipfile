@@ -6,17 +6,19 @@ name = "pypi"
 [packages]
 click = "*"
 jinja2 = "*"
-pypandoc = "*"
 tox = "*"
-pytest = "*"
-pytest-cov = "*"
-flask-sphinx-themes = "*"
-sphinx = "*"
-sphinx-autobuild = "*"
-recommonmark = "*"
-pytest-env = "*"
 
 [dev-packages]
+sphinx = "*"
+sphinx-autobuild = "*"
+flask-sphinx-themes = "*"
+psycopg2 = "*"
+psycopg2-binary = "*"
+pytest = "*"
+pytest-cov = "*"
+pytest-env = "*"
+flake8 = "*"
+twine = "*"
 
 [requires]
 python_version = "3.7"
