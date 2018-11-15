@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 import json
 
 from sqlalchemy.orm import exc as orm_exc
@@ -38,4 +39,6 @@ class TestErrHandler(BaseTest):
         assert resp.status_code == 500
         data = json.loads(resp.get_data())
         assert data['message'] == u'服务器内部错误'
-        assert data['detail'] == "Exception('msg')"
+        # py27,py36 == "Exception('msg',)"
+        # py37 == "Exception('msg')"
+        assert data['detail'].startswith("Exception('msg'")
