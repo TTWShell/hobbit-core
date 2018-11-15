@@ -1,6 +1,10 @@
 Change history
 ==============
 
+1.3.0a4 (2018-11-15)
+
+* Add ErrHandler.handler_assertion_error.
+
 1.3.0a3 (2018-11-11)
 
 * Hobbit startproject cmd support celery option.
