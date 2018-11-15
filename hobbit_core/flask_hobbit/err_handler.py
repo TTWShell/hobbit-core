@@ -33,17 +33,25 @@ you can change it
         code, message, detail = 500, RESP_MSGS[500], repr(e)
 
         if isinstance(e, orm_exc.NoResultFound):
-            code, message, detail = 404, '源数据未找到', repr(e)
+            code, message, detail = 404, u'源数据未找到', repr(e)
 
+        return Result(gen_response(code, message, detail), status=code)
+
+    @classmethod
+    def handler_assertion_error(cls, e):
+        code, message, detail = 422, str(e), repr(e)
         return Result(gen_response(code, message, detail), status=code)
 
     @classmethod
     def handler_others(cls, e):
         traceback.print_exc()
-        return ServerErrorResult(500, detail=repr(e))
+        return ServerErrorResult(code=500, detail=repr(e))
 
     @classmethod
     def handler(cls, e):
-        exc = 'others' if not hasattr(e, '__module__') else \
-            e.__module__.replace('.', '_')
+        exc = 'others'
+        if hasattr(e, '__module__'):
+            exc = e.__module__.replace('.', '_')
+        elif isinstance(e, AssertionError):
+            exc = 'assertion_error'
         return getattr(cls, 'handler_{}'.format(exc), cls.handler_others)(e)
