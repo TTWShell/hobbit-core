@@ -1,9 +1,11 @@
 # -*- encoding: utf-8 -*-
-import traceback
+import logging
 
 from sqlalchemy.orm import exc as orm_exc
 
 from .response import Result, ServerErrorResult, gen_response, RESP_MSGS
+
+logger = logging.getLogger(__name__)
 
 
 class ErrHandler(object):
@@ -44,7 +46,7 @@ you can change it
 
     @classmethod
     def handler_others(cls, e):
-        traceback.print_exc()
+        logging.error('UncheckedException:', exc_info=1)
         return ServerErrorResult(code=500, detail=repr(e))
 
     @classmethod
