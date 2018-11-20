@@ -1,6 +1,10 @@
 Change history
 ==============
 
+1.3.0a5 (2018-11-20)
+
+* traceback.print_exc() --> logging.error.
+
 1.3.0a4 (2018-11-15)
 
 * Add ErrHandler.handler_assertion_error.
