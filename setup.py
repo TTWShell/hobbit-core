@@ -23,6 +23,7 @@ def gen_data(data_root='hobbit/static/bootstrap'):
 package_data = gen_data()
 assert len(package_data) == 30 + 4, \
     'nums of tepl files error, {}'.format(len(package_data))
+package_data.append('py.typed')
 
 
 try:
@@ -42,6 +43,7 @@ setup(
     author='Legolas Bloom',
     author_email='zhanhsw@gmail.com',
     url='https://github.com/TTWShell/hobbit-core',
+    zip_safe=False,
     packages=find_packages(),
     package_data={'hobbit_core': package_data},
     install_requires=[

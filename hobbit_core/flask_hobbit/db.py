@@ -1,12 +1,13 @@
-# -*- encoding: utf-8 -*-
-from functools import wraps
 from enum import Enum, EnumMeta
-import six
+from functools import wraps
+from mypy_extensions import TypedDict
+from typing import Any, Union, List, Dict
 
 from sqlalchemy import Integer, Column, ForeignKey, func, DateTime
+from sqlalchemy.orm.session import Session
 
 
-class SurrogatePK(object):
+class SurrogatePK:
     """A mixin that add ``id``、``created_at`` and ``updated_at`` columns
     to any declarative-mapped class.
 
@@ -17,7 +18,7 @@ class SurrogatePK(object):
     **updated_at**: Auto save ``datetime.now()`` when row updated.
     """
 
-    __table_args__ = {'extend_existing': True}
+    __table_args__ = {'extend_existing': True}  # type: ignore
 
     id = Column(Integer, primary_key=True)
     created_at = Column(
@@ -26,7 +27,7 @@ class SurrogatePK(object):
         DateTime, nullable=False, server_default=func.now(),
         onupdate=func.now())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """You can set label property.
 
         Returns:
@@ -37,8 +38,9 @@ class SurrogatePK(object):
             label=getattr(self, 'label', ''))
 
 
-def reference_col(tablename, nullable=False, pk_name='id',
-                  onupdate=None, ondelete=None, **kwargs):
+def reference_col(tablename: str, nullable: bool = False, pk_name: str = 'id',
+                  onupdate: str = None, ondelete: str = None, **kwargs: Any) \
+        -> Column:
     """Column that adds primary key foreign key reference.
 
     Args:
@@ -91,7 +93,13 @@ class EnumExtMeta(EnumMeta):
         return obj
 
 
-class EnumExt(six.with_metaclass(EnumExtMeta, Enum)):
+class OptType(TypedDict, total=False):
+    key: int
+    value: str
+    label: str
+
+
+class EnumExt(Enum, metaclass=EnumExtMeta):
     """ Extension for serialize/deserialize sqlalchemy enum field.
 
     Be sure ``type(key)`` is ``int`` and ``type(value)`` is ``str``
@@ -110,7 +118,7 @@ class EnumExt(six.with_metaclass(EnumExtMeta, Enum)):
     """
 
     @classmethod
-    def strict_dump(cls, label, verbose=False):
+    def strict_dump(cls, label: str, verbose: bool = False) -> Union[int, str]:
         """Get key or value by label.
 
         Examples::
@@ -125,7 +133,7 @@ class EnumExt(six.with_metaclass(EnumExtMeta, Enum)):
         return cls[label].value[1 if verbose else 0]
 
     @classmethod
-    def dump(cls, label, verbose=False):
+    def dump(cls, label: str, verbose: bool = False) -> Dict[str, Any]:
         """Dump one label to option.
 
         Examples::
@@ -144,7 +152,7 @@ class EnumExt(six.with_metaclass(EnumExtMeta, Enum)):
         return ret
 
     @classmethod
-    def load(cls, val):
+    def load(cls, val: Union[int, str]) -> str:  # type: ignore
         """Get label by key or value. Return val when val is label.
 
         Examples::
@@ -158,15 +166,15 @@ class EnumExt(six.with_metaclass(EnumExtMeta, Enum)):
         """
 
         if val in cls.__members__:
-            return val
+            return val  # type: ignore
 
-        pos = 1 if isinstance(val, six.string_types) else 0
+        pos = 1 if isinstance(val, str) else 0
         for elem in cls:
             if elem.value[pos] == val:
                 return elem.name
 
     @classmethod
-    def to_opts(cls, verbose=False):
+    def to_opts(cls, verbose: bool = False) -> List[Dict[str, Any]]:
         """Enum to options.
 
         Examples::
@@ -189,7 +197,7 @@ class EnumExt(six.with_metaclass(EnumExtMeta, Enum)):
         return opts
 
 
-def transaction(session, nested=False):
+def transaction(session: Session, nested: bool = False):
     """Auto transaction commit or rollback. This worked with
     ``session.autocommit=False`` (the default behavior of ``flask-sqlalchemy``)
     or ``session.autocommit=True``.
