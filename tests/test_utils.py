@@ -8,6 +8,20 @@ from . import BaseTest, python2_only, python3_only
 
 class TestUtils(BaseTest):
 
+    def test_params_dict(self):
+        d = utils.ParamsDict({'1': 1})
+
+        updated_d = d.update({'2': 2})
+        # assert isinstance(updated_d, utils.ParamsDict)
+        assert updated_d == {'1': 1, '2': 2}
+        assert d == {'1': 1}
+
+        reupdated = updated_d.update({'3': 3})
+        # assert isinstance(reupdated, utils.ParamsDict)
+        assert reupdated == {'1': 1, '2': 2, '3': 3}
+        assert updated_d == {'1': 1, '2': 2}
+        assert d == {'1': 1}
+
     def test_dict2object(self):
         obj = utils.dict2object({'a': 2, 'c': 3})
         assert obj.a == 2

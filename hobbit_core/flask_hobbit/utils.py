@@ -24,7 +24,7 @@ class ParamsDict(dict):
     def update(self, other=None):
         """Update self by other Mapping and return self.
         """
-        ret = self.copy()
+        ret = ParamsDict(self.copy())
         if other is not None:
             for k, v in other.items() if isinstance(other, Mapping) else other:
                 ret[k] = v
