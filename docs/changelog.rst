@@ -1,6 +1,10 @@
 Change history
 ==============
 
+1.3.0a6 (2018-12-07)
+
+* Add index for created_at、updated_at cloumn.
+
 1.3.0a5 (2018-11-20)
 
 * traceback.print_exc() --> logging.error.
