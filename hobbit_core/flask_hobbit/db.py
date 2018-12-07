@@ -21,9 +21,9 @@ class SurrogatePK(object):
 
     id = Column(Integer, primary_key=True)
     created_at = Column(
-        DateTime, nullable=False, server_default=func.now())
+        DateTime, index=True, nullable=False, server_default=func.now())
     updated_at = Column(
-        DateTime, nullable=False, server_default=func.now(),
+        DateTime, index=True, nullable=False, server_default=func.now(),
         onupdate=func.now())
 
     def __repr__(self):
