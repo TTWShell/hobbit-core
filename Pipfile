@@ -19,6 +19,8 @@ pytest-cov = "*"
 pytest-env = "*"
 flake8 = "*"
 twine = "*"
+mypy = "*"
+mypy-extensions = "==0.4.1"
 
 [requires]
 python_version = "3.7"

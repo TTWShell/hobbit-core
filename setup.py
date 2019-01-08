@@ -58,6 +58,7 @@ setup(
         'marshmallow-enum>=1.4.1',
         'marshmallow-sqlalchemy>=0.14.1',
         'webargs>=4.0.0',
+        'mypy-extensions==0.4.1',
     ],
     entry_points={
         'console_scripts': 'hobbit = hobbit_core.hobbit:main'

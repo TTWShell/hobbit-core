@@ -33,7 +33,7 @@ jobs:
           command: |
             pip install flake8 pytest pytest-cov pytest-env
             pip install --editable .
-            pip install celery mypy_extensions
+            pip install celery
       - run:
           name: use flake8 check self
           command: flake8 .
@@ -65,7 +65,7 @@ jobs:
           command: |
             pip install flake8 pytest pytest-cov pytest-env
             pip install --editable .
-            pip install celery mypy_extensions
+            pip install celery
       - run:
           name: use flake8 check self
           command: flake8 .
