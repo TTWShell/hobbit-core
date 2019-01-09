@@ -2,10 +2,13 @@ from collections import Mapping
 import inspect
 import os
 import re
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 from unicodedata import normalize
+import importlib
+import fnmatch
 
 from flask import request
+from flask_sqlalchemy import model
 from marshmallow import Schema
 from webargs.flaskparser import use_kwargs as base_use_kwargs, parser
 
@@ -161,3 +164,40 @@ def use_kwargs(argmap, schema_kwargs: Optional[Dict] = None, **kwargs: Any):
         return argmap.__class__(**argmap_kwargs)
 
     return base_use_kwargs(factory, **kwargs)
+
+
+def import_subs(locals_, modules_only: bool = False) -> List[str]:
+    """ Auto import submodules, used in __init__.py.
+
+    Args:
+
+        locals_: `locals()`.
+        modules_only: Only collect modules to __all__.
+
+    Examples::
+
+        # app/models/__init__.py
+        __all__ = import_subs(locals())
+    """
+
+    __all__ = []
+    for name in os.listdir(locals_['__path__'][0]):
+        if not fnmatch.fnmatch(name, '*.py') or name == '__init__.py':
+            continue
+
+        submodule = importlib.import_module(
+            f".{name.split('.')[0]}", locals_['__package__'])
+        __all__.append(submodule.__name__.split('.')[-1])
+
+        if modules_only:
+            continue
+
+        if hasattr(submodule, '__all__'):
+            __all__.extend(getattr(submodule, '__all__'))
+        else:
+            for name, obj in submodule.__dict__.items():
+                if isinstance(obj, (model.DefaultMeta, Schema)) or \
+                        (inspect.isclass(obj) and issubclass(obj, Schema)):
+                    __all__.append(name)
+                    locals_[name] = obj
+    return __all__
