@@ -1,9 +1,8 @@
-# -*- encoding: utf-8 -*-
 from collections import Mapping
 import inspect
 import os
 import re
-import six
+from typing import Any, Dict, Optional
 from unicodedata import normalize
 
 from flask import request
@@ -25,7 +24,7 @@ class ParamsDict(dict):
     def update(self, other=None):
         """Update self by other Mapping and return self.
         """
-        ret = self.copy()
+        ret = ParamsDict(self.copy())
         if other is not None:
             for k, v in other.items() if isinstance(other, Mapping) else other:
                 ret[k] = v
@@ -47,18 +46,18 @@ class dict2object(dict):
 
     """
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> Any:
         if name in self.keys():
             return self[name]
         raise AttributeError('object has no attribute {}'.format(name))
 
-    def __setattr__(self, name, value):
-        if not isinstance(name, six.string_types):
+    def __setattr__(self, name: str, value: Any) -> None:
+        if not isinstance(name, str):
             raise TypeError('key must be string type.')
         self[name] = value
 
 
-def secure_filename(filename):
+def secure_filename(filename: str) -> str:
     """Borrowed from werkzeug.utils.secure_filename.
 
     Pass it a filename and it will return a secure version of it. This
@@ -78,26 +77,12 @@ def secure_filename(filename):
         'i_contain_cool_umlauts.txt'
 
     """
-    if not isinstance(filename, six.text_type):
-        try:
-            filename = filename.decode('utf-8')
-        except UnicodeDecodeError:
-            raise Exception(
-                'filename must be {}'.format(six.text_type))
 
     for sep in os.path.sep, os.path.altsep:
         if sep:
             filename = filename.replace(sep, ' ')
 
-    filename = '_'.join(filename.split())
-
-    if isinstance(filename, six.text_type):
-        filename = normalize('NFKD', filename).encode('utf-8')
-        if not six.PY2:
-            filename = filename.decode('utf-8')
-
-    if six.PY2 and not isinstance(filename, six.text_type):
-        filename = filename.decode('utf-8', 'replace')
+    filename = normalize('NFKD', '_'.join(filename.split()))
 
     filename_strip_re = re.compile(u'[^A-Za-z0-9\u4e00-\u9fa5_.-]')
     filename = filename_strip_re.sub('', filename).strip('._')
@@ -119,10 +104,7 @@ def secure_filename(filename):
 def _get_init_args(instance, base_class):
     """Get instance's __init__ args and it's value when __call__.
     """
-    if six.PY2:
-        getargspec = inspect.getargspec
-    else:
-        getargspec = inspect.getfullargspec
+    getargspec = inspect.getfullargspec
 
     argspec = getargspec(base_class.__init__)
     no_defaults = argspec.args[:-len(argspec.defaults)]
@@ -139,7 +121,7 @@ def _get_init_args(instance, base_class):
     return kwargs
 
 
-def use_kwargs(argmap, schema_kwargs=None, **kwargs):
+def use_kwargs(argmap, schema_kwargs: Optional[Dict] = None, **kwargs: Any):
     """For fix ``Schema(partial=True)`` not work when used with
     ``@webargs.flaskparser.use_kwargs``. More details ``see webargs.core``.
 

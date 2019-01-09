@@ -1,18 +1,27 @@
-# -*- encoding: utf-8 -*-
+from typing import Optional, Any
+from mypy_extensions import TypedDict
+
 from flask.json import dumps
 from werkzeug import Response
 
 RESP_MSGS = {
-    401: u'未登录',
-    403: u'未授权',
-    404: u'不正确的链接地址',
-    422: u'请求数据校验失败',
+    401: '未登录',
+    403: '未授权',
+    404: '不正确的链接地址',
+    422: '请求数据校验失败',
 
-    500: u'服务器内部错误',
+    500: '服务器内部错误',
 }
 
 
-def gen_response(code, message='', detail=None):
+class RespType(TypedDict):
+    code: str
+    message: str
+    detail: Any
+
+
+def gen_response(code: int, message: str = '', detail: Optional[str] = None) \
+        -> RespType:
     """Func for generate response body.
 
     Args:
@@ -22,12 +31,12 @@ def gen_response(code, message='', detail=None):
         detail (object): For debug, detail server error msg.
 
     Returns:
-        dict: A dict contains args.
+        dict: A dict contains all args.
 
     """
     return {
         'code': str(code),
-        'message': message or RESP_MSGS.get(code, u'未知错误'),
+        'message': message or RESP_MSGS.get(code, '未知错误'),  # type: ignore
         'detail': detail,
     }
 
@@ -35,14 +44,14 @@ def gen_response(code, message='', detail=None):
 class Result(Response):
     """Base json response.
     """
-    status = 200
+    status = 200  # type: ignore
 
     def __init__(self, response=None, status=None, headers=None,
                  mimetype='application/json', content_type=None,
                  direct_passthrough=False):
         assert sorted(response.keys()) == ['code', 'detail', 'message'], \
             'Error response, must include keys: code, detail, message'
-        return super(Result, self).__init__(
+        super(Result, self).__init__(
             response=dumps(response, indent=0, separators=(',', ':')) + '\n',
             status=status or self.status, headers=headers, mimetype=mimetype,
             content_type=content_type, direct_passthrough=direct_passthrough)
@@ -53,8 +62,9 @@ class SuccessResult(Result):
     """
     status = 200
 
-    def __init__(self, message='', code=None, detail=None, status=None):
-        return super(SuccessResult, self).__init__(
+    def __init__(self, message: str = '', code: Optional[int] = None,
+                 detail: Any = None, status: Optional[int] = None):
+        super(SuccessResult, self).__init__(
             gen_response(code or self.status, message, detail),
             status or self.status)
 
@@ -64,8 +74,9 @@ class FailedResult(Result):
     """
     status = 400
 
-    def __init__(self, message='', code=None, detail=None):
-        return super(FailedResult, self).__init__(
+    def __init__(self, message: str = '', code: Optional[int] = None,
+                 detail: Any = None):
+        super(FailedResult, self).__init__(
             gen_response(code or self.status, message, detail), self.status)
 
 

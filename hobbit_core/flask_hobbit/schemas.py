@@ -1,13 +1,12 @@
-# -*- encoding: utf-8 -*-
-import six
-
-from marshmallow import Schema, fields, pre_load, post_load, post_dump
+from marshmallow import (
+    Schema as Schema_, fields, pre_load, post_load, post_dump,
+)
 from marshmallow_sqlalchemy.schema import ModelSchemaMeta
-from flask_marshmallow.sqla import ModelSchema
+from flask_marshmallow.sqla import ModelSchema as ModelSchema_
 from marshmallow_enum import EnumField
 
 
-class ORMSchema(ModelSchema):
+class ORMSchema(ModelSchema_):
     """Base schema for ModelSchema. See `webargs/issues/126
     <https://github.com/sloria/webargs/issues/126>`_.
 
@@ -59,7 +58,7 @@ class SchemaMixin(object):
         dateformat = '%Y-%m-%d %H:%M:%S'
 
 
-class PagedSchema(Schema):
+class PagedSchema(Schema_):
     """Base schema for list api pagination.
 
     Example::
@@ -136,8 +135,7 @@ class EnumSetMeta(ModelSchemaMeta):
         return schema
 
 
-@six.add_metaclass(EnumSetMeta)
-class ModelSchema(ORMSchema, SchemaMixin):
+class ModelSchema(ORMSchema, SchemaMixin, metaclass=EnumSetMeta):
     """Base ModelSchema for ``class Model(db.SurrogatePK)``.
 
     * Auto generate load and dump func for EnumField.

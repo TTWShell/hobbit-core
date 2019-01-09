@@ -1,4 +1,6 @@
-# -*- encoding: utf-8 -*-
+from mypy_extensions import TypedDict
+from typing import Union, List
+
 from flask_sqlalchemy import model
 
 from marshmallow import fields
@@ -29,7 +31,16 @@ PageParams = ParamsDict(
 """
 
 
-def pagination(obj, page, page_size, order_by='id', query_exp=None):
+class PaginationType(TypedDict):
+    items: list
+    page: int
+    page_size: int
+    total: int
+
+
+def pagination(obj: 'model.DefaultMeta', page: int, page_size: int,
+               order_by: Union[str, List[str]] = 'id', query_exp=None) \
+        -> PaginationType:
     """A pagination for sqlalchemy query.
 
     Args:

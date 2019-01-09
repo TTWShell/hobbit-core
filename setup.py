@@ -23,6 +23,7 @@ def gen_data(data_root='hobbit/static/bootstrap'):
 package_data = gen_data()
 assert len(package_data) == 30 + 4, \
     'nums of tepl files error, {}'.format(len(package_data))
+package_data.append('py.typed')
 
 
 try:
@@ -42,6 +43,7 @@ setup(
     author='Legolas Bloom',
     author_email='zhanhsw@gmail.com',
     url='https://github.com/TTWShell/hobbit-core',
+    zip_safe=False,
     packages=find_packages(),
     package_data={'hobbit_core': package_data},
     install_requires=[
@@ -55,7 +57,8 @@ setup(
         'Flask-SQLAlchemy>=2.3.2',
         'marshmallow-enum>=1.4.1',
         'marshmallow-sqlalchemy>=0.14.1',
-        'webargs>=4.0.0',
+        'webargs>=4.0.0, <5.0.0',
+        'mypy-extensions==0.4.1',
     ],
     entry_points={
         'console_scripts': 'hobbit = hobbit_core.hobbit:main'

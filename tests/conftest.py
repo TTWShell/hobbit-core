@@ -1,8 +1,5 @@
 import pytest
-try:
-    from unittest import mock
-except ImportError:
-    import mock  # python2
+from unittest import mock
 
 from webargs.core import Parser, get_value
 
