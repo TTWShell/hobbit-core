@@ -27,6 +27,10 @@ class SurrogatePK:
         DateTime, index=True, nullable=False, server_default=func.now(),
         onupdate=func.now())
 
+    __mapper_args__ = {
+        'order_by': 'id',
+    }
+
     def __repr__(self) -> str:
         """You can set label property.
 
