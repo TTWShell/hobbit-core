@@ -59,6 +59,7 @@ setup(
         'marshmallow-sqlalchemy>=0.14.1',
         'webargs>=4.0.0, <5.0.0',
         'mypy-extensions==0.4.1',
+        'pyyaml>=4.2b1',
     ],
     entry_points={
         'console_scripts': 'hobbit = hobbit_core.hobbit:main'
