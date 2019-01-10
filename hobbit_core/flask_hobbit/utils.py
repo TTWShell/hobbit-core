@@ -176,6 +176,8 @@ def import_subs(locals_, modules_only: bool = False) -> List[str]:
     Examples::
 
         # app/models/__init__.py
+        from hobbit_core.flask_hobbit.utils import import_subs
+
         __all__ = import_subs(locals())
     """
 
