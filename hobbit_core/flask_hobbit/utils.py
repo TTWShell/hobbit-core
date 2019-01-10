@@ -184,15 +184,22 @@ def import_subs(locals_, modules_only: bool = False) -> List[str]:
         if not name.endswith(('.py', '.pyc')) or name.startswith('__init__.'):
             continue
 
+        module_name = name.split('.')[0]
         submodule = importlib.import_module(
-            f".{name.split('.')[0]}", locals_['__package__'])
-        __all__.append(submodule.__name__.split('.')[-1])
+            f".{module_name}", locals_['__package__'])
+        __all__.append(module_name)
 
         if modules_only:
             continue
 
         if hasattr(submodule, '__all__'):
-            __all__.extend(getattr(submodule, '__all__'))
+            for attr in getattr(submodule, '__all__'):
+                if isinstance(attr, str):
+                    name, obj = attr, getattr(submodule, attr)
+                else:
+                    name, obj = attr.__name__, attr
+                locals_[name] = obj
+                __all__.append(name)
         else:
             for name, obj in submodule.__dict__.items():
                 if isinstance(obj, (model.DefaultMeta, Schema)) or \
