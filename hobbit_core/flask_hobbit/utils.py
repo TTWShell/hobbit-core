@@ -1,11 +1,10 @@
 from collections import Mapping
 import inspect
+import importlib
 import os
 import re
 from typing import Any, Dict, List, Optional
 from unicodedata import normalize
-import importlib
-import fnmatch
 
 from flask import request
 from flask_sqlalchemy import model
@@ -182,7 +181,7 @@ def import_subs(locals_, modules_only: bool = False) -> List[str]:
 
     __all__ = []
     for name in os.listdir(locals_['__path__'][0]):
-        if not fnmatch.fnmatch(name, '*.py') or name == '__init__.py':
+        if not name.endswith(('.py', '.pyc')) or name.startswith('__init__.'):
             continue
 
         submodule = importlib.import_module(
