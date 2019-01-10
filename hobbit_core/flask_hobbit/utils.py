@@ -179,7 +179,7 @@ def import_subs(locals_, modules_only: bool = False) -> List[str]:
         __all__ = import_subs(locals())
     """
 
-    __all__ = []
+    all_ = []
     for name in os.listdir(locals_['__path__'][0]):
         if not name.endswith(('.py', '.pyc')) or name.startswith('__init__.'):
             continue
@@ -187,7 +187,7 @@ def import_subs(locals_, modules_only: bool = False) -> List[str]:
         module_name = name.split('.')[0]
         submodule = importlib.import_module(
             f".{module_name}", locals_['__package__'])
-        __all__.append(module_name)
+        all_.append(module_name)
 
         if modules_only:
             continue
@@ -199,11 +199,11 @@ def import_subs(locals_, modules_only: bool = False) -> List[str]:
                 else:
                     name, obj = attr.__name__, attr
                 locals_[name] = obj
-                __all__.append(name)
+                all_.append(name)
         else:
             for name, obj in submodule.__dict__.items():
                 if isinstance(obj, (model.DefaultMeta, Schema)) or \
                         (inspect.isclass(obj) and issubclass(obj, Schema)):
-                    __all__.append(name)
+                    all_.append(name)
                     locals_[name] = obj
-    return __all__
+    return all_
