@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 import pytest
 
 from hobbit_core.flask_hobbit import utils
@@ -98,3 +97,24 @@ class TestUseKwargs(BaseTest):
     def test_base_use_kwargs_dictargmap_whitout_partial(self, client):
         resp = client.post('/base_use_kwargs_dictargmap_partial/', json={})
         assert resp.json == {'username': None, 'password': 'missing'}
+
+
+class TestImportSubs(BaseTest):
+
+    def test_import_subs(self):
+        from . import importsub
+        all_ = getattr(importsub, '__all__')
+        assert sorted(all_) == [
+            'A',
+            'G_VAR',
+            'PagedSchema',
+            'PagedUserSchema',
+            'User',
+            'UserSchema',
+            'b',
+            'models',
+            'others',
+            'paged_user_schemas',
+            'schemas',
+            'user_schemas'
+        ]
