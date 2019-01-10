@@ -3,7 +3,7 @@ from importlib import reload
 
 from hobbit_core.flask_hobbit import utils
 
-from . import BaseTest, python2_only, python3_only
+from . import BaseTest
 
 
 class TestUtils(BaseTest):
@@ -49,15 +49,6 @@ class TestUtils(BaseTest):
         for i, filename in enumerate(filenames):
             assert utils.secure_filename(filename) == excepted[i]
 
-    @python2_only
-    def test_secure_filename_py2(self):
-        with pytest.raises(
-                Exception, message="filename must be <type 'unicode'>"):
-            assert utils.secure_filename(
-                'i contain cool \xfcml\xe4uts.txt') == \
-                'i_contain_cool_umlauts.txt'
-
-    @python3_only
     def test_secure_filename_py3(self):
         assert utils.secure_filename(
             'i contain cool \xfcml\xe4uts.txt') == \
