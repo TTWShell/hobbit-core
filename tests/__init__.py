@@ -1,9 +1,7 @@
 import os
 import shutil
-import six
 import functools
 
-import pytest
 from flask_sqlalchemy import model
 
 from .run import app, db
@@ -47,7 +45,3 @@ def chdir(path):
             os.chdir(cwd)
         return inner
     return wrapper
-
-
-python2_only = pytest.mark.skipif(not six.PY2, reason='only support Python2')
-python3_only = pytest.mark.skipif(not six.PY3, reason='only support Python3')

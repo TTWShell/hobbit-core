@@ -1,11 +1,13 @@
 from collections import Mapping
 import inspect
+import importlib
 import os
 import re
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 from unicodedata import normalize
 
 from flask import request
+from flask_sqlalchemy import model
 from marshmallow import Schema
 from webargs.flaskparser import use_kwargs as base_use_kwargs, parser
 
@@ -161,3 +163,51 @@ def use_kwargs(argmap, schema_kwargs: Optional[Dict] = None, **kwargs: Any):
         return argmap.__class__(**argmap_kwargs)
 
     return base_use_kwargs(factory, **kwargs)
+
+
+def import_subs(locals_, modules_only: bool = False) -> List[str]:
+    """ Auto import submodules, used in __init__.py.
+
+    Args:
+
+        locals_: `locals()`.
+        modules_only: Only collect modules to __all__.
+
+    Examples::
+
+        # app/models/__init__.py
+        from hobbit_core.flask_hobbit.utils import import_subs
+
+        __all__ = import_subs(locals())
+
+    Auto collect Model's subclass, Schema's subclass and instance.
+    Others objects must defined in submodule.__all__.
+    """
+
+    all_ = []
+    for name in os.listdir(locals_['__path__'][0]):
+        if not name.endswith(('.py', '.pyc')) or name.startswith('__init__.'):
+            continue
+
+        module_name = name.split('.')[0]
+        submodule = importlib.import_module(
+            f".{module_name}", locals_['__package__'])
+        all_.append(module_name)
+
+        if modules_only:
+            continue
+
+        if hasattr(submodule, '__all__'):
+            for name in getattr(submodule, '__all__'):
+                if not isinstance(name, str):
+                    raise Exception(f'Invalid object {name} in __all__, '
+                                    f'must contain only strings.')
+                locals_[name] = getattr(submodule, name)
+                all_.append(name)
+        else:
+            for name, obj in submodule.__dict__.items():
+                if isinstance(obj, (model.DefaultMeta, Schema)) or \
+                        (inspect.isclass(obj) and issubclass(obj, Schema)):
+                    all_.append(name)
+                    locals_[name] = obj
+    return all_

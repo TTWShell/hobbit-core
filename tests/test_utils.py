@@ -1,9 +1,9 @@
-# -*- encoding: utf-8 -*-
 import pytest
+from importlib import reload
 
 from hobbit_core.flask_hobbit import utils
 
-from . import BaseTest, python2_only, python3_only
+from . import BaseTest
 
 
 class TestUtils(BaseTest):
@@ -49,15 +49,6 @@ class TestUtils(BaseTest):
         for i, filename in enumerate(filenames):
             assert utils.secure_filename(filename) == excepted[i]
 
-    @python2_only
-    def test_secure_filename_py2(self):
-        with pytest.raises(
-                Exception, message="filename must be <type 'unicode'>"):
-            assert utils.secure_filename(
-                'i contain cool \xfcml\xe4uts.txt') == \
-                'i_contain_cool_umlauts.txt'
-
-    @python3_only
     def test_secure_filename_py3(self):
         assert utils.secure_filename(
             'i contain cool \xfcml\xe4uts.txt') == \
@@ -98,3 +89,30 @@ class TestUseKwargs(BaseTest):
     def test_base_use_kwargs_dictargmap_whitout_partial(self, client):
         resp = client.post('/base_use_kwargs_dictargmap_partial/', json={})
         assert resp.json == {'username': None, 'password': 'missing'}
+
+
+class TestImportSubs(BaseTest):
+
+    def test_import_subs(self):
+        from . import importsub
+        all_ = getattr(importsub, '__all__')
+        assert sorted(all_) == [
+            'A',
+            'G_VAR',
+            'PagedSchema',
+            'PagedUserSchema',
+            'User',
+            'UserSchema',
+            'b',
+            'models',
+            'others',
+            'paged_user_schemas',
+            'schemas',
+            'user_schemas'
+        ]
+
+        setattr(importsub.others, '__all__', [importsub.others.A])
+        msg = "Invalid object <class 'tests.importsub.others.A'> " + \
+            "in __all__, must contain only strings."
+        with pytest.raises(Exception, match=msg):
+            reload(importsub)
