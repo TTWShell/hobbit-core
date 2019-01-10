@@ -179,6 +179,9 @@ def import_subs(locals_, modules_only: bool = False) -> List[str]:
         from hobbit_core.flask_hobbit.utils import import_subs
 
         __all__ = import_subs(locals())
+
+    Auto collect Model's subclass, Schema's subclass and instance.
+    Others objects must defined in submodule.__all__.
     """
 
     all_ = []
@@ -195,12 +198,11 @@ def import_subs(locals_, modules_only: bool = False) -> List[str]:
             continue
 
         if hasattr(submodule, '__all__'):
-            for attr in getattr(submodule, '__all__'):
-                if isinstance(attr, str):
-                    name, obj = attr, getattr(submodule, attr)
-                else:
-                    name, obj = attr.__name__, attr
-                locals_[name] = obj
+            for name in getattr(submodule, '__all__'):
+                if not isinstance(name, str):
+                    raise Exception(f'Invalid object {name} in __all__, '
+                                    f'must contain only strings.')
+                locals_[name] = getattr(submodule, name)
                 all_.append(name)
         else:
             for name, obj in submodule.__dict__.items():

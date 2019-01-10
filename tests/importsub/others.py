@@ -9,4 +9,4 @@ def b():
     pass
 
 
-__all__ = ['A', b, 'G_VAR']  # type: ignore
+__all__ = ['A', 'b', 'G_VAR']

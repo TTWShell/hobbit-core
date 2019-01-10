@@ -1,4 +1,5 @@
 import pytest
+from importlib import reload
 
 from hobbit_core.flask_hobbit import utils
 
@@ -118,3 +119,9 @@ class TestImportSubs(BaseTest):
             'schemas',
             'user_schemas'
         ]
+
+        setattr(importsub.others, '__all__', [importsub.others.A])
+        msg = "Invalid object <class 'tests.importsub.others.A'> " + \
+            "in __all__, must contain only strings."
+        with pytest.raises(Exception, match=msg):
+            reload(importsub)
