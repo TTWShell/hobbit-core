@@ -1,11 +1,3 @@
-{%- if example -%}
-from .example import bp
+from hobbit_core.flask_hobbit.utils import import_subs
 
-__all__ = [bp]
-{% else %}
-from flask import Blueprint
-
-bp = Blueprint('{{ project_name }}', __name__)
-
-__all__ = []
-{% endif %}
+__all__ = import_subs(locals(), modules_only=True)
