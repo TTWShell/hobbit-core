@@ -3,6 +3,7 @@ import inspect
 import importlib
 import os
 import re
+import sys
 from typing import Any, Dict, List, Optional
 from unicodedata import normalize
 
@@ -183,15 +184,17 @@ def import_subs(locals_, modules_only: bool = False) -> List[str]:
     Auto collect Model's subclass, Schema's subclass and instance.
     Others objects must defined in submodule.__all__.
     """
+    package = locals_['__package__']
+    path = locals_['__path__']
+    top_mudule = sys.modules[package]
 
     all_ = []
-    for name in os.listdir(locals_['__path__'][0]):
+    for name in os.listdir(path[0]):
         if not name.endswith(('.py', '.pyc')) or name.startswith('__init__.'):
             continue
 
         module_name = name.split('.')[0]
-        submodule = importlib.import_module(
-            f".{module_name}", locals_['__package__'])
+        submodule = importlib.import_module(f".{module_name}", package)
         all_.append(module_name)
 
         if modules_only:
@@ -202,12 +205,12 @@ def import_subs(locals_, modules_only: bool = False) -> List[str]:
                 if not isinstance(name, str):
                     raise Exception(f'Invalid object {name} in __all__, '
                                     f'must contain only strings.')
-                locals_[name] = getattr(submodule, name)
+                setattr(top_mudule, name, getattr(submodule, name))
                 all_.append(name)
         else:
             for name, obj in submodule.__dict__.items():
                 if isinstance(obj, (model.DefaultMeta, Schema)) or \
                         (inspect.isclass(obj) and issubclass(obj, Schema)):
+                    setattr(top_mudule, name, obj)
                     all_.append(name)
-                    locals_[name] = obj
     return all_
