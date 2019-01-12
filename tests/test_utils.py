@@ -110,6 +110,8 @@ class TestImportSubs(BaseTest):
             'schemas',
             'user_schemas'
         ]
+        for name in all_:
+            exec(f'from .importsub import {name}')
 
         setattr(importsub.others, '__all__', [importsub.others.A])
         msg = "Invalid object <class 'tests.importsub.others.A'> " + \

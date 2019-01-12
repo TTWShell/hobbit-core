@@ -9,11 +9,6 @@ from app import schemas
 bp = Blueprint('example', __name__)
 
 
-@bp.route('/ping/', methods=['GET'])
-def ping():
-    return 'ok'
-
-
 @bp.route('/users/', methods=['GET'])
 @use_kwargs(PageParams)
 def list_users(page, page_size, order_by):
