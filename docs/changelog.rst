@@ -1,37 +1,19 @@
 Change history
 ==============
 
-1.3.0a6 (2018-12-07)
+1.3.0 (2018-01-14)
+******************
 
-* Add index for created_at、updated_at cloumn.
-
-1.3.0a5 (2018-11-20)
-
-* traceback.print_exc() --> logging.error.
-
-1.3.0a4 (2018-11-15)
-
-* Add ErrHandler.handler_assertion_error.
-
-1.3.0a3 (2018-11-11)
-
-* Hobbit startproject cmd support celery option.
-* Refactor db.transaction decorator, worked either autocommit True or False.
-
-1.3.0a2 (2018-11-06)
-
-* Foreign key fields support ondelete, onupdate.
-
-1.3.0a1 (2018-11-05)
-
-* Refactor transaction decorator.
-
-1.3.0a0 (2018-11-1)
-
+* Add import_subs util for auto import models、schemas、views in module/__init__.py file.
+* Add index for created_at、updated_at cloumn and default order_by id.
 * Add validate for PageParams.
-* pagination return dict instead of class.
-* Add transaction decorator.
 * Add hobbit gen cmd for auto render views.py, models.py, schemas.py etc when start a feature dev.
+* Add ErrHandler.handler_assertion_error.
+* Add db.transaction decorator, worked either autocommit True or False.
+* pagination return dict instead of class, order_by can set None for
+* traceback.print_exc() --> logging.error.
+* Foreign key fields support ondelete, onupdate.
+* Hobbit startproject cmd support celery option.
 
 1.2.5 (2018-10-30)
 ******************
