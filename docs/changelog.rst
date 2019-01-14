@@ -1,7 +1,7 @@
 Change history
 ==============
 
-1.3.0 (2018-01-14)
+1.3.0 (2019-01-14)
 ******************
 
 * Add import_subs util for auto import models、schemas、views in module/__init__.py file.
