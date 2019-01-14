@@ -39,7 +39,7 @@ class PaginationType(TypedDict):
 
 
 def pagination(obj: 'model.DefaultMeta', page: int, page_size: int,
-               order_by: Union[str, List[str]] = 'id', query_exp=None) \
+               order_by: Union[str, List[str], None] = 'id', query_exp=None) \
         -> PaginationType:
     """A pagination for sqlalchemy query.
 
@@ -47,7 +47,7 @@ def pagination(obj: 'model.DefaultMeta', page: int, page_size: int,
         obj (db.Model): Model class like User.
         page (int): Page index.
         page_size (int): Row's count per page.
-        order_by (str, list): Example: 'id'、['-id', 'column_name'].
+        order_by (str, list, None): Example: 'id'、['-id', 'column_name'].
         query_exp (flask_sqlalchemy.BaseQuery): Query like \
             ``User.query.filter_by(id=1)``.
 
@@ -58,28 +58,28 @@ def pagination(obj: 'model.DefaultMeta', page: int, page_size: int,
     if not isinstance(obj, model.DefaultMeta):
         raise Exception('first arg obj must be model.')
 
-    if not isinstance(order_by, list):
-        order_by = [order_by]
-
-    order_by = [i for i in order_by if i]  # exclude ''
-
-    columns = {i.name for i in obj.__table__.columns}
-    diff = {c.lstrip('-') for c in order_by} - columns
-    if diff:
-        raise Exception('columns {} not exist in {} model'.format(diff, obj))
-
-    order_exp = []
-    for column in order_by:
-        if column.startswith('-'):
-            order_exp.append(getattr(obj, column.lstrip('-')).desc())
-        else:
-            order_exp.append(getattr(obj, column))
-
     qexp = query_exp or getattr(obj, 'query')
 
-    items = qexp.order_by(*order_exp).paginate(
-        page, page_size, error_out=False)
+    if order_by:
+        if not isinstance(order_by, list):
+            order_by = [order_by]
 
+        order_by = [i for i in order_by if i]  # exclude ''
+
+        columns = {i.name for i in obj.__table__.columns}
+        diff = {c.lstrip('-') for c in order_by} - columns
+        if diff:
+            raise Exception(f'columns {diff} not exist in {obj} model')
+
+        order_exp = []
+        for column in order_by:
+            if column.startswith('-'):
+                order_exp.append(getattr(obj, column.lstrip('-')).desc())
+            else:
+                order_exp.append(getattr(obj, column))
+        qexp = qexp.order_by(*order_exp)
+
+    items = qexp.paginate(page, page_size, error_out=False)
     return {
         'items': items.items, 'page': page, 'page_size': page_size,
         'total': items.total,
