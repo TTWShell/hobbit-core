@@ -1,6 +1,11 @@
 Change history
 ==============
 
+1.3.1 (2019-02-26)
+******************
+
+* The strict parameter is removed in marshmallow >= 3.0.0.
+
 1.3.0 (2019-01-14)
 ******************
 

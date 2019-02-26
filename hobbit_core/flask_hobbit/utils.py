@@ -6,9 +6,11 @@ import re
 import sys
 from typing import Any, Dict, List, Optional
 from unicodedata import normalize
+from distutils.version import LooseVersion
 
 from flask import request
 from flask_sqlalchemy import model
+import marshmallow
 from marshmallow import Schema
 from webargs.flaskparser import use_kwargs as base_use_kwargs, parser
 
@@ -158,8 +160,9 @@ def use_kwargs(argmap, schema_kwargs: Optional[Dict] = None, **kwargs: Any):
             'partial': False,  # fix missing=None not work
             'only': only or None,
             'context': {"request": request},
-            'strict': True,
         })
+        if tuple(LooseVersion(marshmallow.__version__).version)[0] < 3:
+            argmap_kwargs['strict'] = True
 
         return argmap.__class__(**argmap_kwargs)
 
