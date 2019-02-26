@@ -242,14 +242,14 @@ class TestTransaction(BaseTest):
             create_user()
 
     def test_autocommit_use_nested_alone_raise(self, auto_session):
-            @transaction(auto_session, nested=True)
-            def create_user():
-                pass
+        @transaction(auto_session, nested=True)
+        def create_user():
+            pass
 
-            msg = "Can't start a SAVEPOINT transaction " + \
-                "when no existing transaction is in progress"
-            with pytest.raises(InvalidRequestError, match=msg):
-                create_user()
+        msg = "Can't start a SAVEPOINT transaction " + \
+            "when no existing transaction is in progress"
+        with pytest.raises(InvalidRequestError, match=msg):
+            create_user()
 
     def test_autocommittrue_not_excepted(self, auto_session, assert_session):
         msg = 'This transaction is closed'
@@ -259,5 +259,5 @@ class TestTransaction(BaseTest):
                 auto_session.add(user)
                 auto_session.commit()
 
-        # assert not rollback. Our transaction decorator worked as excepted. 😊
+        # assert not rollback. Be very careful when using commit. 😒😒😒😒
         assert len(assert_session.query(User).all()) == 1
