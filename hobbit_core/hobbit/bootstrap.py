@@ -22,7 +22,7 @@ def cli(ctx, force):
               type=click.IntRange(1024, 65535))
 @click.option('-d', '--dist', type=click.Path(), required=False,
               help='Dir for new project.')
-@click.option('-t', '--template', type=click.Choice(['shire']),
+@click.option('-t', '--template', type=click.Choice(['shire', 'expirement']),
               default='shire', help='Template name.')
 @click.option('-f', '--force', default=False, is_flag=True,
               help='Force render files, covered if file exist.')

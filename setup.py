@@ -21,7 +21,7 @@ def gen_data(data_root='hobbit/static/bootstrap'):
 
 
 package_data = gen_data()
-assert len(package_data) == 31 + 4, \
+assert len(package_data) == 31 + 4 + 32, \
     'nums of tepl files error, {}'.format(len(package_data))
 package_data.append('py.typed')
 

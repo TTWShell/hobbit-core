@@ -1,0 +1,16 @@
+from app.exts import celery, db
+
+from app.models import User
+
+
+@celery.task
+def add(x, y):
+    return x + y
+
+
+@celery.task
+def update_user(id, new_nick):
+    user = User.query.get(id)
+    user.nick = new_nick
+    db.session.commit()
+

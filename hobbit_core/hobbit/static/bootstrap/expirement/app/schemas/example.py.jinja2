@@ -1,0 +1,22 @@
+from marshmallow import fields  # NOQA F401
+from marshmallow_enum import EnumField  # NOQA F401
+
+from hobbit_core.flask_hobbit.schemas import PagedSchema
+
+from app import models
+from app.exts import ma
+
+
+class UserSchema(ma.ModelSchema):
+
+    class Meta:
+        model = models.User
+
+
+class PagedUserSchema(PagedSchema):
+    items = fields.Nested('UserSchema', many=True)
+
+
+user_schemas = UserSchema()
+paged_user_schemas = PagedUserSchema()
+

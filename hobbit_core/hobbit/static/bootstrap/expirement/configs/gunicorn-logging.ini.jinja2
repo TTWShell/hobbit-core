@@ -1,0 +1,43 @@
+[loggers]
+keys=root, gunicorn.error, gunicorn.access
+
+[handlers]
+keys=console, file
+
+
+[formatters]
+keys=timedRotatingFormatter
+
+[formatter_timedRotatingFormatter]
+format=%(asctime)s pid:%(process)d - %(levelname)s: %(message)s
+datefmt=%Y-%m-%d %H:%M:%S
+
+
+[logger_root]
+level=NOTSET
+handlers=console, file
+qualname=root
+
+[logger_gunicorn.error]
+level=INFO
+handlers=console, file
+propagate=1
+qualname=gunicorn.error
+
+[logger_gunicorn.access]
+level=INFO
+handlers=console, file
+propagate=0
+qualname=gunicorn.access
+
+
+[handler_console]
+level=INFO
+class=StreamHandler
+formatter=timedRotatingFormatter
+args=(sys.stdout, )
+
+[handler_file]
+level=DEBUG
+class=handlers.TimedRotatingFileHandler
+args=('logs/gunicorn.log', 'D', 1, 30)

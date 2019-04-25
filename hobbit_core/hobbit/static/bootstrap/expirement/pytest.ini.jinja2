@@ -1,0 +1,5 @@
+[pytest]
+env =
+    FLASK_APP=app/run.py
+    FLASK_ENV=testing
+addopts = --cov . --cov-report term-missing -s -x -vv -p no:warnings

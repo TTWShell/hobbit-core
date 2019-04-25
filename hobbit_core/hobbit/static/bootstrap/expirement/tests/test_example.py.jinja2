@@ -1,0 +1,94 @@
+import pytest
+
+from app.run import db
+from app.models import User
+
+from . import BaseTest
+
+
+class TestAPIExample(BaseTest):
+
+    def test_ping_api(self, client):
+        resp = client.get('/api/ping/')
+        assert resp.status_code == 200
+
+    @pytest.fixture(autouse=True)
+    def create_users(self):
+        for i in range(11):
+            db.session.add(User(
+                username='test{}'.format(i), nick='nick{}'.format(i)))
+        db.session.commit()
+
+    def test_list_users(self, client):
+        resp = client.get('/api/users/')
+        assert resp.status_code == 200
+        assert resp.json['page_size'] == 10
+        assert resp.json['total'] == 11
+        assert resp.json['page'] == 1
+        assert len(resp.json['items']) == 10
+        for key in ('id', 'created_at', 'updated_at', 'username', 'nick'):
+            assert key in resp.json['items'][0]
+
+    def test_list_users_query(self, client):
+        resp = client.get('/api/users/?page=3&page_size=5')
+        assert resp.status_code == 200
+        assert resp.json['page_size'] == 5
+        assert resp.json['total'] == 11
+        assert resp.json['page'] == 3
+        assert len(resp.json['items']) == 1
+
+    def test_list_users_order_by(self, client):
+        resp = client.get('/api/users/?order_by=id')
+        assert resp.status_code == 200
+        assert [item['id'] for item in resp.json['items']] == \
+            [i for i in range(1, 11)]
+
+        resp = client.get('/api/users/?order_by=-id')
+        assert resp.status_code == 200
+        assert [item['id'] for item in resp.json['items']] == \
+            [i for i in range(11, 1, -1)]
+
+        resp = client.get('/api/users/?order_by=id,-nick')
+        assert resp.status_code == 200
+        assert [item['id'] for item in resp.json['items']] == \
+            [i for i in range(1, 11)]
+
+
+class TestErrorExample(BaseTest):
+
+    def test_error_handler_url_404(self, client):
+        resp = client.get('/api/not-exist/')
+        assert resp.status_code == 404
+        print(resp.json)
+
+    def test_error_args_not_valid(self, client):
+        resp = client.get('/api/users/?page=h')
+        assert resp.status_code == 422
+        print(resp.json)
+
+    def test_obj_not_exist(self, client):
+        resp = client.get('/api/users/{pk}/'.format(pk=1))
+        print(resp.json)
+        assert resp.status_code == 404
+{% if celery %}
+
+class TestTask(BaseTest):
+
+    def test_add(self, celery_app, celery_worker):
+        from app.tasks import add
+        assert add.delay(1, 2).get() == 3
+
+    def test_update_user(self, celery_app, celery_worker):
+        user = User(username='test', nick='nick')
+        db.session.add(user)
+        db.session.commit()
+        user_id = user.id
+
+        from app.tasks import update_user
+
+        new_nick = 'new nick'
+        assert update_user.delay(user_id, new_nick).get() is None
+
+        db.session.remove()
+        assert User.query.get(user_id).nick == new_nick
+{% endif %}

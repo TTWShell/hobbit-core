@@ -1,0 +1,14 @@
+import os
+
+ROOT_PATH = os.path.split(os.path.abspath(__name__))[0]
+
+DEBUG = True
+SECRET_KEY = '{{ secret_key }}'
+SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format(
+    os.path.join(ROOT_PATH, '{{ project_name }}.db'))
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+{% if celery %}
+CELERY_TIMEZONE = 'Asia/Shanghai'
+BROKER_URL = 'sqla+sqlite:///celerydb.sqlite'  # CELERY_BROKER_URL
+CELERY_RESULT_BACKEND = 'db+sqlite:///results.sqlite'
+{% endif %}
