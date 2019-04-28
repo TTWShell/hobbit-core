@@ -7,7 +7,6 @@ from jinja2 import Environment, FileSystemLoader, Template
 from . import echo
 
 SUFFIX = '.jinja2'
-EXAMPLE_SUFFIX = 'example.py.jinja2'
 
 
 @contextmanager
@@ -24,7 +23,6 @@ def chdir(dist):
 
 @click.pass_context
 def render_project(ctx, dist, tpl_path):
-    example = ctx.obj['EXAMPLE']
     celery = ctx.obj['CELERY']
     context = ctx.obj['JINJIA_CONTEXT']
 
@@ -35,8 +33,6 @@ def render_project(ctx, dist, tpl_path):
             origin_path = os.path.join(tpl_path, fn)
 
             if os.path.isfile(origin_path) and not fn.endswith(SUFFIX):
-                continue
-            if not example and fn.endswith(EXAMPLE_SUFFIX):
                 continue
 
             if os.path.isfile(origin_path):

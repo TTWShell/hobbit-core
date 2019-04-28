@@ -39,7 +39,7 @@ jobs:
           command: flake8 .
       - run:
           name: run hobbit cmd
-          command: hobbit --echo startproject -n demo -d ~/haha -f --example -p 1024 --no-celery
+          command: hobbit --echo startproject -n demo -d ~/haha -f -p 1024 --no-celery
       - run:
           name: tree flask project
           command: |
@@ -73,7 +73,7 @@ jobs:
           name: run hobbit cmd
           command: |
             mkdir ~/haha && cd ~/haha
-            hobbit --echo startproject -n demo -f --example -p 1024 --celery
+            hobbit --echo startproject -n demo -f -p 1024 --celery
             mkdir ~/hahaha && cd ~/hahaha
             hobbit --echo startproject -n demo -t expirement -p 1025 --celery
       - run:
