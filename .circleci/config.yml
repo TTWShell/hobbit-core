@@ -74,16 +74,25 @@ jobs:
           command: |
             mkdir ~/haha && cd ~/haha
             hobbit --echo startproject -n demo -f --example -p 1024 --celery
+            mkdir ~/hahaha && cd ~/hahaha
+            hobbit --echo startproject -n demo -t expirement -p 1025 --celery
       - run:
           name: tree flask project
           command: |
             cd ~/haha
             apt-get install -y tree
             tree
+            cd ~/hahaha
+            apt-get install -y tree
+            tree
       - run:
           name: run tests
           command: |
             cd ~/haha
+            flask db init && flask db migrate && flask db upgrade
+            flake8 . --exclude migrations
+            py.test
+            cd ~/hahaha
             flask db init && flask db migrate && flask db upgrade
             flake8 . --exclude migrations
             py.test
