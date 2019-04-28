@@ -83,7 +83,6 @@ jobs:
             apt-get install -y tree
             tree
             cd ~/hahaha
-            apt-get install -y tree
             tree
       - run:
           name: run tests

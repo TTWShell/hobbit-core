@@ -18,9 +18,7 @@ def register_extensions(app):
 
 def register_blueprints(app):
     app.register_blueprint(views.ping.bp, url_prefix='/api')
-    {%- if example %}
-    app.register_blueprint(views.example.bp, url_prefix='/api')
-    {%- endif %}
+    app.register_blueprint(views.option.bp, url_prefix='/api')
 
 
 def register_error_handler(app):

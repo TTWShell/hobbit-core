@@ -24,7 +24,7 @@ Get it right now::
 
 Create your flask project::
 
-    hobbit --echo startproject -n demo -d . --example -p 5000 --celery
+    hobbit --echo startproject -n demo -d . -p 5000 --celery
 
 Run flask app::
 
@@ -49,45 +49,45 @@ Other tips::
 Project Tree
 ============
 
-If not skip example(Please see --example/--no-example options), you can get project tree like this::
+::
 
     .
     ├── Dockerfile
     ├── app
-    │   ├── __init__.py
-    │   ├── configs
-    │   │   ├── __init__.py
-    │   │   ├── default.py
-    │   │   ├── development.py
-    │   │   ├── production.py
-    │   │   └── testing.py
-    │   ├── core
-    │   │   └── __init__.py
-    │   ├── exts.py
-    │   ├── models
-    │   │   ├── __init__.py
-    │   │   └── example.py
-    │   ├── run.py
-    │   ├── schemas
-    │   │   ├── __init__.py
-    │   │   └── example.py
-    │   ├── tasks
-    │   │   ├── __init__.py
-    │   │   └── example.py
-    │   ├── utils
-    │   │   └── __init__.py
-    │   └── views
-    │       ├── __init__.py
-    │       └── example.py
+    │   ├── __init__.py
+    │   ├── configs
+    │   │   ├── __init__.py
+    │   │   ├── default.py
+    │   │   ├── development.py
+    │   │   ├── production.py
+    │   │   └── testing.py
+    │   ├── core
+    │   │   └── __init__.py
+    │   ├── exts.py
+    │   ├── models
+    │   │   └── __init__.py
+    │   ├── run.py
+    │   ├── schemas
+    │   │   └── __init__.py
+    │   ├── tasks
+    │   │   └── __init__.py
+    │   ├── utils
+    │   │   └── __init__.py
+    │   └── views
+    │       ├── __init__.py
+    │       └── ping.py
+    ├── configs
+    │   └── gunicorn-logging.ini
     ├── deploy.sh
     ├── docker-compose.yml
     ├── docs
-    ├── logs
+    │   └── index.apib
+    ├── pytest.ini
     ├── requirements.txt
     └── tests
         ├── __init__.py
         ├── conftest.py
-        └── test_example.py
+        └── test_ping.py
 
 Dockerfile
 ----------

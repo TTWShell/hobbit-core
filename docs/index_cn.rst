@@ -24,9 +24,9 @@ Hobbit-core中文文档
 
 使用 ``hobbit`` 命令自动生成你的flask项目::
 
-    hobbit --echo startproject -n demo -d . --example -p 5000 --celery
+    hobbit --echo startproject -n demo -d . -p 5000 --celery
 
-参数 ``--example`` 会同时生成一个完整的api及其测试范例，使用以下项目启动server::
+该命令会生成一个完整的api及其测试范例，使用以下项目启动server::
 
     FLASK_APP=app/run.py flask run
 
@@ -49,45 +49,45 @@ Hobbit-core中文文档
 项目结构
 ========
 
-如果使用 ``--example`` 参数（查看 ``--example/--no-example`` 相关帮助信息），你将会得到如下所示的项目结构::
+::
 
     .
     ├── Dockerfile
     ├── app
-    │   ├── __init__.py
-    │   ├── configs
-    │   │   ├── __init__.py
-    │   │   ├── default.py
-    │   │   ├── development.py
-    │   │   ├── production.py
-    │   │   └── testing.py
-    │   ├── core
-    │   │   └── __init__.py
-    │   ├── exts.py
-    │   ├── models
-    │   │   ├── __init__.py
-    │   │   └── example.py
-    │   ├── run.py
-    │   ├── schemas
-    │   │   ├── __init__.py
-    │   │   └── example.py
-    │   ├── tasks
-    │   │   ├── __init__.py
-    │   │   └── example.py
-    │   ├── utils
-    │   │   └── __init__.py
-    │   └── views
-    │       ├── __init__.py
-    │       └── example.py
+    │   ├── __init__.py
+    │   ├── configs
+    │   │   ├── __init__.py
+    │   │   ├── default.py
+    │   │   ├── development.py
+    │   │   ├── production.py
+    │   │   └── testing.py
+    │   ├── core
+    │   │   └── __init__.py
+    │   ├── exts.py
+    │   ├── models
+    │   │   └── __init__.py
+    │   ├── run.py
+    │   ├── schemas
+    │   │   └── __init__.py
+    │   ├── tasks
+    │   │   └── __init__.py
+    │   ├── utils
+    │   │   └── __init__.py
+    │   └── views
+    │       ├── __init__.py
+    │       └── ping.py
+    ├── configs
+    │   └── gunicorn-logging.ini
     ├── deploy.sh
     ├── docker-compose.yml
     ├── docs
-    ├── logs
+    │   └── index.apib
+    ├── pytest.ini
     ├── requirements.txt
     └── tests
         ├── __init__.py
         ├── conftest.py
-        └── test_example.py
+        └── test_ping.py
 
 Dockerfile
 ----------
