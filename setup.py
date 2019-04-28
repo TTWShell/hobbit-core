@@ -22,7 +22,7 @@ def gen_data(data_root='hobbit/static/bootstrap'):
 
 package_data = gen_data()
 # 模板shire + feature + expirement 文件数
-assert len(package_data) == 26 + 4 + 28, \
+assert len(package_data) == 27 + 4 + 29, \
     'nums of tepl files error, {}'.format(len(package_data))
 package_data.append('py.typed')
 

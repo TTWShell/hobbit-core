@@ -50,7 +50,7 @@ jobs:
           name: run tests
           command: |
             cd ~/haha
-            flask db init && flask db migrate && flask db upgrade
+            FLASK_APP=app.run:app flask db init && FLASK_APP=app.run:app flask db migrate && FLASK_APP=app.run:app flask db upgrade
             flake8 . --exclude migrations
             py.test
   test-py37:
@@ -89,11 +89,11 @@ jobs:
           name: run tests
           command: |
             cd ~/haha
-            flask db init && flask db migrate && flask db upgrade
+            FLASK_APP=app.run:app flask db init && FLASK_APP=app.run:app flask db migrate && FLASK_APP=app.run:app flask db upgrade
             flake8 . --exclude migrations
             py.test
             cd ~/hahaha
-            flask db init && flask db migrate && flask db upgrade
+            FLASK_APP=app.run:app flask db init && FLASK_APP=app.run:app flask db migrate && FLASK_APP=app.run:app flask db upgrade
             flake8 . --exclude migrations
             py.test
 
