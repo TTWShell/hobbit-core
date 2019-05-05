@@ -78,7 +78,6 @@ def gen(ctx, name, dist):
     dist = os.getcwd() if dist is None else os.path.abspath(dist)
 
     ctx.obj['FORCE'] = False
-    ctx.obj['EXAMPLE'] = True
     ctx.obj['JINJIA_CONTEXT'] = {'name': name}
 
     tpl_path = os.path.join(
