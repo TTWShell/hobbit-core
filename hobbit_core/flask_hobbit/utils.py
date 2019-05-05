@@ -213,7 +213,9 @@ def import_subs(locals_, modules_only: bool = False) -> List[str]:
         else:
             for name, obj in submodule.__dict__.items():
                 if isinstance(obj, (model.DefaultMeta, Schema)) or \
-                        (inspect.isclass(obj) and issubclass(obj, Schema)):
+                        (inspect.isclass(obj) and
+                         (issubclass(obj, Schema) or
+                          obj.__name__.endswith('Service'))):
                     setattr(top_mudule, name, obj)
                     all_.append(name)
     return all_

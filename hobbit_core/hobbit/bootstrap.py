@@ -22,21 +22,19 @@ def cli(ctx, force):
               type=click.IntRange(1024, 65535))
 @click.option('-d', '--dist', type=click.Path(), required=False,
               help='Dir for new project.')
-@click.option('-t', '--template', type=click.Choice(['shire']),
+@click.option('-t', '--template', type=click.Choice(['shire', 'expirement']),
               default='shire', help='Template name.')
 @click.option('-f', '--force', default=False, is_flag=True,
               help='Force render files, covered if file exist.')
-@click.option('--example/--no-example', default=False,
-              help='Generate api, test example files or not.')
 @click.option('--celery/--no-celery', default=False,
               help='Generate celery files or not.')
 @click.pass_context
-def startproject(ctx, name, port, dist, template, force, example, celery):
+def startproject(ctx, name, port, dist, template, force, celery):
     """Create a new flask project, render from different template.
 
     Examples::
 
-        hobbit --echo startproject -n demo -d /tmp/test --example -p 1024
+        hobbit --echo startproject -n demo -d /tmp/test -p 1024
 
     Other tips::
 
@@ -44,7 +42,6 @@ def startproject(ctx, name, port, dist, template, force, example, celery):
     """
     dist = os.getcwd() if dist is None else os.path.abspath(dist)
     ctx.obj['FORCE'] = force
-    ctx.obj['EXAMPLE'] = example
     ctx.obj['CELERY'] = celery
     ctx.obj['JINJIA_CONTEXT'] = {
         'project_name': name,
@@ -52,7 +49,6 @@ def startproject(ctx, name, port, dist, template, force, example, celery):
         'secret_key': ''.join(random.choice(
             string.ascii_letters) for i in range(38)),
         'version': '.'.join(str(i) for i in VERSION),
-        'example': example,
         'celery': celery,
     }
 

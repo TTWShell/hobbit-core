@@ -96,20 +96,24 @@ class TestImportSubs(BaseTest):
     def test_import_subs(self):
         from . import importsub
         all_ = getattr(importsub, '__all__')
-        assert sorted(all_) == [
+        print(sorted(all_))
+        assert sorted(all_) == sorted([
             'A',
             'G_VAR',
             'PagedSchema',
             'PagedUserSchema',
             'User',
             'UserSchema',
+            'FooService',
+            'BarService',
             'b',
             'models',
             'others',
             'paged_user_schemas',
             'schemas',
+            'services',
             'user_schemas'
-        ]
+        ])
         for name in all_:
             exec(f'from .importsub import {name}')
 

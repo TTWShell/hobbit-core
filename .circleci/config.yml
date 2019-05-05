@@ -39,7 +39,7 @@ jobs:
           command: flake8 .
       - run:
           name: run hobbit cmd
-          command: hobbit --echo startproject -n demo -d ~/haha -f --example -p 1024 --no-celery
+          command: hobbit --echo startproject -n demo -d ~/haha -f -p 1024 --no-celery
       - run:
           name: tree flask project
           command: |
@@ -50,7 +50,7 @@ jobs:
           name: run tests
           command: |
             cd ~/haha
-            flask db init && flask db migrate && flask db upgrade
+            FLASK_APP=app.run:app flask db init && FLASK_APP=app.run:app flask db migrate && FLASK_APP=app.run:app flask db upgrade
             flake8 . --exclude migrations
             py.test
   test-py37:
@@ -73,18 +73,26 @@ jobs:
           name: run hobbit cmd
           command: |
             mkdir ~/haha && cd ~/haha
-            hobbit --echo startproject -n demo -f --example -p 1024 --celery
+            hobbit --echo startproject -n demo -f -p 1024 --celery
+            mkdir ~/hahaha && cd ~/hahaha
+            hobbit --echo startproject -n demo -t expirement -p 1025 --celery
       - run:
           name: tree flask project
           command: |
             cd ~/haha
             apt-get install -y tree
             tree
+            cd ~/hahaha
+            tree
       - run:
           name: run tests
           command: |
             cd ~/haha
-            flask db init && flask db migrate && flask db upgrade
+            FLASK_APP=app.run:app flask db init && FLASK_APP=app.run:app flask db migrate && FLASK_APP=app.run:app flask db upgrade
+            flake8 . --exclude migrations
+            py.test
+            cd ~/hahaha
+            FLASK_APP=app.run:app flask db init && FLASK_APP=app.run:app flask db migrate && FLASK_APP=app.run:app flask db upgrade
             flake8 . --exclude migrations
             py.test
 

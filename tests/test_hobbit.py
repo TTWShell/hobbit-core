@@ -78,18 +78,17 @@ class TestHobbit(BaseTest):
         assert 'example.py' not in result.output
 
     @chdir(wkdir)
-    def test_startproject_cmd_example(self):
+    def test_startproject_cmd(self):
         assert os.getcwd() == self.wkdir
         runner = CliRunner()
 
         cmd = [
-            '--echo', 'startproject', '-n', 'haha', '--example', '-p', '1024']
+            '--echo', 'startproject', '-n', 'haha', '-p', '1024']
         result = runner.invoke(hobbit, cmd, obj={})
         # start + 28 files + 11 dir + 1 end + empty
         # in this test case. main dir exists, so mkdir - 1
-        assert len(result.output.split('\n')) == 1 + 29 + 11 + 1 + 1 - 1
+        assert len(result.output.split('\n')) == 1 + 27 + 11 + 1 + 1 - 1
         assert result.exit_code == 0
-        assert 'example.py' in result.output
 
         # test no -f worked
         result = runner.invoke(hobbit, cmd, obj={})
@@ -98,15 +97,15 @@ class TestHobbit(BaseTest):
         assert call(['flake8', '.']) == 0
 
     @chdir(wkdir)
-    def test_startproject_cmd_example_celery(self):
+    def test_startproject_cmd_celery(self):
         assert os.getcwd() == self.wkdir
         runner = CliRunner()
         cmd = [
-            '--echo', 'startproject', '-n', 'haha', '--example', '-p', '1024',
+            '--echo', 'startproject', '-n', 'haha', '-p', '1024',
             '--celery']
         result = runner.invoke(hobbit, cmd, obj={})
         assert len(result.output.split('\n')) == \
-            1 + (29 + 2) + (11 + 1) + 1 + 1 - 1
+            1 + 28 + (11 + 1) + 1 + 1 - 1
         assert result.exit_code == 0
         assert '/tasks' in result.output
         assert call(['flake8', '.']) == 0

@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    image: ttwshell/hobbit-app:latest
+    restart: always
+    ports:
+      - {{ port }}:5000
+    environment:
+      - LANG=C.UTF-8
+      - FLASK_APP=app/run.py
+      - FLASK_ENV=production
+    volumes:
+      - ./logs:/logs
+      - ./:/app
+    networks:
+      - web_nw
+    command:
+      bash -c "flask db upgrade &&
+      gunicorn --log-config configs/gunicorn-logging.ini -k gevent -w 4 -b 0.0.0.0:5000 app.run:app"
+
+networks:
+  web_nw:
+    driver: bridge
