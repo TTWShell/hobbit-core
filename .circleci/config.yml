@@ -32,7 +32,7 @@ jobs:
           name: install dependencies
           command: |
             pip install flake8 pytest pytest-cov pytest-env
-            pip install --editable .
+            pip install --editable ".[hobbit,hobbit_core]"
             pip install celery
       - run:
           name: use flake8 check self
@@ -64,7 +64,7 @@ jobs:
           name: install dependencies
           command: |
             pip install flake8 pytest pytest-cov pytest-env
-            pip install --editable .
+            pip install --editable ".[hobbit,hobbit_core]"
             pip install celery
       - run:
           name: use flake8 check self
