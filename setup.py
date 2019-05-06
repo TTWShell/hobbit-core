@@ -20,7 +20,7 @@ def gen_data(data_root='static/bootstrap'):
 
 package_data = gen_data()
 # The amount files of `shire` + `feature` + `expirement`
-assert len(package_data) == 28 + 4 + 29, \
+assert len(package_data) == 30 + 4 + 31, \
     'nums of tepl files error, {}'.format(len(package_data))
 package_data.append('py.typed')
 
