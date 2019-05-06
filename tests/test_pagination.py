@@ -1,7 +1,7 @@
 import pytest
 
 from webargs.core import ValidationError
-from hobbit_core.flask_hobbit.pagination import PageParams, pagination
+from hobbit_core.pagination import PageParams, pagination
 
 from . import BaseTest
 from .models import User

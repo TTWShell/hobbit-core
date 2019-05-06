@@ -3,7 +3,7 @@ from marshmallow import fields
 from marshmallow.utils import missing
 from webargs.flaskparser import use_kwargs as base_use_kwargs
 
-from hobbit_core.flask_hobbit.utils import use_kwargs
+from hobbit_core.utils import use_kwargs
 
 from .schemas import UserSchema
 

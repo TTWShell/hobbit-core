@@ -1,14 +1,12 @@
 import os
 from setuptools import setup, find_packages
 
-import hobbit_core
-
 SUFFIX = '.jinja2'
 ROOT_PATH = os.path.split(os.path.abspath(os.path.join(__file__)))[0]
-src_path = os.path.join(ROOT_PATH, 'hobbit_core')
+src_path = os.path.join(ROOT_PATH, 'hobbit')
 
 
-def gen_data(data_root='hobbit/static/bootstrap'):
+def gen_data(data_root='static/bootstrap'):
     """just for collect static files.
     """
     data = []
@@ -36,7 +34,7 @@ except(OSError, ImportError):
 
 setup(
     name='hobbit-core',
-    version='.'.join(str(i) for i in hobbit_core.VERSION),
+    version='1.3.2',
     python_requires='>=3.6, <4',
     description='Hobbit - A flask project generator.',
     long_description=long_description,
@@ -45,10 +43,10 @@ setup(
     url='https://github.com/TTWShell/hobbit-core',
     zip_safe=False,
     packages=find_packages(),
-    package_data={'hobbit_core': package_data},
+    package_data={'hobbit': package_data},
     install_requires=[],
     extras_require={
-        'flask_hobbit': [
+        'hobbit_core': [
             'Flask>=1.0.2',
             'flask-marshmallow>=0.9.0',
             'Flask-Migrate>=2.2.1',
@@ -66,6 +64,6 @@ setup(
         ],
     },
     entry_points={
-        'console_scripts': 'hobbit = hobbit_core.hobbit:main [hobbit]'
+        'console_scripts': 'hobbit = hobbit:main [hobbit]'
     },
 )

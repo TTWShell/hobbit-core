@@ -3,7 +3,7 @@ from subprocess import call
 
 from click.testing import CliRunner
 
-from hobbit_core.hobbit import main as hobbit
+from hobbit import main as hobbit
 
 from . import BaseTest, rmdir, chdir
 

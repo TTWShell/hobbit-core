@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 from marshmallow_enum import EnumField
 
-from hobbit_core.flask_hobbit.schemas import ModelSchema
+from hobbit_core.schemas import ModelSchema
 
 from .exts import db
 from . import BaseTest

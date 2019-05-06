@@ -1,4 +1,4 @@
-from hobbit_core.flask_hobbit.schemas import ORMSchema, SchemaMixin
+from hobbit_core.schemas import ORMSchema, SchemaMixin
 
 from marshmallow import fields
 
