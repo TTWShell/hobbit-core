@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 import pytest
 
-from hobbit_core.flask_hobbit.response import gen_response, Result, \
+from hobbit_core.response import gen_response, Result, \
     SuccessResult, FailedResult, UnauthorizedResult, ForbiddenResult, \
     ValidationErrorResult, ServerErrorResult
 

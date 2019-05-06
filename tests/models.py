@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
-from hobbit_core.flask_hobbit.db import Column, SurrogatePK
-from hobbit_core.flask_hobbit.db import EnumExt
+from hobbit_core.db import Column, SurrogatePK, EnumExt
 
 from .exts import db
 

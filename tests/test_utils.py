@@ -1,7 +1,7 @@
 import pytest
 from importlib import reload
 
-from hobbit_core.flask_hobbit import utils
+from hobbit_core import utils
 
 from . import BaseTest
 

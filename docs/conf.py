@@ -22,7 +22,7 @@ sys.path.insert(0, os.path.join(ROOT_PATH, 'hobbit_core'))
 # -- Project information -----------------------------------------------------
 
 project = 'hobbit-core'
-copyright = '2018, Legolas Bloom'
+copyright = '2019, Legolas Bloom'
 author = 'Legolas Bloom'
 
 # The short X.Y version

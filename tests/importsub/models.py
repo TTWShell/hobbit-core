@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 
-from hobbit_core.flask_hobbit.db import SurrogatePK, Column
+from hobbit_core.db import SurrogatePK, Column
 
 db = SQLAlchemy()
 

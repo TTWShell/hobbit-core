@@ -3,7 +3,7 @@ import time
 import pytest
 
 from sqlalchemy.exc import ResourceClosedError, InvalidRequestError
-from hobbit_core.flask_hobbit.db import EnumExt, transaction
+from hobbit_core.db import EnumExt, transaction
 
 from . import BaseTest
 from .exts import db

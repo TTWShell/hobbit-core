@@ -4,7 +4,7 @@ import json
 from sqlalchemy.orm import exc as orm_exc
 from werkzeug import exceptions as wkz_exc
 
-from hobbit_core.flask_hobbit.err_handler import ErrHandler
+from hobbit_core.err_handler import ErrHandler
 
 from . import BaseTest
 

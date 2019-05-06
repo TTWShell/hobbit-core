@@ -6,22 +6,22 @@ hobbit cmd
 
 hobbit - A flask project generator.
 
-.. autofunction:: hobbit_core.hobbit.bootstrap.startproject
-.. autofunction:: hobbit_core.hobbit.bootstrap.gen
+.. autofunction:: hobbit.bootstrap.startproject
+.. autofunction:: hobbit.bootstrap.gen
 
-hobbit_core.flask_hobbit
+hobbit_core
 ------------------------
 
 A flask extension that take care of base utils.
 
-.. automodule:: hobbit_core.flask_hobbit
+.. automodule:: hobbit_core
    :members:
    :undoc-members:
 
 db
 ^^
 
-.. automodule:: hobbit_core.flask_hobbit.db
+.. automodule:: hobbit_core.db
    :members:
    :undoc-members:
    :exclude-members: SurrogatePK, EnumExt, EnumExtMeta
@@ -40,14 +40,14 @@ db
 pagination
 ^^^^^^^^^^
 
-.. automodule:: hobbit_core.flask_hobbit.pagination
+.. automodule:: hobbit_core.pagination
    :members:
    :undoc-members:
 
 schemas
 ^^^^^^^
 
-.. automodule:: hobbit_core.flask_hobbit.schemas
+.. automodule:: hobbit_core.schemas
    :members:
    :undoc-members:
    :exclude-members: ORMSchema, SchemaMixin, PagedSchema, EnumSetMeta
@@ -65,7 +65,7 @@ schemas
 utils
 ^^^^^
 
-.. automodule:: hobbit_core.flask_hobbit.utils
+.. automodule:: hobbit_core.utils
    :members:
    :undoc-members:
 
@@ -73,14 +73,14 @@ utils
 response
 ^^^^^^^^
 
-.. automodule:: hobbit_core.flask_hobbit.response
+.. automodule:: hobbit_core.response
    :members:
    :undoc-members:
 
 err_handler
 ^^^^^^^^^^^
 
-.. automodule:: hobbit_core.flask_hobbit.err_handler
+.. automodule:: hobbit_core.err_handler
    :members:
 
 

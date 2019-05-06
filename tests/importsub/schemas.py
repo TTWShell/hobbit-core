@@ -1,7 +1,7 @@
 from marshmallow import fields
 from flask_marshmallow import Marshmallow
 
-from hobbit_core.flask_hobbit.schemas import PagedSchema
+from hobbit_core.schemas import PagedSchema
 
 ma = Marshmallow()
 
