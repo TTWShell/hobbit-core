@@ -85,9 +85,9 @@ class TestHobbit(BaseTest):
         cmd = [
             '--echo', 'startproject', '-n', 'haha', '-p', '1024']
         result = runner.invoke(hobbit, cmd, obj={})
-        # start + 28 files + 11 dir + 1 end + empty
+        # start + 29 files + 11 dir + 1 end + empty
         # in this test case. main dir exists, so mkdir - 1
-        assert len(result.output.split('\n')) == 1 + 27 + 11 + 1 + 1 - 1
+        assert len(result.output.split('\n')) == 1 + 29 + 11 + 1 + 1 - 1
         assert result.exit_code == 0
 
         # test no -f worked
@@ -105,7 +105,7 @@ class TestHobbit(BaseTest):
             '--celery']
         result = runner.invoke(hobbit, cmd, obj={})
         assert len(result.output.split('\n')) == \
-            1 + 28 + (11 + 1) + 1 + 1 - 1
+            1 + 30 + (11 + 1) + 1 + 1 - 1
         assert result.exit_code == 0
         assert '/tasks' in result.output
         assert call(['flake8', '.']) == 0
