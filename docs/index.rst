@@ -20,7 +20,9 @@ Hobbit-core中文文档
 
 快速安装::
 
-    pip install hobbit-core
+    pip install "hobbit-core[hobbit,hobbit_core]"  # 安装全部功能
+    pip install "hobbit-core[hobbit]"  # 仅安装命令依赖，不安装库依赖（安装命令到全局时推荐使用）
+
 
 使用 ``hobbit`` 命令自动生成你的flask项目::
 
@@ -107,7 +109,7 @@ configs
 core
 ^^^^
 
-core文件夹约定编写自定义的基础类库代码，复杂的业务层代码。
+core文件夹约定编写自定义的基础类库代码，或者临时扩展hobbit_core的基础组件（方便后续直接贡献到hobbit_core）。
 
 exts.py
 ^^^^^^^
@@ -118,6 +120,11 @@ models
 ^^^^^^
 
 所有数据库模型定义在这里。
+
+services
+^^^^^^^^
+
+使用expirement模版事会有此模块，类比java结构，这时候约定view不访问model层而去访问sevices层，由sevices层去访问model层。
 
 run.py
 ^^^^^^
@@ -164,7 +171,7 @@ logs
 tests
 -----
 
-所有的测试case. 推荐使用 `pytest <https://docs.pytest.org/en/latest/>`_ 测试。
+所有的测试case. 推荐使用 `pytest <https://docs.pytest.org/en/latest/>`_ 测试，项目也会自动生成基本的pytest配置。
 
 
 Others
