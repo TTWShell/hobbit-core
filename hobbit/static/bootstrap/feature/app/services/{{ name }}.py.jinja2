@@ -11,7 +11,8 @@ class {{ model }}Service:
     @classmethod
     def list(cls, page, page_size, order_by):
         qexp = cls.model.query.all()
-        paged_ret = pagination(cls.model, page, page_size, order_by, query_exp=qexp)
+        paged_ret = pagination(
+            cls.model, page, page_size, order_by, query_exp=qexp)
         return paged_ret
 
     @classmethod
@@ -35,5 +36,6 @@ class {{ model }}Service:
     @classmethod
     @transaction(db.session, nested=True)
     def delete(cls, ids):
-        return cls.model.query.filter(cls.model.id.in_(ids)).delete(synchronize_session='fetch')
+        return cls.model.query.filter(
+            cls.model.id.in_(ids)).delete(synchronize_session='fetch')
 
