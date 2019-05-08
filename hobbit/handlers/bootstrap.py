@@ -23,7 +23,7 @@ def chdir(dist):
 
 @click.pass_context
 def render_project(ctx, dist, tpl_path):
-    celery = ctx.obj['CELERY']
+    celery = ctx.obj.get('CELERY')  # gen cmd not have this arg
     context = ctx.obj['JINJIA_CONTEXT']
 
     jinjia_env = Environment(loader=FileSystemLoader(tpl_path))

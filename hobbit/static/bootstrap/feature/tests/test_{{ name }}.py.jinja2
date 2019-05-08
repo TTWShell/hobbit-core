@@ -1,8 +1,65 @@
 import pytest  # NOQA F401
 
+from app.exts import db
+from app.models import {{ model }}
+
 from .import BaseTest
 
 
-class Test{{ name | capitalize }}(BaseTest):
-    pass
+def register_bp():
+    # just for unittest, must register in run.py
+    from app.run import app as tapp
+    from app import views
+    if views.{{ module }}.bp.name not in tapp.blueprints:
+        tapp.register_blueprint(views.{{ module }}.bp, url_prefix='/api')
+
+
+register_bp()
+
+
+class Test{{ model }}(BaseTest):
+
+    @pytest.fixture
+    def instance(self):
+        instance = {{ model }}(username='test')
+        db.session.add(instance)
+        db.session.flush()
+        db.session.commit()
+        return instance
+
+    def test_list(self, client):
+        resp = client.get('/api/{{ plural }}/')
+        assert resp.status_code == 200
+        assert set(resp.json.keys()) == {'items', 'page', 'page_size', 'total'}
+
+    def test_retrieve(self, client, instance):
+        resp = client.get(f'/api/{{ plural }}/{instance.id}/')
+        assert resp.status_code == 200
+        assert set(resp.json.keys()) == {
+            'created_at', 'id', 'updated_at', 'username'}
+
+    def test_create(self, client):
+        payload = {
+            'username': 'test',
+        }
+        resp = client.post('/api/{{ plural }}/', json=payload)
+        assert resp.status_code == 201
+        assert set(resp.json.keys()) == {
+            'created_at', 'id', 'updated_at', 'username'}
+        assert resp.json['username'] == payload['username']
+
+    def test_update(self, client, instance):
+        payload = {
+            'username': f'{instance.username}_updated',
+        }
+        resp = client.put(f'/api/{{ plural }}/{instance.id}/', json=payload)
+        assert resp.status_code == 200
+        assert set(resp.json.keys()) == {
+            'created_at', 'id', 'updated_at', 'username'}
+        assert resp.json['username'] == payload['username']
+
+    def test_delete(self, client, instance):
+        resp = client.delete(f'/api/{{ plural }}/?ids={instance.id}')
+        assert resp.status_code == 204
+        assert {{ model }}.query.get(instance.id) is None
 

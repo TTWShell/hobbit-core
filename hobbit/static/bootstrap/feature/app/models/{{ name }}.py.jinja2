@@ -2,5 +2,10 @@ from sqlalchemy.orm import relationship  # NOQA F401
 
 from hobbit_core.db import Column, SurrogatePK, reference_col  # NOQA F401
 
-from app.exts import db  # NOQA F401
+from app.exts import db
+
+
+class {{ model }}(SurrogatePK, db.Model):
+    # some examples:
+    username = Column(db.String(20), nullable=False, index=True, doc='用户名')
 

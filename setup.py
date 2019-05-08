@@ -20,7 +20,7 @@ def gen_data(data_root='static/bootstrap'):
 
 package_data = gen_data()
 # The amount files of `shire` + `feature` + `expirement`
-assert len(package_data) == 30 + 4 + 31, \
+assert len(package_data) == 30 + 5 + 31, \
     'nums of tepl files error, {}'.format(len(package_data))
 package_data.append('py.typed')
 
@@ -61,6 +61,7 @@ setup(
         'hobbit': [
             'Click>=6.7',
             'Jinja2>=2.10',
+            'inflect>=2.1.0',
         ],
     },
     entry_points={
