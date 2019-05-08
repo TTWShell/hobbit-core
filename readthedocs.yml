@@ -1,0 +1,4 @@
+python:
+    extra_requirements:
+        - hobbit
+        - hobbit_core
