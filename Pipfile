@@ -10,7 +10,7 @@ tox = "*"
 ipython = "*"
 
 [dev-packages]
-sphinx = "*"
+sphinx = "2.0.1"
 sphinx-autobuild = "*"
 flask-sphinx-themes = "*"
 psycopg2-binary = "*"
