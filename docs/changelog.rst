@@ -1,7 +1,7 @@
 Change history
 ==============
 
-1.4.0 (2019-05-06)
+1.4.0 (2019-05-08)
 ******************
 
 * Add template for 4-layers (view、schema、service、model).
@@ -9,6 +9,7 @@ Change history
 * Removed example code.
 * Split hobbit cmd and hobbit_core lib, now install cmd should be `pip install "hobbit-core[hobbit,hobbit_core]"`.
 * Remove flask_hobbit when import (`hobbit_core.flask_hobbit.db import transaction` --> `from hobbit_core.db import transaction`).
+* Enhance gen cmd: now can auto create CRUD API and tests.
 
 1.3.1 (2019-02-26)
 ******************
