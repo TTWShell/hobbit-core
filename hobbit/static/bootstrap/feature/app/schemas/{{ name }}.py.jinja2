@@ -1,6 +1,21 @@
 from marshmallow import fields  # NOQA F401
 from marshmallow_enum import EnumField  # NOQA F401
 
-from hobbit_core.schemas import PagedSchema, ModelSchema  # NOQA F401
+from hobbit_core.schemas import PagedSchema, ModelSchema
 
-from app.models import *  # NOQA F401
+from app.models import {{ model }}
+
+
+class {{ model }}Schema(ModelSchema):
+
+    class Meta:
+        model = {{ model }}
+
+
+class Paged{{ model }}Schema(PagedSchema):
+    items = fields.Nested({{ model }}Schema, many=True)
+
+
+{{ module }}_schema = {{ model }}Schema()
+paged_{{ module }}_schemas = Paged{{ model }}Schema()
+

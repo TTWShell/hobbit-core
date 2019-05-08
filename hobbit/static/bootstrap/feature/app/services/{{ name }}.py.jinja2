@@ -1,0 +1,41 @@
+from hobbit_core.pagination import pagination
+from hobbit_core.db import transaction
+
+from app.models import {{ model }}
+from app.exts import db
+
+
+class {{ model }}Service:
+    model = {{ model }}
+
+    @classmethod
+    def list(cls, page, page_size, order_by):
+        qexp = cls.model.query.all()
+        paged_ret = pagination(
+            cls.model, page, page_size, order_by, query_exp=qexp)
+        return paged_ret
+
+    @classmethod
+    def get_or_404(cls, pk):
+        return cls.model.query.get_or_404(pk)
+
+    @classmethod
+    @transaction(db.session, nested=True)
+    def create(cls, **kwargs):
+        instance = cls.model(**kwargs)
+        db.session.add(instance)
+        db.session.flush()
+        return instance
+
+    @classmethod
+    @transaction(db.session, nested=True)
+    def update(cls, pk, **kwargs):
+        cls.model.query.filter_by(id=pk).update(kwargs)
+        return cls.model.query.get(pk)
+
+    @classmethod
+    @transaction(db.session, nested=True)
+    def delete(cls, ids):
+        return cls.model.query.filter(
+            cls.model.id.in_(ids)).delete(synchronize_session='fetch')
+

@@ -1,6 +1,7 @@
 import os
 from subprocess import call
 
+import pytest
 from click.testing import CliRunner
 
 from hobbit import main as hobbit
@@ -17,6 +18,10 @@ class TestHobbit(BaseTest):
     def teardown_method(self, method):
         os.chdir(self.root_path)
         rmdir(self.wkdir)
+
+    @pytest.fixture
+    def runner(self):
+        yield CliRunner()
 
     def test_hobbit_cmd(self):
         runner = CliRunner()
@@ -104,8 +109,31 @@ class TestHobbit(BaseTest):
             '--echo', 'startproject', '-n', 'haha', '-p', '1024',
             '--celery']
         result = runner.invoke(hobbit, cmd, obj={})
-        assert len(result.output.split('\n')) == \
-            1 + 30 + (11 + 1) + 1 + 1 - 1
+        # start + files + mkdir + tail
+        assert len(result.output.split('\n')) == 1 + 30 + 12 + 1
         assert result.exit_code == 0
         assert '/tasks' in result.output
         assert call(['flake8', '.']) == 0
+
+    @chdir(wkdir)
+    def test_new_expirement_tpl_and_gen_cmd(self, runner):
+        assert os.getcwd() == self.wkdir
+
+        # new project use expirement template
+        cmd = [
+            '--echo', 'startproject', '-n', 'haha', '-p', '1024',
+            '-t', 'expirement']
+        result = runner.invoke(hobbit, cmd, obj={})
+        # start + files + mkdir + tail
+        assert len(result.output.split('\n')) == 1 + 31 + 11 + 1
+
+        # gen new module
+        cmd = ['--echo', 'gen', '-n', 'user']
+        result = runner.invoke(hobbit, cmd, obj={})
+        assert len(result.output.split('\n')) == 5 + 1  # files
+
+        # flake8 check
+        assert call(['flake8', '.']) == 0
+
+        # pytest
+        assert call(['pytest']) == 0

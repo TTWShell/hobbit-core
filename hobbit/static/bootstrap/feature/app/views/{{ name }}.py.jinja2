@@ -1,12 +1,52 @@
 from flask import Blueprint, jsonify, request  # NOQA F401
 from marshmallow import fields  # NOQA F401
 from marshmallow_enum import EnumField  # NOQA F401
+from webargs.fields import DelimitedList
 
-from hobbit_core.utils import use_kwargs  # NOQA F401
-from hobbit_core.pagination import PageParams  # NOQA F401
+from hobbit_core.utils import use_kwargs
+from hobbit_core.pagination import PageParams
+from hobbit_core.db import transaction
 
-from app.models import * # NOQA F401
-from app import schemas  # NOQA F401
+from app import schemas
+from app.services import {{ model }}Service
+from app.exts import db
 
-bp = Blueprint("{{ name | lower }}", __name__)
+bp = Blueprint('{{ module }}', __name__)
+
+
+@bp.route('/{{ plural }}/', methods=['GET'])
+@use_kwargs(PageParams)
+def list_{{ plural }}(page, page_size, order_by):
+    page_ret = {{ model }}Service.list(page, page_size, order_by)
+    return jsonify(schemas.paged_{{ module }}_schemas.dump(page_ret).data)
+
+
+@bp.route('/{{ plural }}/', methods=['POST'])
+@use_kwargs(schemas.{{ module }}_schema)
+@transaction(db.session)
+def create_{{ module }}(**kwargs):
+    instance = {{ model }}Service.create(**kwargs)
+    return jsonify(schemas.{{ module }}_schema.dump(instance).data), 201
+
+
+@bp.route('/{{ plural }}/<int:pk>/', methods=['GET'])
+def retrieve_{{ module }}(pk):
+    instance = {{ model }}Service.get_or_404(pk)
+    return jsonify(schemas.{{ module }}_schema.dump(instance).data)
+
+
+@bp.route('/{{ plural }}/<int:pk>/', methods=['PUT'])
+@use_kwargs(schemas.{{ module }}_schema)
+@transaction(db.session)
+def update_{{ module }}(pk, **kwargs):
+    instance = {{ model }}Service.update(pk, **kwargs)
+    return jsonify(schemas.{{ module }}_schema.dump(instance).data)
+
+
+@bp.route('/{{ plural }}/', methods=['DELETE'])
+@use_kwargs({'ids': DelimitedList(fields.Int())})
+@transaction(db.session)
+def delete_{{ plural }}(ids):
+    {{ model }}Service.delete(ids)
+    return '', 204
 

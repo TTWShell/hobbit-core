@@ -4,9 +4,12 @@ import string
 import pkg_resources
 
 import click
+import inflect
 
 from .handlers import echo
 from .handlers.bootstrap import render_project
+
+engine = inflect.engine()
 
 
 @click.group()
@@ -70,14 +73,29 @@ def startproject(ctx, name, port, dist, template, force, celery):
 @click.option('-n', '--name', help='Name of feature.', required=True)
 @click.option('-d', '--dist', type=click.Path(), required=False,
               help='Dir for new project.')
+@click.option('-f', '--force', default=False, is_flag=True,
+              help='Force render files, covered if file exist.')
 @click.pass_context
-def gen(ctx, name, dist):
-    """Generator models/{name}.py, schemas/{name}.py, views/{name}.py etc.
+def gen(ctx, name, dist, force):
+    """Generator models/{name}.py, schemas/{name}.py, views/{name}.py,
+    services/{name.py} etc.
     """
     dist = os.getcwd() if dist is None else os.path.abspath(dist)
+    module = '_'.join(name.split('_')).lower()
+    model = ''.join([sub.capitalize() for sub in name.split('_')])
 
-    ctx.obj['FORCE'] = False
-    ctx.obj['JINJIA_CONTEXT'] = {'name': name}
+    if module != name or not all(name.split('_')):
+        raise click.UsageError(click.style(
+            'name should be lowercase, with words separated by '
+            'underscores as necessary to improve readability.', fg='red'))
+
+    ctx.obj['FORCE'] = force
+    ctx.obj['JINJIA_CONTEXT'] = {
+        'name': name,
+        'module': module,
+        'model': model,
+        'plural': engine.plural(module)
+    }
 
     tpl_path = os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
