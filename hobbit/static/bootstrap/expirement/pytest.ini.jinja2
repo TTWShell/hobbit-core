@@ -2,4 +2,4 @@
 env =
     FLASK_APP=app/run.py
     FLASK_ENV=testing
-addopts = --cov . --cov-report term-missing -s -x -vv -p no:warnings
+addopts = --cov . --cov-report term-missing --no-cov-on-fail -s -x -vv -p no:warnings
