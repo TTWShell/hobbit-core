@@ -37,8 +37,9 @@ def cli(ctx, force):
               type=click.IntRange(1024, 65535))
 @click.option('-d', '--dist', type=click.Path(), required=False,
               help='Dir for new project.')
-@click.option('-t', '--template', type=click.Choice(templates), default='shire',
-              callback=validate_template_path, help='Template name.')
+@click.option('-t', '--template', type=click.Choice(templates),
+              default='shire', callback=validate_template_path,
+              help='Template name.')
 @click.option('-f', '--force', default=False, is_flag=True,
               help='Force render files, covered if file exist.')
 @click.option('--celery/--no-celery', default=False,
@@ -77,8 +78,9 @@ def startproject(ctx, name, port, dist, template, force, celery):
 @click.option('-n', '--name', help='Name of feature.', required=True)
 @click.option('-d', '--dist', type=click.Path(), required=False,
               help='Dir for new feature.')
-@click.option('-t', '--template', type=click.Choice(templates), default='shire',
-              callback=validate_template_path, help='Template name.')
+@click.option('-t', '--template', type=click.Choice(templates),
+              default='shire', callback=validate_template_path,
+              help='Template name.')
 @click.option('-f', '--force', default=False, is_flag=True,
               help='Force render files, covered if file exist.')
 @click.pass_context
