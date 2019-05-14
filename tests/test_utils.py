@@ -35,24 +35,19 @@ class TestUtils(BaseTest):
         with pytest.raises(AttributeError):
             obj.b
 
-    def test_secure_filename(self):
-        filenames = (
-            u'哈哈.zip', '../../../etc/passwd', 'My cool movie.mov',
-            '__filename__', 'foo$&^*)bar',
-            u'i contain cool \xfcml\xe4uts.txt',
-        )
-        excepted = (
-            u'哈哈.zip', 'etc_passwd', 'My_cool_movie.mov',
-            'filename', 'foobar',
-            'i_contain_cool_umlauts.txt',
-        )
-        for i, filename in enumerate(filenames):
-            assert utils.secure_filename(filename) == excepted[i]
-
-    def test_secure_filename_py3(self):
-        assert utils.secure_filename(
-            'i contain cool \xfcml\xe4uts.txt') == \
-            'i_contain_cool_umlauts.txt'
+    # this func worked ok in py2 & py3, u'' is py2 test
+    @pytest.mark.parametrize("filename, excepted", [
+        # (u'哈哈.zip', u'哈哈.zip'),
+        ('哈哈.zip', '哈哈.zip'),
+        ('../../../etc/passwd', 'etc_passwd'),
+        ('My cool movie.mov', 'My_cool_movie.mov'),
+        ('__filename__', 'filename'),
+        ('foo$&^*)bar', 'foobar'),
+        # (u'i contain cool \xfcml\xe4uts.txt', 'i_contain_cool_umlauts.txt'),
+        ('i contain cool \xfcml\xe4uts.txt', 'i_contain_cool_umlauts.txt'),
+    ])
+    def test_secure_filename(self, filename, excepted):
+        assert utils.secure_filename(filename) == excepted
 
 
 class TestUseKwargs(BaseTest):
