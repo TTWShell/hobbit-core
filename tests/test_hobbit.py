@@ -23,9 +23,7 @@ class TestHobbit(BaseTest):
     def runner(self):
         yield CliRunner()
 
-    def test_hobbit_cmd(self):
-        runner = CliRunner()
-
+    def test_hobbit_cmd(self, runner):
         result = runner.invoke(hobbit)
         assert result.exit_code == 0
 
@@ -33,9 +31,8 @@ class TestHobbit(BaseTest):
         assert 'Error: cmd not exist: doesnotexistcmd' in result.output
 
     @chdir(wkdir)
-    def test_startproject_cmd_nodist(self):
+    def test_startproject_cmd_nodist(self, runner):
         assert os.getcwd() == self.wkdir
-        runner = CliRunner()
 
         result = runner.invoke(hobbit, ['--echo', 'startproject'], obj={})
         assert result.exit_code == 2
@@ -52,9 +49,7 @@ class TestHobbit(BaseTest):
             os.getcwd(), 'app', 'models', '__init__.py'))
         assert 'example.py' not in result.output
 
-    def test_startproject_cmd_dist(self):
-        runner = CliRunner()
-
+    def test_startproject_cmd_dist(self, runner):
         result = runner.invoke(
             hobbit, [
                 '--echo', 'startproject', '-n', 'haha', '-f', '-d', self.wkdir,
@@ -68,9 +63,8 @@ class TestHobbit(BaseTest):
         assert 'example.py' not in result.output
 
     @chdir(wkdir)
-    def test_startproject_cmd_curdir(self):
+    def test_startproject_cmd_curdir(self, runner):
         assert os.getcwd() == self.wkdir
-        runner = CliRunner()
 
         result = runner.invoke(
             hobbit, [
@@ -83,9 +77,8 @@ class TestHobbit(BaseTest):
         assert 'example.py' not in result.output
 
     @chdir(wkdir)
-    def test_startproject_cmd(self):
+    def test_startproject_cmd(self, runner):
         assert os.getcwd() == self.wkdir
-        runner = CliRunner()
 
         cmd = [
             '--echo', 'startproject', '-n', 'haha', '-p', '1024']
@@ -102,9 +95,9 @@ class TestHobbit(BaseTest):
         assert call(['flake8', '.']) == 0
 
     @chdir(wkdir)
-    def test_startproject_cmd_celery(self):
+    def test_startproject_cmd_celery(self, runner):
         assert os.getcwd() == self.wkdir
-        runner = CliRunner()
+
         cmd = [
             '--echo', 'startproject', '-n', 'haha', '-p', '1024',
             '--celery']
