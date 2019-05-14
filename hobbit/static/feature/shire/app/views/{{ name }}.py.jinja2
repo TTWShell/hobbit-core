@@ -1,0 +1,12 @@
+from flask import Blueprint, jsonify, request  # NOQA F401
+from marshmallow import fields  # NOQA F401
+from marshmallow_enum import EnumField  # NOQA F401
+
+from hobbit_core.utils import use_kwargs  # NOQA F401
+from hobbit_core.pagination import PageParams  # NOQA F401
+
+from app.models import * # NOQA F401
+from app import schemas  # NOQA F401
+
+bp = Blueprint("{{ module }}", __name__)
+
