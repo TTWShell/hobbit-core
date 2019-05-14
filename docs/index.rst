@@ -21,12 +21,12 @@ Hobbit-core中文文档
 快速安装::
 
     pip install "hobbit-core[hobbit,hobbit_core]"  # 安装全部功能
+    pip install "hobbit-core[hobbit,hobbit_core]==1.4.0a2"  # 如果安装pre release版本请加版本号
     pip install "hobbit-core[hobbit]"  # 仅安装命令依赖，不安装库依赖（安装命令到全局时推荐使用）
-
 
 使用 ``hobbit`` 命令自动生成你的flask项目::
 
-    hobbit --echo startproject -n demo -d . -p 5000 --celery
+    hobbit --echo startproject -n demo -d . -p 5000 --celery  # 建议试用 -t expirement 新模版
 
 该命令会生成一个完整的api及其测试范例，使用以下项目启动server::
 
