@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 import json
 
 from sqlalchemy.orm import exc as orm_exc

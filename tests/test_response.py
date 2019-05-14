@@ -10,12 +10,12 @@ from . import BaseTest
 
 class TestResponse(BaseTest):
 
-    def test_gen_response(self):
-        excepted = {'code': '1', 'message': u'未知错误', 'detail': None}
-        assert excepted == gen_response(1)
-
-        excepted = {'code': '1', 'message': u'测试', 'detail': ['1']}
-        assert excepted == gen_response(1, u'测试', ['1'])
+    @pytest.mark.parametrize('input_, excepted', [
+        ((1, ), {'code': '1', 'message': '未知错误', 'detail': None}),
+        ((1, '测试', ['1']), {'code': '1', 'message': '测试', 'detail': ['1']})
+    ])
+    def test_gen_response(self, input_, excepted):
+        assert excepted == gen_response(*input_)
 
     def test_result(self):
         msg = 'Error response, must include keys: code, detail, message'
@@ -44,10 +44,11 @@ class TestResponse(BaseTest):
         result = FailedResult()
         assert result.status_code == 400
 
-    def test_results(self):
-        excepted = {
-            UnauthorizedResult: 401, ForbiddenResult: 403,
-            ValidationErrorResult: 422, ServerErrorResult: 500,
-        }
-        for result, status_code in excepted.items():
-            assert result().status_code == status_code
+    @pytest.mark.parametrize('result, excepted_status_code', [
+        (UnauthorizedResult, 401),
+        (ForbiddenResult, 403),
+        (ValidationErrorResult, 422),
+        (ServerErrorResult, 500),
+    ])
+    def test_results(self, result, excepted_status_code):
+        assert result().status_code == excepted_status_code

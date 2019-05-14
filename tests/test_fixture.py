@@ -1,5 +1,5 @@
-from .models import User
-from .exts import db
+from .test_app.models import User
+from .test_app.exts import db
 
 from . import BaseTest
 

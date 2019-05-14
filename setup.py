@@ -6,7 +6,7 @@ ROOT_PATH = os.path.split(os.path.abspath(os.path.join(__file__)))[0]
 src_path = os.path.join(ROOT_PATH, 'hobbit')
 
 
-def gen_data(data_root='static/bootstrap'):
+def gen_data(data_root='static'):
     """just for collect static files.
     """
     data = []
@@ -34,7 +34,7 @@ except(OSError, ImportError):
 
 setup(
     name='hobbit-core',
-    version='1.4.0a1',
+    version='1.4.0a2',
     python_requires='>=3.6, <4',
     description='Hobbit - A flask project generator.',
     long_description=long_description,
@@ -57,6 +57,7 @@ setup(
             'webargs>=5.1.3',
             'mypy-extensions==0.4.1',
             'pyyaml>=4.2b1',
+            'marshmallow==v3.0.0rc6',
         ],
         'hobbit': [
             'Click>=6.7',

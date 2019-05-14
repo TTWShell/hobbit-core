@@ -4,13 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-click = "*"
-jinja2 = "*"
 tox = "*"
 ipython = "*"
+hobbit-core = {editable = true,extras = ["hobbit", "hobbit_core"],path = "."}
 
 [dev-packages]
-sphinx = "2.0.1"
+sphinx = "==2.0.1"
 sphinx-autobuild = "*"
 flask-sphinx-themes = "*"
 psycopg2-binary = "*"
@@ -24,3 +23,6 @@ mypy-extensions = "==0.4.1"
 
 [requires]
 python_version = "3.7"
+
+[pipenv]
+allow_prereleases = true
