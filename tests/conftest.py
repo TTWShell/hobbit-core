@@ -3,8 +3,8 @@ from unittest import mock
 
 from webargs.core import Parser, get_value
 
-from .run import app as tapp
-from .exts import db as tdb
+from .test_app.run import app as tapp
+from .test_app.exts import db as tdb
 
 
 @pytest.fixture(scope='session')

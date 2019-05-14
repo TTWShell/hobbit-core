@@ -1,11 +1,12 @@
 import pytest
 
 from webargs.core import ValidationError
+
 from hobbit_core.pagination import PageParams, pagination
 
 from . import BaseTest
-from .models import User
-from .exts import db
+from .test_app.models import User
+from .test_app.exts import db
 
 
 class TestPagination(BaseTest):

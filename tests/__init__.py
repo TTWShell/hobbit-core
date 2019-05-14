@@ -4,7 +4,7 @@ import functools
 
 from flask_sqlalchemy import model
 
-from .run import app, db
+from .test_app.run import app, db
 
 
 class BaseTest(object):

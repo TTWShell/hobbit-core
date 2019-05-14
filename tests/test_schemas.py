@@ -3,9 +3,10 @@ from marshmallow_enum import EnumField
 
 from hobbit_core.schemas import ModelSchema
 
-from .exts import db
+from .test_app.exts import db
+from .test_app.models import User, RoleEnum
+
 from . import BaseTest
-from .models import User, RoleEnum
 
 
 class TestSchema(BaseTest):

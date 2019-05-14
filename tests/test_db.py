@@ -1,13 +1,14 @@
-# -*- encoding: utf-8 -*-
 import time
 import pytest
 
 from sqlalchemy.exc import ResourceClosedError, InvalidRequestError
+
 from hobbit_core.db import EnumExt, transaction
 
+from .test_app.exts import db
+from .test_app.models import User
+
 from . import BaseTest
-from .exts import db
-from .models import User
 
 
 class TestSurrogatePK(BaseTest):
