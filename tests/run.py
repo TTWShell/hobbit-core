@@ -1,6 +1,8 @@
 import os
 from flask import Flask
 
+from hobbit_core.err_handler import ErrHandler
+
 from .exts import db, ma, hobbit
 from .views import bp
 
@@ -25,12 +27,17 @@ def register_blueprints(app):
     app.register_blueprint(bp)
 
 
+def register_error_handler(app):
+    app.register_error_handler(Exception, ErrHandler.handler)
+
+
 def init_app(config=ConfigClass):
     app = Flask(__name__)
     app.config.from_object(config)
 
     register_extensions(app)
     register_blueprints(app)
+    register_error_handler(app)
 
     return app
 

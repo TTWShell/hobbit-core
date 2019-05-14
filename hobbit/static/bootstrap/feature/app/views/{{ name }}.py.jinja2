@@ -18,7 +18,7 @@ bp = Blueprint('{{ module }}', __name__)
 @use_kwargs(PageParams)
 def list_{{ plural }}(page, page_size, order_by):
     page_ret = {{ model }}Service.list(page, page_size, order_by)
-    return jsonify(schemas.paged_{{ module }}_schemas.dump(page_ret).data)
+    return jsonify(schemas.paged_{{ module }}_schemas.dump(page_ret))
 
 
 @bp.route('/{{ plural }}/', methods=['POST'])
@@ -26,13 +26,13 @@ def list_{{ plural }}(page, page_size, order_by):
 @transaction(db.session)
 def create_{{ module }}(**kwargs):
     instance = {{ model }}Service.create(**kwargs)
-    return jsonify(schemas.{{ module }}_schema.dump(instance).data), 201
+    return jsonify(schemas.{{ module }}_schema.dump(instance)), 201
 
 
 @bp.route('/{{ plural }}/<int:pk>/', methods=['GET'])
 def retrieve_{{ module }}(pk):
     instance = {{ model }}Service.get_or_404(pk)
-    return jsonify(schemas.{{ module }}_schema.dump(instance).data)
+    return jsonify(schemas.{{ module }}_schema.dump(instance))
 
 
 @bp.route('/{{ plural }}/<int:pk>/', methods=['PUT'])
@@ -40,7 +40,7 @@ def retrieve_{{ module }}(pk):
 @transaction(db.session)
 def update_{{ module }}(pk, **kwargs):
     instance = {{ model }}Service.update(pk, **kwargs)
-    return jsonify(schemas.{{ module }}_schema.dump(instance).data)
+    return jsonify(schemas.{{ module }}_schema.dump(instance))
 
 
 @bp.route('/{{ plural }}/', methods=['DELETE'])

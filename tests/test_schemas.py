@@ -24,7 +24,7 @@ class TestSchema(BaseTest):
         db.session.add(user)
         db.session.commit()
 
-        data = UserSchema().dump(user).data
+        data = UserSchema().dump(user)
         assert data['role'] == {'key': 1, 'label': 'admin', 'value': '管理员'}
 
         class UserSchema(ModelSchema):
@@ -34,14 +34,14 @@ class TestSchema(BaseTest):
                 model = User
                 verbose = False
 
-        data = UserSchema().dump(user).data
+        data = UserSchema().dump(user)
         assert data['role'] == {'key': 1, 'value': '管理员'}
 
         payload = {'username': 'name', 'email': 'admin@test'}
         for role in (RoleEnum.admin.name,  RoleEnum.admin.value[0],
                      RoleEnum.admin.value[1]):
             payload['role'] = role
-            assert UserSchema().load(payload).data == {
+            assert UserSchema().load(payload) == {
                 'role': RoleEnum.admin, 'email': 'admin@test',
                 'username': 'name',
             }

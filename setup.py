@@ -34,7 +34,7 @@ except(OSError, ImportError):
 
 setup(
     name='hobbit-core',
-    version='1.4.0a1',
+    version='1.4.0a2',
     python_requires='>=3.6, <4',
     description='Hobbit - A flask project generator.',
     long_description=long_description,
@@ -57,6 +57,7 @@ setup(
             'webargs>=5.1.3',
             'mypy-extensions==0.4.1',
             'pyyaml>=4.2b1',
+            'marshmallow==v3.0.0rc6',
         ],
         'hobbit': [
             'Click>=6.7',
