@@ -92,7 +92,6 @@ class TestImportSubs(BaseTest):
     def test_import_subs(self):
         from . import importsub
         all_ = getattr(importsub, '__all__')
-        print(sorted(all_))
         assert sorted(all_) == sorted([
             'A',
             'G_VAR',
