@@ -76,7 +76,7 @@ def startproject(ctx, name, port, dist, template, force, celery):
 @cli.command()
 @click.option('-n', '--name', help='Name of feature.', required=True)
 @click.option('-d', '--dist', type=click.Path(), required=False,
-              help='Dir for new project.')
+              help='Dir for new feature.')
 @click.option('-t', '--template', type=click.Choice(templates), default='shire',
               callback=validate_template_path, help='Template name.')
 @click.option('-f', '--force', default=False, is_flag=True,
