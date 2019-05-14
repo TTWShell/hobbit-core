@@ -121,7 +121,7 @@ class TestHobbit(BaseTest):
         assert len(result.output.split('\n')) == 1 + 31 + 11 + 1
 
         # gen new module
-        cmd = ['--echo', 'gen', '-n', 'user']
+        cmd = ['--echo', 'gen', '-n', 'user', '-t', 'expirement']
         result = runner.invoke(hobbit, cmd, obj={})
         assert len(result.output.split('\n')) == 5 + 1  # files
 

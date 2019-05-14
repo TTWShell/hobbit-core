@@ -6,7 +6,7 @@ ROOT_PATH = os.path.split(os.path.abspath(os.path.join(__file__)))[0]
 src_path = os.path.join(ROOT_PATH, 'hobbit')
 
 
-def gen_data(data_root='static/bootstrap'):
+def gen_data(data_root='static'):
     """just for collect static files.
     """
     data = []

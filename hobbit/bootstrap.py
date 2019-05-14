@@ -9,7 +9,20 @@ import inflect
 from .handlers import echo
 from .handlers.bootstrap import render_project
 
+ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 engine = inflect.engine()
+templates = ['shire', 'expirement']
+
+
+def validate_template_path(ctx, param, value):
+    dir = 'feature' if ctx.command.name == 'gen' else 'bootstrap'
+    tpl_path = os.path.join(ROOT_PATH, 'static', dir, value)
+
+    if not os.path.exists(tpl_path):
+        raise click.UsageError(
+            click.style('Tpl `{}` not exists.'.format(value), fg='red'))
+
+    return tpl_path
 
 
 @click.group()
@@ -24,8 +37,8 @@ def cli(ctx, force):
               type=click.IntRange(1024, 65535))
 @click.option('-d', '--dist', type=click.Path(), required=False,
               help='Dir for new project.')
-@click.option('-t', '--template', type=click.Choice(['shire', 'expirement']),
-              default='shire', help='Template name.')
+@click.option('-t', '--template', type=click.Choice(templates), default='shire',
+              callback=validate_template_path, help='Template name.')
 @click.option('-f', '--force', default=False, is_flag=True,
               help='Force render files, covered if file exist.')
 @click.option('--celery/--no-celery', default=False,
@@ -56,16 +69,7 @@ def startproject(ctx, name, port, dist, template, force, celery):
 
     echo('Start init a hobbit project `{}` to `{}`, use template {}',
          (name, dist, template))
-
-    tpl_path = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        'static', 'bootstrap', template)
-    if not os.path.exists(tpl_path):
-        raise click.UsageError(
-            click.style('Tpl `{}` not exists.'.format(template), fg='red'))
-
-    render_project(dist, tpl_path)
-
+    render_project(dist, template)
     echo('project `{}` render finished.', (name, ))
 
 
@@ -73,12 +77,14 @@ def startproject(ctx, name, port, dist, template, force, celery):
 @click.option('-n', '--name', help='Name of feature.', required=True)
 @click.option('-d', '--dist', type=click.Path(), required=False,
               help='Dir for new project.')
+@click.option('-t', '--template', type=click.Choice(templates), default='shire',
+              callback=validate_template_path, help='Template name.')
 @click.option('-f', '--force', default=False, is_flag=True,
               help='Force render files, covered if file exist.')
 @click.pass_context
-def gen(ctx, name, dist, force):
-    """Generator models/{name}.py, schemas/{name}.py, views/{name}.py,
-    services/{name.py} etc.
+def gen(ctx, name, template, dist, force):
+    """Generator new feature. Auto gen models/{name}.py, schemas/{name}.py,
+    views/{name}.py, services/{name.py}, tests/test_{name}.py etc.
     """
     dist = os.getcwd() if dist is None else os.path.abspath(dist)
     module = '_'.join(name.split('_')).lower()
@@ -97,11 +103,7 @@ def gen(ctx, name, dist, force):
         'plural': engine.plural(module)
     }
 
-    tpl_path = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        'static', 'bootstrap', 'feature')
-
-    render_project(dist, tpl_path)
+    render_project(dist, template)
 
 
 CMDS = [startproject, gen]
