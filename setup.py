@@ -19,8 +19,8 @@ def gen_data(data_root='static'):
 
 
 package_data = gen_data()
-# The amount files of `shire` + `feature` + `expirement`
-assert len(package_data) == 30 + 5 + 31, \
+# The amount files of `shire[startproject,gen]` + `expirement[...]`
+assert len(package_data) == 30 + 4 + 31 + 5, \
     'nums of tepl files error, {}'.format(len(package_data))
 package_data.append('py.typed')
 
