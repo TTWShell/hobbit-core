@@ -24,7 +24,7 @@ Get it right now::
 
 Create your flask project::
 
-    hobbit --echo startproject -n demo -d . -p 5000 --celery
+    hobbit --echo new -n demo -d . -p 5000 --celery
 
 Run flask app::
 

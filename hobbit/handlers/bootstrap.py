@@ -4,9 +4,18 @@ import os
 import click
 from jinja2 import Environment, FileSystemLoader, Template
 
-from . import echo
-
 SUFFIX = '.jinja2'
+
+
+@click.pass_context
+def echo(ctx, msg, args=None):
+    if not ctx.obj['ECHO']:
+        return
+
+    if args:
+        click.echo(msg.format(*args))
+    else:
+        click.echo(msg)
 
 
 @contextmanager

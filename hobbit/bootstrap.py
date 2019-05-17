@@ -6,12 +6,18 @@ import pkg_resources
 import click
 import inflect
 
-from .handlers import echo
-from .handlers.bootstrap import render_project
+from .handlers.bootstrap import echo, render_project
+from . import HobbitCommand
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 engine = inflect.engine()
 templates = ['shire', 'expirement']
+
+
+@click.group()
+@click.pass_context
+def cli(ctx, force):
+    pass
 
 
 def validate_template_path(ctx, param, value):
@@ -25,13 +31,7 @@ def validate_template_path(ctx, param, value):
     return tpl_path
 
 
-@click.group()
-@click.pass_context
-def cli(ctx, force):
-    pass
-
-
-@cli.command()
+@cli.command(cls=HobbitCommand)
 @click.option('-n', '--name', help='Name of project.', required=True)
 @click.option('-p', '--port', help='Port of web server.', required=True,
               type=click.IntRange(1024, 65535))
@@ -45,12 +45,12 @@ def cli(ctx, force):
 @click.option('--celery/--no-celery', default=False,
               help='Generate celery files or not.')
 @click.pass_context
-def startproject(ctx, name, port, dist, template, force, celery):
+def new(ctx, name, port, dist, template, force, celery):
     """Create a new flask project, render from different template.
 
     Examples::
 
-        hobbit --echo startproject -n demo -d /tmp/test -p 1024
+        hobbit --echo new -n demo -d /tmp/test -p 1024
 
     Other tips::
 
@@ -74,7 +74,7 @@ def startproject(ctx, name, port, dist, template, force, celery):
     echo('project `{}` render finished.', (name, ))
 
 
-@cli.command()
+@cli.command(cls=HobbitCommand)
 @click.option('-n', '--name', help='Name of feature.', required=True)
 @click.option('-d', '--dist', type=click.Path(), required=False,
               help='Dir for new feature.')
@@ -108,4 +108,4 @@ def gen(ctx, name, template, dist, force):
     render_project(dist, template)
 
 
-CMDS = [startproject, gen]
+CMDS = [new, gen]

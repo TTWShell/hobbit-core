@@ -6,7 +6,7 @@ hobbit cmd
 
 hobbit - A flask project generator.
 
-.. autofunction:: hobbit.bootstrap.startproject
+.. autofunction:: hobbit.bootstrap.new
 .. autofunction:: hobbit.bootstrap.gen
 
 hobbit_core
