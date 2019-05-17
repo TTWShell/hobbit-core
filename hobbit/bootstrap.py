@@ -31,6 +31,10 @@ def validate_template_path(ctx, param, value):
     return tpl_path
 
 
+def validate_csv_file(ctx, param, value):
+    print(ctx, param, value)
+
+
 @cli.command(cls=HobbitCommand)
 @click.option('-n', '--name', help='Name of project.', required=True)
 @click.option('-p', '--port', help='Port of web server.', required=True,
@@ -83,8 +87,11 @@ def new(ctx, name, port, dist, template, force, celery):
               help='Template name.')
 @click.option('-f', '--force', default=False, is_flag=True,
               help='Force render files, covered if file exist.')
+@click.option('-c', '--csv-path', required=False, type=click.Path(exists=True),
+              callback=validate_csv_file,
+              help='A csv file that defines some models.')
 @click.pass_context
-def gen(ctx, name, template, dist, force):
+def gen(ctx, name, template, dist, force, csv_path):
     """Generator new feature. Auto gen models/{name}.py, schemas/{name}.py,
     views/{name}.py, services/{name.py}, tests/test_{name}.py etc.
     """
