@@ -3,9 +3,6 @@ from click import Command
 
 
 class HobbitCommand(Command):
-    # https://en.wikipedia.org/wiki/ANSI_escape_code
-    FOREGROUND_GREEN = '\033[32m'
-    ENDC = '\033[0m'
 
     def format_options(self, ctx, formatter):
         """Writes all the options into the formatter if they exist."""
@@ -16,7 +13,7 @@ class HobbitCommand(Command):
             if rv is not None:
                 # rewrite for color
                 rv = list(rv)
-                rv[0] = f'{self.FOREGROUND_GREEN}{rv[0]}{self.ENDC}'
+                rv[0] = click.style(rv[0], fg='green')
                 opts.append(tuple(rv))
 
         if opts:
@@ -76,7 +73,7 @@ class CLI(click.MultiCommand, HobbitCommand):
 
             for i, row in enumerate(rows):  # rewrite for color
                 row = list(row)
-                row[0] = f'{self.FOREGROUND_GREEN}{row[0]}{self.ENDC}'
+                row[0] = click.style(row[0], fg='green')
                 rows[i] = tuple(row)
 
             if rows:
