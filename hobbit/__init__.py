@@ -30,6 +30,8 @@ class CLI(click.MultiCommand, HobbitCommand):
         return sorted(self.cmds.keys())
 
     def get_command(self, ctx, cmd_name):
+        # Alias startproject to new
+        cmd_name = 'new' if cmd_name == 'startproject' else cmd_name
         try:
             return self.cmds[cmd_name]
         except KeyError:
