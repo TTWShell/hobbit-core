@@ -74,11 +74,12 @@ class CLI(click.MultiCommand, HobbitCommand):
                 help = cmd.get_short_help_str(limit)
                 rows.append((subcommand, help))
 
+            for i, row in enumerate(rows):  # rewrite for color
+                row = list(row)
+                row[0] = f'{self.FOREGROUND_GREEN}{row[0]}{self.ENDC}'
+                rows[i] = tuple(row)
+
             if rows:
-                for i, row in enumerate(rows):  # rewrite for color
-                    row = list(row)
-                    row[0] = f'{self.FOREGROUND_GREEN}{row[0]}{self.ENDC}'
-                    rows[i] = tuple(row)
                 with formatter.section('Commands'):
                     formatter.write_dl(rows)
 
