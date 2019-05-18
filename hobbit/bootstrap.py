@@ -87,7 +87,7 @@ def gen(ctx, name, template, dist, force, csv_path):
         csv_path[model].singular = module
         csv_path[model].plural = inflect_engine.plural(module)
         csv_path[model].columns.append(gen_column([
-            'username', 'String', 20, '', 'index', '', '用户名']))
+            'username', 'String', 20, '', 'index', '', '用户名', 'test']))
 
     ctx.obj['FORCE'] = force
     ctx.obj['JINJIA_CONTEXT'] = {

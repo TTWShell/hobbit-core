@@ -11,7 +11,7 @@ from hobbit import inflect_engine
 
 SUFFIX = '.jinja2'
 Column = namedtuple('Column', [
-    'field', 'type', 'type_arg', 'is_unique', 'is_index', 'is_null', 'doc'])
+    'field', 'type', 'type_arg', 'is_unique', 'is_index', 'is_null', 'doc', 'test'])
 
 """ Gen types
 from sqlalchemy import types
@@ -143,10 +143,13 @@ def gen_column(row):
     is_unique = True if column.is_unique else False
     is_index = True if column.is_index else False
     is_null = True if column.is_null else False
+    test = column.test
+    if column.test not in ('False', 'True', ''):
+        test = f"'{column.test}'"
 
     column = column._replace(
         type=ORM_TYPE_MAPS[column.type.lower()], is_null=str(is_null),
-        is_unique=str(is_unique), is_index=str(is_index))
+        is_unique=str(is_unique), is_index=str(is_index), test=test)
 
     return column
 
@@ -180,11 +183,11 @@ def validate_csv_file(ctx, param, value):
         for row in spamreader:
             if spamreader.line_num == 1:
                 continue
-            if len(row) == 1:
+            if len(row) == 1 or row[0] == ''.join(row):
                 module, model = gen_metadata_by_name(row[0])
                 data[model].singular = module
                 data[model].plural = inflect_engine.plural(module)
-            elif len(row) == 7:
+            elif len(row) == 8:
                 data[model].columns.append(gen_column(row))
             else:
                 raise click.UsageError(

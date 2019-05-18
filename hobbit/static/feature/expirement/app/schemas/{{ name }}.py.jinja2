@@ -6,7 +6,7 @@ from hobbit_core.schemas import PagedSchema, ModelSchema
 from app.models import {{ metadata | join(', ') }}
 
 
-{% for model_name in metadata -%}
+{% for model_name, Model in metadata.items() -%}
 class {{ model_name }}Schema(ModelSchema):
 
     class Meta:
@@ -17,8 +17,8 @@ class Paged{{ model_name }}Schema(PagedSchema):
     items = fields.Nested({{ model_name }}Schema, many=True)
 
 
-{{ module }}_schema = {{ model_name }}Schema()
-paged_{{ module }}_schemas = Paged{{ model_name }}Schema()
+{{ Model.singular }}_schema = {{ model_name }}Schema()
+paged_{{ Model.singular }}_schemas = Paged{{ model_name }}Schema()
 {% if not loop.last %}
 
 {% endif %}

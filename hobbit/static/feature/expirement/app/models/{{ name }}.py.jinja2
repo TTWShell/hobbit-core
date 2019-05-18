@@ -8,13 +8,14 @@ from app.exts import db
 {% for model_name, Model in metadata.items() -%}
 class {{ model_name }}(SurrogatePK, db.Model):
     {% for c in Model.columns -%}
-    {{ c.field }} = Column(db.{{ c.type }}
+        {{ c.field }} = Column(db.{{ c.type }}
         {%- if c.type_arg %}({{ c.type_arg }}){% endif %}
         {%- if c.is_unique %}, unique=True{% endif %}
         {%- if c.is_index %}, index=True{% endif %}
         {%- if c.is_null %}, nullable=True{% endif %}
         {%- if c.doc %}, doc='{{ c.doc }}'{% endif %})
-    {%- endfor %}
+{% if not loop.last %}    {% endif -%}
+    {%- endfor -%}
 {% if not loop.last %}
 
 {% endif %}

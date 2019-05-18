@@ -22,7 +22,10 @@ class Test{{ model_name }}(BaseTest):
 
     @pytest.fixture
     def instance(self):
-        instance = {{ model_name }}(username='test')
+        instance = {{ model_name }}(
+            {%- for c in Model.columns -%}
+            {{ c.field }}={{ c.test }}{%- if not loop.last -%}, {% endif -%}
+            {%- endfor -%})
         db.session.add(instance)
         db.session.flush()
         db.session.commit()
@@ -37,27 +40,31 @@ class Test{{ model_name }}(BaseTest):
         resp = client.get(f'/api/{{ Model.plural }}/{instance.id}/')
         assert resp.status_code == 200
         assert set(resp.json.keys()) == {
-            'created_at', 'id', 'updated_at', 'username'}
+            'created_at', 'id', 'updated_at'{%- for c in Model.columns -%}, '{{ c.field }}'{%- endfor -%}}
 
     def test_create(self, client):
         payload = {
-            'username': 'test',
+            {%- for c in Model.columns -%}
+            '{{ c.field }}': {{ c.test }}{%- if not loop.last -%}, {% endif -%}
+            {%- endfor -%}
         }
         resp = client.post('/api/{{ Model.plural }}/', json=payload)
         assert resp.status_code == 201
         assert set(resp.json.keys()) == {
-            'created_at', 'id', 'updated_at', 'username'}
+            'created_at', 'id', 'updated_at'{%- for c in Model.columns -%}, '{{ c.field }}'{%- endfor -%}}
         for k, v in payload.items():
             assert resp.json[k] == v
 
     def test_update(self, client, instance):
         payload = {
-            'username': f'{instance.username}_updated',
+            {%- for c in Model.columns -%}
+            '{{ c.field }}': {{ c.test }}{%- if not loop.last -%}, {% endif -%}
+            {%- endfor -%}
         }
         resp = client.put(f'/api/{{ Model.plural }}/{instance.id}/', json=payload)
         assert resp.status_code == 200
         assert set(resp.json.keys()) == {
-            'created_at', 'id', 'updated_at', 'username'}
+            'created_at', 'id', 'updated_at'{%- for c in Model.columns -%}, '{{ c.field }}'{%- endfor -%}}
         for k, v in payload.items():
             assert resp.json[k] == v
 
