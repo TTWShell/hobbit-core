@@ -5,9 +5,9 @@ from hobbit_core.db import Column, SurrogatePK, reference_col  # NOQA F401
 from app.exts import db
 
 
-{% for model, columns in metadata.items() -%}
-class {{ model }}(SurrogatePK, db.Model):
-    {% for c in columns -%}
+{% for model_name, Model in metadata.items() -%}
+class {{ model_name }}(SurrogatePK, db.Model):
+    {% for c in Model.columns -%}
     {{ c.field }} = Column(db.{{ c.type }}
         {%- if c.type_arg %}({{ c.type_arg }}){% endif %}
         {%- if c.is_unique %}, unique=True{% endif %}
@@ -15,7 +15,7 @@ class {{ model }}(SurrogatePK, db.Model):
         {%- if c.is_null %}, nullable=True{% endif %}
         {%- if c.doc %}, doc='{{ c.doc }}'{% endif %})
     {%- endfor %}
-{% if metadata | length != loop.index %}
+{% if not loop.last %}
 
 {% endif %}
 {%- endfor %}

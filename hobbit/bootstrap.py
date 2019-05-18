@@ -4,13 +4,11 @@ import string
 import pkg_resources
 
 import click
-import inflect
 
 from .handlers.bootstrap import echo, render_project, gen_metadata_by_name, \
     Column, validate_template_path, validate_csv_file
-from . import HobbitCommand
+from . import HobbitCommand, inflect_engine
 
-engine = inflect.engine()
 templates = ['shire', 'expirement']
 
 
@@ -91,7 +89,7 @@ def gen(ctx, name, template, dist, force, csv_path):
         'name': name,
         'module': module,
         'metadata': csv_path,  # auto read data when validate
-        'plural': engine.plural(module)
+        'plural': inflect_engine.plural(module)
     }
 
     render_project(dist, template)

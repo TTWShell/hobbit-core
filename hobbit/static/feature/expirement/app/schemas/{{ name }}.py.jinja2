@@ -6,20 +6,20 @@ from hobbit_core.schemas import PagedSchema, ModelSchema
 from app.models import {{ metadata | join(', ') }}
 
 
-{% for model, columns in metadata.items() -%}
-class {{ model }}Schema(ModelSchema):
+{% for model_name in metadata -%}
+class {{ model_name }}Schema(ModelSchema):
 
     class Meta:
-        model = {{ model }}
+        model = {{ model_name }}
 
 
-class Paged{{ model }}Schema(PagedSchema):
-    items = fields.Nested({{ model }}Schema, many=True)
+class Paged{{ model_name }}Schema(PagedSchema):
+    items = fields.Nested({{ model_name }}Schema, many=True)
 
 
-{{ module }}_schema = {{ model }}Schema()
-paged_{{ module }}_schemas = Paged{{ model }}Schema()
-{% if metadata | length != loop.index %}
+{{ module }}_schema = {{ model_name }}Schema()
+paged_{{ module }}_schemas = Paged{{ model_name }}Schema()
+{% if not loop.last %}
 
 {% endif %}
 {%- endfor %}

@@ -2,9 +2,12 @@ from collections import namedtuple, defaultdict
 from contextlib import contextmanager
 import csv
 import os
+import re
 
 import click
 from jinja2 import Environment, FileSystemLoader, Template
+
+from hobbit import inflect_engine
 
 SUFFIX = '.jinja2'
 Column = namedtuple('Column', [
@@ -44,6 +47,11 @@ ORM_TYPES = [
 ORM_TYPE_MAPS = {t.lower(): t for t in ORM_TYPES}
 
 
+def regex_replace(s, find, replace):
+    """A non-optimal implementation of a regex filter"""
+    return re.sub(find, replace, s)
+
+
 @click.pass_context
 def echo(ctx, msg, args=None):
     if not ctx.obj['ECHO']:
@@ -73,6 +81,7 @@ def render_project(ctx, dist, tpl_path):
     context = ctx.obj['JINJIA_CONTEXT']
 
     jinjia_env = Environment(loader=FileSystemLoader(tpl_path))
+    jinjia_env.filters['regex_replace'] = regex_replace
 
     with chdir(dist):
         for fn in os.listdir(tpl_path):
@@ -154,8 +163,16 @@ def validate_template_path(ctx, param, value):
     return tpl_path
 
 
+def _gen_model():
+    class Model:
+        singular = None
+        plural = None
+        columns = []
+    return Model
+
+
 def validate_csv_file(ctx, param, value):
-    model, data = None, defaultdict(list)
+    model, data = None, defaultdict(_gen_model)
     if value is None:
         return data
     with open(value) as csvfile:
@@ -164,9 +181,11 @@ def validate_csv_file(ctx, param, value):
             if spamreader.line_num == 1:
                 continue
             if len(row) == 1:
-                _, model = gen_metadata_by_name(row[0])
+                module, model = gen_metadata_by_name(row[0])
+                data[model].singular = module
+                data[model].plural = inflect_engine.plural(module)
             elif len(row) == 7:
-                data[model].append(gen_column(row))
+                data[model].columns.append(gen_column(row))
             else:
                 raise click.UsageError(
                     click.style(f'csv file err: `{row}`.', fg='red'))

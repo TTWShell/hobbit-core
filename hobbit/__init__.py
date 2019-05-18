@@ -3,7 +3,10 @@ import os
 import click
 from click import Command
 
+import inflect
+
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
+inflect_engine = inflect.engine()
 
 
 class HobbitCommand(Command):
