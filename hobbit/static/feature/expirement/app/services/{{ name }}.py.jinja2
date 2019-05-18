@@ -1,10 +1,11 @@
 from hobbit_core.pagination import pagination
 from hobbit_core.db import transaction
 
-from app.models import {{ model }}
+from app.models import {{ metadata | join(', ') }}
 from app.exts import db
 
 
+{% for model, columns in metadata.items() -%}
 class {{ model }}Service:
     model = {{ model }}
 
@@ -38,4 +39,7 @@ class {{ model }}Service:
     def delete(cls, ids):
         return cls.model.query.filter(
             cls.model.id.in_(ids)).delete(synchronize_session='fetch')
+{% if metadata | length != loop.index %}
 
+{% endif %}
+{%- endfor %}
