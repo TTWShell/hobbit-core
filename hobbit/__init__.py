@@ -1,5 +1,9 @@
+import os
+
 import click
 from click import Command
+
+ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 
 
 class HobbitCommand(Command):

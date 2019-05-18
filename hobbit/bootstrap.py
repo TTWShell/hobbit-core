@@ -6,10 +6,10 @@ import pkg_resources
 import click
 import inflect
 
-from .handlers.bootstrap import echo, render_project
+from .handlers.bootstrap import echo, render_project, gen_metadata_by_name, \
+    Column, validate_template_path, validate_csv_file
 from . import HobbitCommand
 
-ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 engine = inflect.engine()
 templates = ['shire', 'expirement']
 
@@ -18,21 +18,6 @@ templates = ['shire', 'expirement']
 @click.pass_context
 def cli(ctx, force):
     pass
-
-
-def validate_template_path(ctx, param, value):
-    dir = 'feature' if ctx.command.name == 'gen' else 'bootstrap'
-    tpl_path = os.path.join(ROOT_PATH, 'static', dir, value)
-
-    if not os.path.exists(tpl_path):
-        raise click.UsageError(
-            click.style('Tpl `{}` not exists.'.format(value), fg='red'))
-
-    return tpl_path
-
-
-def validate_csv_file(ctx, param, value):
-    print(ctx, param, value)
 
 
 @cli.command(cls=HobbitCommand)
@@ -96,19 +81,16 @@ def gen(ctx, name, template, dist, force, csv_path):
     views/{name}.py, services/{name.py}, tests/test_{name}.py etc.
     """
     dist = os.getcwd() if dist is None else os.path.abspath(dist)
-    module = '_'.join(name.split('_')).lower()
-    model = ''.join([sub.capitalize() for sub in name.split('_')])
-
-    if module != name or not all(name.split('_')):
-        raise click.UsageError(click.style(
-            'name should be lowercase, with words separated by '
-            'underscores as necessary to improve readability.', fg='red'))
+    module, model = gen_metadata_by_name(name)
+    if not csv_path:
+        csv_path[model] = [Column(*[
+            'username', 'string', 20, '', 'index', '', '用户名'])]
 
     ctx.obj['FORCE'] = force
     ctx.obj['JINJIA_CONTEXT'] = {
         'name': name,
         'module': module,
-        'model': model,
+        'metadata': csv_path,  # auto read data when validate
         'plural': engine.plural(module)
     }
 
