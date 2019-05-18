@@ -3,9 +3,10 @@ from marshmallow_enum import EnumField  # NOQA F401
 
 from hobbit_core.schemas import PagedSchema, ModelSchema
 
-from app.models import {{ model }}
+from app.models import {{ metadata | join(', ') }}
 
 
+{% for model, columns in metadata.items() -%}
 class {{ model }}Schema(ModelSchema):
 
     class Meta:
@@ -18,4 +19,7 @@ class Paged{{ model }}Schema(PagedSchema):
 
 {{ module }}_schema = {{ model }}Schema()
 paged_{{ module }}_schemas = Paged{{ model }}Schema()
+{% if metadata | length != loop.index %}
 
+{% endif %}
+{%- endfor %}
