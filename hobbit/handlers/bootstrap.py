@@ -120,40 +120,6 @@ def render_file(ctx, dist, fn, data):
         os.chmod(fn, 0o755)
 
 
-def gen_metadata_by_name(name):
-    module = '_'.join(name.split('_')).lower()
-    model = ''.join([sub.capitalize() for sub in name.split('_')])
-
-    if module != name or not all(name.split('_')):
-        raise click.UsageError(click.style(
-            f'Name `{name}` should be lowercase, with words separated by '
-            f'underscores as necessary to improve readability.', fg='red'))
-
-    return module, model
-
-
-def gen_column(row):
-    column = Column(*row)
-
-    gen_metadata_by_name(column.field)  # validate the field name
-
-    assert column.type.lower() in ORM_TYPE_MAPS, \
-        f'column type err: cannot be `{column.type}`'
-
-    is_unique = True if column.is_unique else False
-    is_index = True if column.is_index else False
-    is_null = True if column.is_null else False
-    test = column.test
-    if column.test not in ('False', 'True', ''):
-        test = f"'{column.test}'"
-
-    column = column._replace(
-        type=ORM_TYPE_MAPS[column.type.lower()], is_null=str(is_null),
-        is_unique=str(is_unique), is_index=str(is_index), test=test)
-
-    return column
-
-
 def validate_template_path(ctx, param, value):
     from hobbit import ROOT_PATH
     dir = 'feature' if ctx.command.name == 'gen' else 'bootstrap'
@@ -166,7 +132,48 @@ def validate_template_path(ctx, param, value):
     return tpl_path
 
 
-def _gen_model():
+def gen_metadata_by_name(name):
+    module = '_'.join(name.split('_')).lower()
+    model = ''.join([sub.capitalize() for sub in name.split('_')])
+
+    if module != name or not all(name.split('_')):
+        raise click.UsageError(click.style(
+            f'Name `{name}` should be lowercase, with words separated by '
+            f'underscores as necessary to improve readability.', fg='red'))
+
+    return module, model
+
+
+def cleaning_test_value(type_, value):
+    if type_ in ['BigInteger', 'Float', 'Integer', 'SmallInteger']:
+        return value
+    if type_ == 'Boolean':
+        return value.capitalize()
+    return f"'{value}'"
+
+
+def gen_column(row):
+    column = Column(*row)
+
+    gen_metadata_by_name(column.field)  # validate the field name
+
+    assert column.type.lower() in ORM_TYPE_MAPS, \
+        f'column type err: cannot be `{column.type}`'
+
+    type_ = ORM_TYPE_MAPS[column.type.lower()]
+    is_unique = True if column.is_unique else False
+    is_index = True if column.is_index else False
+    is_null = True if column.is_null else False
+    test = cleaning_test_value(type_, column.test)
+
+    column = column._replace(
+        type=type_, is_null=str(is_null),
+        is_unique=str(is_unique), is_index=str(is_index), test=test)
+
+    return column
+
+
+def gen_model():
     class Model:
         singular = None
         plural = None
@@ -175,7 +182,7 @@ def _gen_model():
 
 
 def validate_csv_file(ctx, param, value):
-    model, data = None, defaultdict(_gen_model)
+    model, data = None, defaultdict(gen_model)
     if value is None:
         return data
     with open(value) as csvfile:

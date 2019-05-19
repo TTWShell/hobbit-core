@@ -82,8 +82,7 @@ def gen(ctx, name, template, dist, force, csv_path):
     module, model = gen_metadata_by_name(name)
     if not csv_path:
         # default gen username column
-        from hobbit.handlers.bootstrap import _gen_model, gen_column
-        csv_path[model] = _gen_model()
+        from hobbit.handlers.bootstrap import gen_column
         csv_path[model].singular = module
         csv_path[model].plural = inflect_engine.plural(module)
         csv_path[model].columns.append(gen_column([
