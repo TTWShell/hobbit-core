@@ -6,8 +6,8 @@ import pkg_resources
 import click
 
 from .handlers.bootstrap import echo, render_project, gen_metadata_by_name, \
-    validate_template_path, validate_csv_file
-from . import HobbitCommand, inflect_engine
+    validate_template_path, validate_csv_file, MetaModel
+from . import HobbitCommand
 
 templates = ['shire', 'expirement']
 
@@ -79,20 +79,19 @@ def gen(ctx, name, template, dist, force, csv_path):
     views/{name}.py, services/{name.py}, tests/test_{name}.py etc.
     """
     dist = os.getcwd() if dist is None else os.path.abspath(dist)
-    module, model = gen_metadata_by_name(name)
-    if not csv_path:
-        # default gen username column
-        from hobbit.handlers.bootstrap import gen_column
-        csv_path[model].singular = module
-        csv_path[model].plural = inflect_engine.plural(module)
-        csv_path[model].columns.append(gen_column([
-            'username', 'String', 20, '', 'index', '', '用户名', 'test']))
+    module, _ = gen_metadata_by_name(name)
+
+    if csv_path:
+        metadata = {m.name: m for m in MetaModel.csv2model(csv_path)}
+    else:
+        default = MetaModel.gen_default(name)
+        metadata = {default.name: default}
 
     ctx.obj['FORCE'] = force
     ctx.obj['JINJIA_CONTEXT'] = {
         'name': name,
         'module': module,
-        'metadata': csv_path,  # auto read data when validate
+        'metadata': metadata,
     }
 
     render_project(dist, template)

@@ -1,4 +1,4 @@
-from collections import namedtuple, defaultdict
+from collections import namedtuple
 from contextlib import contextmanager
 import csv
 import os
@@ -10,41 +10,6 @@ from jinja2 import Environment, FileSystemLoader, Template
 from hobbit import inflect_engine
 
 SUFFIX = '.jinja2'
-Column = namedtuple('Column', [
-    'field', 'type', 'type_arg', 'is_unique', 'is_index', 'is_null', 'doc', 'test'])
-
-""" Gen types
-from sqlalchemy import types
-from sqlalchemy.sql.visitors import VisitableType
-
-[
-    k for k, v in types.__dict__.items()
-    if isinstance(v, VisitableType) and k != k.upper()
-    and not k.startswith('_')]
-"""
-ORM_TYPES = [
-    'BigInteger',
-    'Binary',
-    'Boolean',
-    'Date',
-    'DateTime',
-    'Enum',
-    'Float',
-    'Integer',
-    'Interval',
-    'LargeBinary',
-    'MatchType',
-    'NullType',
-    'Numeric',
-    'PickleType',
-    'SmallInteger',
-    'String',
-    'Text',
-    'Time',
-    'Unicode',
-    'UnicodeText',
-]
-ORM_TYPE_MAPS = {t.lower(): t for t in ORM_TYPES}
 
 
 def regex_replace(s, find, replace):
@@ -120,18 +85,6 @@ def render_file(ctx, dist, fn, data):
         os.chmod(fn, 0o755)
 
 
-def validate_template_path(ctx, param, value):
-    from hobbit import ROOT_PATH
-    dir = 'feature' if ctx.command.name == 'gen' else 'bootstrap'
-    tpl_path = os.path.join(ROOT_PATH, 'static', dir, value)
-
-    if not os.path.exists(tpl_path):
-        raise click.UsageError(
-            click.style('Tpl `{}` not exists.'.format(value), fg='red'))
-
-    return tpl_path
-
-
 def gen_metadata_by_name(name):
     module = '_'.join(name.split('_')).lower()
     model = ''.join([sub.capitalize() for sub in name.split('_')])
@@ -144,59 +97,142 @@ def gen_metadata_by_name(name):
     return module, model
 
 
-def cleaning_test_value(type_, value):
-    if type_ in ['BigInteger', 'Float', 'Integer', 'SmallInteger']:
-        return value
-    if type_ == 'Boolean':
-        return value.capitalize()
-    return f"'{value}'"
+class MetaModel:
+    Column = namedtuple('Column', [
+        'field', 'type', 'type_arg', 'is_unique', 'is_index', 'is_null',
+        'doc', 'test'])
+
+    """ Gen types
+    from sqlalchemy import types
+    from sqlalchemy.sql.visitors import VisitableType
+
+    [
+        k for k, v in types.__dict__.items()
+        if isinstance(v, VisitableType) and k != k.upper()
+        and not k.startswith('_')]
+    """
+    ORM_TYPES = [
+        'BigInteger',
+        'Binary',
+        'Boolean',
+        'Date',
+        'DateTime',
+        'Enum',
+        'Float',
+        'Integer',
+        'Interval',
+        'LargeBinary',
+        'MatchType',
+        'NullType',
+        'Numeric',
+        'PickleType',
+        'SmallInteger',
+        'String',
+        'Text',
+        'Time',
+        'Unicode',
+        'UnicodeText',
+    ]
+    ORM_TYPE_MAPS = {t.lower(): t for t in ORM_TYPES}
+    TYPE_REF = 'ref'
+
+    @classmethod
+    def gen_model(cls, name=''):
+        module, model = gen_metadata_by_name(name)
+
+        class Model:
+            name = model
+            singular = module
+            plural = inflect_engine.plural(module)
+            columns = []
+            refs = []
+
+        return Model
+
+    @classmethod
+    def cleaning_test_value(cls, type_, value):
+        if type_ in ['BigInteger', 'Float', 'Integer', 'SmallInteger']:
+            return value
+        if type_ == 'Boolean':
+            return value.capitalize()
+        return f"'{value}'"
+
+    @classmethod
+    def row_processing(cls, row):
+        column = cls.Column(*row)
+
+        gen_metadata_by_name(column.field)  # validate the field name
+
+        type_ = column.type.lower()
+        assert type_ in cls.ORM_TYPE_MAPS or type_ == cls.TYPE_REF, \
+            f'column type err: cannot be `{column.type}`'
+
+        type_ = cls.ORM_TYPE_MAPS.get(type_) or cls.TYPE_REF
+        is_unique = True if column.is_unique else False
+        is_index = True if column.is_index else False
+        is_null = True if column.is_null else False
+        test = cls.cleaning_test_value(type_, column.test)
+
+        column = column._replace(
+            type=type_, is_null=is_null,
+            is_unique=is_unique, is_index=is_index, test=test)
+
+        return column
+
+    @classmethod
+    def csv2model(cls, csv_path):
+        with open(csv_path) as csvfile:
+            spamreader = csv.reader(csvfile)
+
+            Model = None
+            for row in spamreader:
+                if spamreader.line_num == 1:
+                    continue
+                if len(row) == 1 or row[0] == ''.join(row):
+                    if Model is not None:
+                        yield Model
+                    Model = cls.gen_model(row[0])
+                elif len(row) == 8:
+                    row = cls.row_processing(row)
+                    if row.type != cls.TYPE_REF:
+                        Model.columns.append(row)
+                    else:
+                        Model.refs.append(row)
+                else:
+                    raise click.UsageError(
+                        click.style(f'csv file err: `{row}`.', fg='red'))
+            yield Model
+
+    @classmethod
+    def gen_default(cls, name):
+        model = cls.gen_model(name)
+        model.columns.append(cls.row_processing([
+            'username', 'String', 20, '', 'index', '', '用户名', 'test']))
+        return model
 
 
-def gen_column(row):
-    column = Column(*row)
+def validate_template_path(ctx, param, value):
+    from hobbit import ROOT_PATH
+    dir = 'feature' if ctx.command.name == 'gen' else 'bootstrap'
+    tpl_path = os.path.join(ROOT_PATH, 'static', dir, value)
 
-    gen_metadata_by_name(column.field)  # validate the field name
+    if not os.path.exists(tpl_path):
+        raise click.UsageError(
+            click.style('Tpl `{}` not exists.'.format(value), fg='red'))
 
-    assert column.type.lower() in ORM_TYPE_MAPS, \
-        f'column type err: cannot be `{column.type}`'
-
-    type_ = ORM_TYPE_MAPS[column.type.lower()]
-    is_unique = True if column.is_unique else False
-    is_index = True if column.is_index else False
-    is_null = True if column.is_null else False
-    test = cleaning_test_value(type_, column.test)
-
-    column = column._replace(
-        type=type_, is_null=str(is_null),
-        is_unique=str(is_unique), is_index=str(is_index), test=test)
-
-    return column
-
-
-def gen_model():
-    class Model:
-        singular = None
-        plural = None
-        columns = []
-    return Model
+    return tpl_path
 
 
 def validate_csv_file(ctx, param, value):
-    model, data = None, defaultdict(gen_model)
     if value is None:
-        return data
+        return value
+
     with open(value) as csvfile:
         spamreader = csv.reader(csvfile)
         for row in spamreader:
-            if spamreader.line_num == 1:
+            if len(row) == 1 or row[0] == ''.join(row) or len(row) == 8:
                 continue
-            if len(row) == 1 or row[0] == ''.join(row):
-                module, model = gen_metadata_by_name(row[0])
-                data[model].singular = module
-                data[model].plural = inflect_engine.plural(module)
-            elif len(row) == 8:
-                data[model].columns.append(gen_column(row))
             else:
                 raise click.UsageError(
                     click.style(f'csv file err: `{row}`.', fg='red'))
-    return data
+    return value

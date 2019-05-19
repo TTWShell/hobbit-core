@@ -1,6 +1,1 @@
-column_name,type,type_arg,is_unique,is_index,is_null,doc,text_value
-user,,,,,,,
-username,string,16,,index,,用户名,test
-is_admin,Boolean,,,,,,True
-role
-name,string,32,unique,,,角色名,admin
+column_name,type,type_arg,is_unique,is_index,is_null,doc,text_valueuser,,,,,,,username,string,16,,index,,用户名,testsocre,integer,,,,TRUE,评分,1is_admin,Boolean,,,,,,TRUErole_id,ref,roles,,,null,用户角色,role,,,,,,,name,string,32,unique,,,角色名,admin
