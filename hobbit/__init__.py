@@ -90,7 +90,8 @@ class CLI(click.MultiCommand, HobbitCommand):
 
 @click.command(cls=CLI)
 @click.version_option()
-@click.option('--echo/--no-echo', default=False, help='Show the logs of commnad.')
+@click.option('--echo/--no-echo', default=False,
+              help='Show the logs of commnad.')
 @click.pass_context
 def main(ctx, echo):
     if ctx.obj is None:
