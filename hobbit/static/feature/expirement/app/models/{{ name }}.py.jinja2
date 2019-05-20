@@ -5,7 +5,27 @@ from hobbit_core.db import Column, SurrogatePK, reference_col  # NOQA F401
 from app.exts import db
 
 
-class {{ model }}(SurrogatePK, db.Model):
-    # some examples:
-    username = Column(db.String(20), nullable=False, index=True, doc='用户名')
+{% for model_name, Model in metadata.items() -%}
+class {{ model_name }}(SurrogatePK, db.Model):
+    __tablename__ = '{{ Model.plural }}'
+    {% for c in Model.columns -%}
+    {{ c.field }} = Column(db.{{ c.type }}
+        {%- if c.type_arg %}({{ c.type_arg }}){% endif %}
+        {%- if c.is_unique %}, unique=True{% endif %}
+        {%- if c.is_index %}, index=True{% endif %}
+        {%- if c.is_null %}, nullable=True{% endif %}
+        {%- if c.doc %}, doc='{{ c.doc }}'{% endif %})
+{% if not loop.last %}    {% endif -%}
+    {%- endfor -%}
+    {% for c in Model.refs %}
+    {{ c.field }} = reference_col('{{ c.type_arg }}'
+        {%- if c.is_unique %}, unique=True{% endif %}
+        {%- if c.is_index %}, index=True{% endif %}
+        {%- if c.is_null %}, nullable=True{% endif %}
+        {%- if c.doc %}, doc='{{ c.doc }}'{% endif %})
+{% if not loop.last %}    {% endif -%}
+    {%- endfor -%}
+{%- if loop.depth == 1 and not loop.last %}
 
+{% endif -%}
+{%- endfor -%}

@@ -4,25 +4,12 @@ import string
 import pkg_resources
 
 import click
-import inflect
 
-from .handlers import echo
-from .handlers.bootstrap import render_project
+from .handlers.bootstrap import echo, render_project, gen_metadata_by_name, \
+    validate_template_path, validate_csv_file, MetaModel
+from . import HobbitCommand
 
-ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
-engine = inflect.engine()
 templates = ['shire', 'expirement']
-
-
-def validate_template_path(ctx, param, value):
-    dir = 'feature' if ctx.command.name == 'gen' else 'bootstrap'
-    tpl_path = os.path.join(ROOT_PATH, 'static', dir, value)
-
-    if not os.path.exists(tpl_path):
-        raise click.UsageError(
-            click.style('Tpl `{}` not exists.'.format(value), fg='red'))
-
-    return tpl_path
 
 
 @click.group()
@@ -31,7 +18,7 @@ def cli(ctx, force):
     pass
 
 
-@cli.command()
+@cli.command(cls=HobbitCommand)
 @click.option('-n', '--name', help='Name of project.', required=True)
 @click.option('-p', '--port', help='Port of web server.', required=True,
               type=click.IntRange(1024, 65535))
@@ -45,12 +32,12 @@ def cli(ctx, force):
 @click.option('--celery/--no-celery', default=False,
               help='Generate celery files or not.')
 @click.pass_context
-def startproject(ctx, name, port, dist, template, force, celery):
+def new(ctx, name, port, dist, template, force, celery):
     """Create a new flask project, render from different template.
 
     Examples::
 
-        hobbit --echo startproject -n demo -d /tmp/test -p 1024
+        hobbit --echo new -n demo -d /tmp/test -p 1024
 
     Other tips::
 
@@ -74,7 +61,7 @@ def startproject(ctx, name, port, dist, template, force, celery):
     echo('project `{}` render finished.', (name, ))
 
 
-@cli.command()
+@cli.command(cls=HobbitCommand)
 @click.option('-n', '--name', help='Name of feature.', required=True)
 @click.option('-d', '--dist', type=click.Path(), required=False,
               help='Dir for new feature.')
@@ -83,29 +70,31 @@ def startproject(ctx, name, port, dist, template, force, celery):
               help='Template name.')
 @click.option('-f', '--force', default=False, is_flag=True,
               help='Force render files, covered if file exist.')
+@click.option('-c', '--csv-path', required=False, type=click.Path(exists=True),
+              callback=validate_csv_file,
+              help='A csv file that defines some models.')
 @click.pass_context
-def gen(ctx, name, template, dist, force):
+def gen(ctx, name, template, dist, force, csv_path):
     """Generator new feature. Auto gen models/{name}.py, schemas/{name}.py,
     views/{name}.py, services/{name.py}, tests/test_{name}.py etc.
     """
     dist = os.getcwd() if dist is None else os.path.abspath(dist)
-    module = '_'.join(name.split('_')).lower()
-    model = ''.join([sub.capitalize() for sub in name.split('_')])
+    module, _ = gen_metadata_by_name(name)
 
-    if module != name or not all(name.split('_')):
-        raise click.UsageError(click.style(
-            'name should be lowercase, with words separated by '
-            'underscores as necessary to improve readability.', fg='red'))
+    if csv_path:
+        metadata = {m.name: m for m in MetaModel.csv2model(csv_path)}
+    else:
+        default = MetaModel.gen_default(name)
+        metadata = {default.name: default}
 
     ctx.obj['FORCE'] = force
     ctx.obj['JINJIA_CONTEXT'] = {
         'name': name,
         'module': module,
-        'model': model,
-        'plural': engine.plural(module)
+        'metadata': metadata,
     }
 
     render_project(dist, template)
 
 
-CMDS = [startproject, gen]
+CMDS = [new, gen]

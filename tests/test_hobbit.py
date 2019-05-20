@@ -31,16 +31,16 @@ class TestHobbit(BaseTest):
         assert 'Error: cmd not exist: doesnotexistcmd' in result.output
 
     @chdir(wkdir)
-    def test_startproject_cmd_nodist(self, runner):
+    def test_new_cmd_nodist(self, runner):
         assert os.getcwd() == self.wkdir
 
-        result = runner.invoke(hobbit, ['--echo', 'startproject'], obj={})
+        result = runner.invoke(hobbit, ['--echo', 'new'], obj={})
         assert result.exit_code == 2
         assert 'Error: Missing option "-n" / "--name".' in result.output
 
         result = runner.invoke(
             hobbit, [
-                '--echo', 'startproject', '-n', 'haha', '-f', '-p', '1024',
+                '--echo', 'new', '-n', 'haha', '-f', '-p', '1024',
             ], obj={})
         assert result.exit_code == 0
         assert 'mkdir\t{}'.format(self.wkdir) in result.output
@@ -49,10 +49,10 @@ class TestHobbit(BaseTest):
             os.getcwd(), 'app', 'models', '__init__.py'))
         assert 'example.py' not in result.output
 
-    def test_startproject_cmd_dist(self, runner):
+    def test_new_cmd_dist(self, runner):
         result = runner.invoke(
             hobbit, [
-                '--echo', 'startproject', '-n', 'haha', '-f', '-d', self.wkdir,
+                '--echo', 'new', '-n', 'haha', '-f', '-d', self.wkdir,
                 '-p', '1024',
             ], obj={})
         assert result.exit_code == 0
@@ -63,12 +63,12 @@ class TestHobbit(BaseTest):
         assert 'example.py' not in result.output
 
     @chdir(wkdir)
-    def test_startproject_cmd_curdir(self, runner):
+    def test_new_cmd_curdir(self, runner):
         assert os.getcwd() == self.wkdir
 
         result = runner.invoke(
             hobbit, [
-                '--echo', 'startproject', '-n', 'haha', '-f', '-d', '.',
+                '--echo', 'new', '-n', 'haha', '-f', '-d', '.',
                 '-p', '1024',
             ], obj={})
         assert result.exit_code == 0
@@ -77,11 +77,11 @@ class TestHobbit(BaseTest):
         assert 'example.py' not in result.output
 
     @chdir(wkdir)
-    def test_startproject_cmd(self, runner):
+    def test_new_cmd(self, runner):
         assert os.getcwd() == self.wkdir
 
         cmd = [
-            '--echo', 'startproject', '-n', 'haha', '-p', '1024']
+            '--echo', 'new', '-n', 'haha', '-p', '1024']
         result = runner.invoke(hobbit, cmd, obj={})
         # start + 29 files + 11 dir + 1 end + empty
         # in this test case. main dir exists, so mkdir - 1
@@ -95,11 +95,11 @@ class TestHobbit(BaseTest):
         assert call(['flake8', '.']) == 0
 
     @chdir(wkdir)
-    def test_startproject_cmd_celery(self, runner):
+    def test_new_cmd_celery(self, runner):
         assert os.getcwd() == self.wkdir
 
         cmd = [
-            '--echo', 'startproject', '-n', 'haha', '-p', '1024',
+            '--echo', 'new', '-n', 'haha', '-p', '1024',
             '--celery']
         result = runner.invoke(hobbit, cmd, obj={})
         # start + files + mkdir + tail
@@ -108,25 +108,28 @@ class TestHobbit(BaseTest):
         assert '/tasks' in result.output
         assert call(['flake8', '.']) == 0
 
+    @pytest.mark.parametrize("gen_cmd", [
+        ['--echo', 'gen', '-n', 'user', '-t', 'expirement'],
+        ['--echo', 'gen', '-n', 'user', '-t', 'expirement', '-f', '--csv-path',
+         os.path.join(BaseTest.root_path, 'tests', 'models.csv')],
+    ])
     @chdir(wkdir)
-    def test_new_expirement_tpl_and_gen_cmd(self, runner):
+    def test_new_expirement_tpl_and_gen_cmd(self, runner, gen_cmd):
         assert os.getcwd() == self.wkdir
 
         # new project use expirement template
         cmd = [
-            '--echo', 'startproject', '-n', 'haha', '-p', '1024',
+            '--echo', 'new', '-n', 'haha', '-p', '1024',
             '-t', 'expirement']
         result = runner.invoke(hobbit, cmd, obj={})
         # start + files + mkdir + tail
         assert len(result.output.split('\n')) == 1 + 31 + 11 + 1
 
         # gen new module
-        cmd = ['--echo', 'gen', '-n', 'user', '-t', 'expirement']
-        result = runner.invoke(hobbit, cmd, obj={})
-        assert len(result.output.split('\n')) == 5 + 1  # files
+        result = runner.invoke(hobbit, gen_cmd, obj={})
+        assert len(result.output.split('\n')) == 5 + 1, result.output  # files
 
         # flake8 check
         assert call(['flake8', '.']) == 0
-
         # pytest
         assert call(['pytest']) == 0

@@ -8,45 +8,49 @@ from hobbit_core.pagination import PageParams
 from hobbit_core.db import transaction
 
 from app import schemas
-from app.services import {{ model }}Service
+from app.services import {{ metadata | map('regex_replace', '^(.*)$', '\\1Service') | join(', ') }}
 from app.exts import db
 
 bp = Blueprint('{{ module }}', __name__)
 
 
-@bp.route('/{{ plural }}/', methods=['GET'])
+{% for model_name, Model in metadata.items() -%}
+@bp.route('/{{ Model.plural }}/', methods=['GET'])
 @use_kwargs(PageParams)
-def list_{{ plural }}(page, page_size, order_by):
-    page_ret = {{ model }}Service.list(page, page_size, order_by)
-    return jsonify(schemas.paged_{{ module }}_schemas.dump(page_ret))
+def list_{{ Model.plural }}(page, page_size, order_by):
+    page_ret = {{ model_name }}Service.list(page, page_size, order_by)
+    return jsonify(schemas.paged_{{ Model.singular }}_schemas.dump(page_ret))
 
 
-@bp.route('/{{ plural }}/', methods=['POST'])
-@use_kwargs(schemas.{{ module }}_schema)
+@bp.route('/{{ Model.plural }}/', methods=['POST'])
+@use_kwargs(schemas.{{ Model.singular }}_schema)
 @transaction(db.session)
-def create_{{ module }}(**kwargs):
-    instance = {{ model }}Service.create(**kwargs)
-    return jsonify(schemas.{{ module }}_schema.dump(instance)), 201
+def create_{{ Model.singular }}(**kwargs):
+    instance = {{ model_name }}Service.create(**kwargs)
+    return jsonify(schemas.{{ Model.singular }}_schema.dump(instance)), 201
 
 
-@bp.route('/{{ plural }}/<int:pk>/', methods=['GET'])
-def retrieve_{{ module }}(pk):
-    instance = {{ model }}Service.get_or_404(pk)
-    return jsonify(schemas.{{ module }}_schema.dump(instance))
+@bp.route('/{{ Model.plural }}/<int:pk>/', methods=['GET'])
+def retrieve_{{ Model.singular }}(pk):
+    instance = {{ model_name }}Service.get_or_404(pk)
+    return jsonify(schemas.{{ Model.singular }}_schema.dump(instance))
 
 
-@bp.route('/{{ plural }}/<int:pk>/', methods=['PUT'])
-@use_kwargs(schemas.{{ module }}_schema)
+@bp.route('/{{ Model.plural }}/<int:pk>/', methods=['PUT'])
+@use_kwargs(schemas.{{ Model.singular }}_schema)
 @transaction(db.session)
-def update_{{ module }}(pk, **kwargs):
-    instance = {{ model }}Service.update(pk, **kwargs)
-    return jsonify(schemas.{{ module }}_schema.dump(instance))
+def update_{{ Model.singular }}(pk, **kwargs):
+    instance = {{ model_name }}Service.update(pk, **kwargs)
+    return jsonify(schemas.{{ Model.singular }}_schema.dump(instance))
 
 
-@bp.route('/{{ plural }}/', methods=['DELETE'])
+@bp.route('/{{ Model.plural }}/', methods=['DELETE'])
 @use_kwargs({'ids': DelimitedList(fields.Int())})
 @transaction(db.session)
-def delete_{{ plural }}(ids):
-    {{ model }}Service.delete(ids)
+def delete_{{ Model.plural }}(ids):
+    {{ model_name }}Service.delete(ids)
     return '', 204
+{% if not loop.last %}
 
+{% endif %}
+{%- endfor %}

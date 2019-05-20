@@ -26,7 +26,7 @@ Hobbit-core中文文档
 
 使用 ``hobbit`` 命令自动生成你的flask项目::
 
-    hobbit --echo startproject -n demo -d . -p 5000 --celery  # 建议试用 -t expirement 新模版
+    hobbit --echo new -n demo -d . -p 5000 --celery  # 建议试用 -t expirement 新模版
 
 该命令会生成一个完整的api及其测试范例，使用以下项目启动server::
 

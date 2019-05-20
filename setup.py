@@ -19,7 +19,7 @@ def gen_data(data_root='static'):
 
 
 package_data = gen_data()
-# The amount files of `shire[startproject,gen]` + `expirement[...]`
+# The amount files of `shire[new,gen]` + `expirement[...]`
 assert len(package_data) == 30 + 4 + 31 + 5, \
     'nums of tepl files error, {}'.format(len(package_data))
 package_data.append('py.typed')
@@ -34,7 +34,7 @@ except(OSError, ImportError):
 
 setup(
     name='hobbit-core',
-    version='1.4.0a2',
+    version='1.4.0a3',
     python_requires='>=3.6, <4',
     description='Hobbit - A flask project generator.',
     long_description=long_description,

@@ -1,12 +1,13 @@
 from hobbit_core.pagination import pagination
 from hobbit_core.db import transaction
 
-from app.models import {{ model }}
+from app.models import {{ metadata | join(', ') }}
 from app.exts import db
 
 
-class {{ model }}Service:
-    model = {{ model }}
+{% for model_name in metadata -%}
+class {{ model_name }}Service:
+    model = {{ model_name }}
 
     @classmethod
     def list(cls, page, page_size, order_by):
@@ -38,4 +39,7 @@ class {{ model }}Service:
     def delete(cls, ids):
         return cls.model.query.filter(
             cls.model.id.in_(ids)).delete(synchronize_session='fetch')
+{% if not loop.last %}
 
+{% endif %}
+{%- endfor %}

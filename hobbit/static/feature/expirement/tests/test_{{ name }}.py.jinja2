@@ -1,7 +1,7 @@
-import pytest  # NOQA F401
+import pytest
 
 from app.exts import db
-from app.models import {{ model }}
+from app.models import {{ metadata | join(', ') }}
 
 from .import BaseTest
 
@@ -17,49 +17,62 @@ def register_bp():
 register_bp()
 
 
-class Test{{ model }}(BaseTest):
+{% for model_name, Model in metadata.items() -%}
+class Test{{ model_name }}(BaseTest):
 
     @pytest.fixture
     def instance(self):
-        instance = {{ model }}(username='test')
+        instance = {{ model_name }}(
+            {%- for c in Model.columns -%}
+            {{ c.field }}={{ c.test }}{%- if not loop.last -%}, {% endif -%}
+            {%- endfor -%})
         db.session.add(instance)
         db.session.flush()
         db.session.commit()
         return instance
 
     def test_list(self, client):
-        resp = client.get('/api/{{ plural }}/')
+        resp = client.get('/api/{{ Model.plural }}/')
         assert resp.status_code == 200
         assert set(resp.json.keys()) == {'items', 'page', 'page_size', 'total'}
 
     def test_retrieve(self, client, instance):
-        resp = client.get(f'/api/{{ plural }}/{instance.id}/')
+        resp = client.get(f'/api/{{ Model.plural }}/{instance.id}/')
         assert resp.status_code == 200
         assert set(resp.json.keys()) == {
-            'created_at', 'id', 'updated_at', 'username'}
+            'created_at', 'id', 'updated_at'{%- for c in Model.columns -%}, '{{ c.field }}'{%- endfor -%}}
 
     def test_create(self, client):
         payload = {
-            'username': 'test',
+            {%- for c in Model.columns -%}
+            '{{ c.field }}': {{ c.test }}{%- if not loop.last -%}, {% endif -%}
+            {%- endfor -%}
         }
-        resp = client.post('/api/{{ plural }}/', json=payload)
+        resp = client.post('/api/{{ Model.plural }}/', json=payload)
         assert resp.status_code == 201
         assert set(resp.json.keys()) == {
-            'created_at', 'id', 'updated_at', 'username'}
-        assert resp.json['username'] == payload['username']
+            'created_at', 'id', 'updated_at'{%- for c in Model.columns -%}, '{{ c.field }}'{%- endfor -%}}
+        for k, v in payload.items():
+            assert resp.json[k] == v
 
     def test_update(self, client, instance):
         payload = {
-            'username': f'{instance.username}_updated',
+            {%- for c in Model.columns -%}
+            '{{ c.field }}': {{ c.test }}{%- if not loop.last -%}, {% endif -%}
+            {%- endfor -%}
         }
-        resp = client.put(f'/api/{{ plural }}/{instance.id}/', json=payload)
+        resp = client.put(f'/api/{{ Model.plural }}/{instance.id}/', json=payload)
         assert resp.status_code == 200
         assert set(resp.json.keys()) == {
-            'created_at', 'id', 'updated_at', 'username'}
-        assert resp.json['username'] == payload['username']
+            'created_at', 'id', 'updated_at'{%- for c in Model.columns -%}, '{{ c.field }}'{%- endfor -%}}
+        for k, v in payload.items():
+            assert resp.json[k] == v
 
     def test_delete(self, client, instance):
-        resp = client.delete(f'/api/{{ plural }}/?ids={instance.id}')
+        resp = client.delete(f'/api/{{ Model.plural }}/?ids={instance.id}')
         assert resp.status_code == 204
-        assert {{ model }}.query.get(instance.id) is None
+        assert {{ model_name }}.query.get(instance.id) is None
+{% if not loop.last %}
 
+{% endif %}
+{%- endfor %}
