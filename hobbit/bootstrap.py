@@ -18,17 +18,25 @@ def cli(ctx, force):
     pass
 
 
+def common_options(func):
+    func = click.option(
+        '-d', '--dist', type=click.Path(), required=False,
+        help='Target path.')(func)
+    func = click.option(
+        '-t', '--template', type=click.Choice(templates),
+        default='shire', callback=validate_template_path,
+        help='Template name.')(func)
+    func = click.option(
+        '-f', '--force', default=False, is_flag=True,
+        help='Force render files, covered if file exist.')(func)
+    return func
+
+
 @cli.command(cls=HobbitCommand)
 @click.option('-n', '--name', help='Name of project.', required=True)
 @click.option('-p', '--port', help='Port of web server.', required=True,
               type=click.IntRange(1024, 65535))
-@click.option('-d', '--dist', type=click.Path(), required=False,
-              help='Dir for new project.')
-@click.option('-t', '--template', type=click.Choice(templates),
-              default='shire', callback=validate_template_path,
-              help='Template name.')
-@click.option('-f', '--force', default=False, is_flag=True,
-              help='Force render files, covered if file exist.')
+@common_options
 @click.option('--celery/--no-celery', default=False,
               help='Generate celery files or not.')
 @click.pass_context
@@ -63,13 +71,7 @@ def new(ctx, name, port, dist, template, force, celery):
 
 @cli.command(cls=HobbitCommand)
 @click.option('-n', '--name', help='Name of feature.', required=True)
-@click.option('-d', '--dist', type=click.Path(), required=False,
-              help='Dir for new feature.')
-@click.option('-t', '--template', type=click.Choice(templates),
-              default='shire', callback=validate_template_path,
-              help='Template name.')
-@click.option('-f', '--force', default=False, is_flag=True,
-              help='Force render files, covered if file exist.')
+@common_options
 @click.option('-c', '--csv-path', required=False, type=click.Path(exists=True),
               callback=validate_csv_file,
               help='A csv file that defines some models.')
