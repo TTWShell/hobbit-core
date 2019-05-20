@@ -47,6 +47,12 @@ Hobbit-core中文文档
 
     hobbit --help
 
+自动补全::
+
+    # bash users add this to your .bashrc
+    eval "$(_HOBBIT_COMPLETE=source hobbit)"
+    # zsh users add this to your .zshrc
+    eval "$(_HOBBIT_COMPLETE=source_zsh hobbit)"
 
 项目结构
 ========
