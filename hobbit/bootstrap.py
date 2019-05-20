@@ -63,10 +63,10 @@ def new(ctx, name, port, dist, template, force, celery):
         'celery': celery,
     }
 
-    echo('Start init a hobbit project `{}` to `{}`, use template {}',
-         (name, dist, template))
+    echo(f'Start init a hobbit project `{name}` to `{dist}`,'
+         f' use template {template}')
     render_project(dist, template)
-    echo('project `{}` render finished.', (name, ))
+    echo(f'project `{name}` render finished.')
 
 
 @cli.command(cls=HobbitCommand)

@@ -18,14 +18,10 @@ def regex_replace(s, find, replace):
 
 
 @click.pass_context
-def echo(ctx, msg, args=None):
+def echo(ctx, msg):
     if not ctx.obj['ECHO']:
         return
-
-    if args:
-        click.echo(msg.format(*args))
-    else:
-        click.echo(msg)
+    click.echo(msg)
 
 
 @contextmanager
@@ -33,7 +29,7 @@ def chdir(dist):
     cwd = os.getcwd()
     # exist_ok py3 only
     if not os.path.exists(dist):
-        echo('mkdir\t{}', (dist, ))
+        echo(f'mkdir\t{dist}')
         os.makedirs(dist)
     os.chdir(dist)
     yield dist
@@ -73,10 +69,10 @@ def render_project(ctx, dist, tpl_path):
 def render_file(ctx, dist, fn, data):
     target = os.path.join(dist, fn)
     if os.path.isfile(fn) and not ctx.obj['FORCE']:
-        echo('exists {}, ignore ...', (target, ))
+        echo(f'exists {target}, ignore ...')
         return
 
-    echo('render\t{} ...', (target, ))
+    echo(f'render\t{target} ...')
 
     with open(fn, 'w') as wf:
         wf.write(data)
@@ -218,7 +214,7 @@ def validate_template_path(ctx, param, value):
 
     if not os.path.exists(tpl_path):
         raise click.UsageError(
-            click.style('Tpl `{}` not exists.'.format(value), fg='red'))
+            click.style(f'Tpl `{value}` not exists.', fg='red'))
 
     return tpl_path
 
