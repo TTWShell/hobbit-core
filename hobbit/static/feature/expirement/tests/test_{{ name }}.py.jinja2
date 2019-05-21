@@ -6,17 +6,6 @@ from app.models import {{ metadata | join(', ') }}
 from .import BaseTest
 
 
-def register_bp():
-    # just for unittest, must register in run.py
-    from app.run import app as tapp
-    from app import views
-    if views.{{ module }}.bp.name not in tapp.blueprints:
-        tapp.register_blueprint(views.{{ module }}.bp, url_prefix='/api')
-
-
-register_bp()
-
-
 {% for model_name, Model in metadata.items() -%}
 class Test{{ model_name }}(BaseTest):
 

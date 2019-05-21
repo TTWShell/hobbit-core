@@ -79,10 +79,6 @@ def new(ctx, name, port, dist, template, force, celery):
 def gen(ctx, name, template, dist, force, csv_path):
     """Generator new feature. Auto gen models/{name}.py, schemas/{name}.py,
     views/{name}.py, services/{name.py}, tests/test_{name}.py etc.
-
-    After gen new feature, should register blueprint in run.py::
-
-        app.register_blueprint(views.{ name }.bp, url_prefix='/api')
     """
     dist = os.getcwd() if dist is None else os.path.abspath(dist)
     module, _ = gen_metadata_by_name(name)
