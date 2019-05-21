@@ -50,7 +50,7 @@ def new(ctx, name, port, dist, template, force, celery):
     It is recommended to use pipenv to create venv::
 
         pipenv install -r requirements.txt && pipenv install --dev pytest pytest-cov pytest-env ipython flake8 ipdb
-    """
+    """  # noqa
     dist = os.getcwd() if dist is None else os.path.abspath(dist)
     ctx.obj['FORCE'] = force
     ctx.obj['CELERY'] = celery
