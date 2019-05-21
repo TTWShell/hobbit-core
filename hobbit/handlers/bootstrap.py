@@ -128,6 +128,8 @@ class MetaModel:
         'Time',
         'Unicode',
         'UnicodeText',
+
+        'JSON',
     ]
     ORM_TYPE_MAPS = {t.lower(): t for t in ORM_TYPES}
     TYPE_REF = 'ref'
