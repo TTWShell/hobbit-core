@@ -12,17 +12,24 @@ Hobbit-core中文文档
 
 包含 RESTful API、celery集成、单元测试、gitlab-ci/cd、docker compose 一套解决方案。后续考虑更好的自动文档工具（目前有 apispec ）。
 
-**为什么我开发了这个项目？** 可以参考这一设计范式： `Convention over configuration. <https://en.wikipedia.org/wiki/Convention_over_configuration>`_
+**为什么我开发了这个项目？** 可以参考这一设计范式： `Convention over configuration <https://en.wikipedia.org/wiki/Convention_over_configuration>`_ 。
 
 
 简易教程
 ========
 
-快速安装::
+快速安装
+^^^^^^^^^^
+
+::
 
     pip install "hobbit-core[hobbit,hobbit_core]"  # 安装全部功能
-    pip install "hobbit-core[hobbit,hobbit_core]==1.4.0a2"  # 如果安装pre release版本请加版本号
-    pip install "hobbit-core[hobbit]"  # 仅安装命令依赖，不安装库依赖（安装命令到全局时推荐使用）
+    pip install "hobbit-core[hobbit,hobbit_core]" --pre  # 安装pre release版本
+    # 仅安装命令依赖，不安装库依赖（安装命令到全局时推荐使用）
+    pip install "hobbit-core[hobbit]"
+
+快速生成项目
+^^^^^^^^^^^^^
 
 使用 ``hobbit`` 命令自动生成你的flask项目::
 
@@ -43,11 +50,27 @@ Hobbit-core中文文档
 
 访问 ``http://127.0.0.1:5000/api/ping/``
 
+快速生成新的模块
+^^^^^^^^^^^^^^^^
+
+Hobbit最重要的一个目标就是快速生成可用可测试的项目。自动生成新的业务模块也是提高开发效率中重要的一环。
+
+``hobbit gen`` 命令可根据一个描叙models的csv文件，自动生成models.py、CRUD 的 API、unittest（目前仅支持expirement模版）。在 `models.csv <https://github.com/TTWShell/hobbit-core/blob/master/tests/models.csv>`_ 可以看到具体例子。
+
+::
+
+    hobbit --echo gen -n user -d /tmp/test -t expirement --csv-path xx
+
 有关 ``hobbit`` 的使用，直接查看帮助文档::
 
     hobbit --help
 
-自动补全::
+
+
+自动补全
+^^^^^^^^^
+
+::
 
     # bash users add this to your .bashrc
     eval "$(_HOBBIT_COMPLETE=source hobbit)"
@@ -97,13 +120,14 @@ Hobbit-core中文文档
         ├── conftest.py
         └── test_ping.py
 
+
 Dockerfile
-----------
+^^^^^^^^^^
 
 使用docker来运行我们的web服务，基于同一个docker image运行测试，由此保证开发环境、测试环境、运行时环境一致。你可以在 `Dockerfile reference <https://docs.docker.com/engine/reference/builder/#usage>`_ 查看有关Dockerfile的语法。
 
 app
----
+^^^
 
 app文件夹保存了所有业务层代码。基于 **约定优于配置** 范式，这个文件夹名字及所有其他文件夹名字 **禁止修改** 。
 
