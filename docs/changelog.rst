@@ -1,11 +1,12 @@
 Change history
 ==============
 
-1.4.0 (2019-05-08)
+1.4.0a (2019-05-08)
 ******************
 
 * Add template for 4-layers (view、schema、service、model).
 * Add options api for query all consts defined in `app/models/consts`.
+* Add `create` command to generate a csv file that defines some models to use in the `gen` command.
 * Removed example code.
 * Split hobbit cmd and hobbit_core lib, now install cmd should be `pip install "hobbit-core[hobbit,hobbit_core]"`.
 * Remove flask_hobbit when import (`hobbit_core.flask_hobbit.db import transaction` --> `from hobbit_core.db import transaction`).
