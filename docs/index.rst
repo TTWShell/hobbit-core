@@ -59,17 +59,22 @@ Hobbit-core中文文档
 
 Hobbit最重要的一个目标就是快速生成可用可测试的项目。自动生成新的业务模块也是提高开发效率中重要的一环。
 
-``hobbit gen`` 命令可根据一个描叙models的csv文件，自动生成models.py、CRUD 的 API、unittest（目前仅支持expirement模版）。在 `models.csv <https://github.com/TTWShell/hobbit-core/blob/master/tests/models.csv>`_ 可以看到具体例子。
+``hobbit gen`` 命令可根据一个描叙models的csv文件，自动生成models.py、CRUD 的 API、unittest（目前仅支持expirement模版）。``hobbit create`` 命令可以生成一个csv文件，含有一些基本的例子。
 
 ::
 
     hobbit --echo gen -n user -d /tmp/test -t expirement --csv-path xx
 
+模版文件说明
+^^^^^^^^^^^^^
+
+1. 支持多models，你只需要使用单行定义一次model，紧随其后是model的列定义。
+2. type列和 ``sqlalchemy.types`` 对应（除了ref，ref是 ``hobbit-core`` 定义的外键写法）。有些type需要参数，例如string类型需要一个length，这需要你自己保证定义的正确性。
+3. 支持测试数据的生成，最后一列test的值即为单元测试需要。
+
 有关 ``hobbit`` 的使用，直接查看帮助文档::
 
     hobbit --help
-
-
 
 自动补全
 ^^^^^^^^^
