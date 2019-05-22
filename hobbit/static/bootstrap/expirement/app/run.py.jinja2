@@ -1,3 +1,4 @@
+import importlib
 import logging
 
 from flask import Flask, request
@@ -17,8 +18,10 @@ def register_extensions(app):
 
 
 def register_blueprints(app):
-    app.register_blueprint(views.ping.bp, url_prefix='/api')
-    app.register_blueprint(views.option.bp, url_prefix='/api')
+    for name in views.__all__:
+        bp = getattr(importlib.import_module(f'app.views.{name}'), 'bp', None)
+        if bp is not None:
+            app.register_blueprint(bp, url_prefix='/api')
 
 
 def register_error_handler(app):

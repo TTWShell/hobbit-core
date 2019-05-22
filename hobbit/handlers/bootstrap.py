@@ -18,14 +18,10 @@ def regex_replace(s, find, replace):
 
 
 @click.pass_context
-def echo(ctx, msg, args=None):
+def echo(ctx, msg):
     if not ctx.obj['ECHO']:
         return
-
-    if args:
-        click.echo(msg.format(*args))
-    else:
-        click.echo(msg)
+    click.echo(msg)
 
 
 @contextmanager
@@ -33,7 +29,7 @@ def chdir(dist):
     cwd = os.getcwd()
     # exist_ok py3 only
     if not os.path.exists(dist):
-        echo('mkdir\t{}', (dist, ))
+        echo(f'mkdir\t{dist}')
         os.makedirs(dist)
     os.chdir(dist)
     yield dist
@@ -73,10 +69,10 @@ def render_project(ctx, dist, tpl_path):
 def render_file(ctx, dist, fn, data):
     target = os.path.join(dist, fn)
     if os.path.isfile(fn) and not ctx.obj['FORCE']:
-        echo('exists {}, ignore ...', (target, ))
+        echo(f'exists {target}, ignore ...')
         return
 
-    echo('render\t{} ...', (target, ))
+    echo(f'render\t{target} ...')
 
     with open(fn, 'w') as wf:
         wf.write(data)
@@ -132,6 +128,8 @@ class MetaModel:
         'Time',
         'Unicode',
         'UnicodeText',
+
+        'JSON',
     ]
     ORM_TYPE_MAPS = {t.lower(): t for t in ORM_TYPES}
     TYPE_REF = 'ref'
@@ -218,7 +216,7 @@ def validate_template_path(ctx, param, value):
 
     if not os.path.exists(tpl_path):
         raise click.UsageError(
-            click.style('Tpl `{}` not exists.'.format(value), fg='red'))
+            click.style(f'Tpl `{value}` not exists.', fg='red'))
 
     return tpl_path
 
@@ -236,3 +234,32 @@ def validate_csv_file(ctx, param, value):
                 raise click.UsageError(
                     click.style(f'csv file err: `{row}`.', fg='red'))
     return value
+
+
+def create_models_csv(name):
+    with open(name, 'w') as csvfile:
+        fieldnames = MetaModel.Column._fields
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerow({'field': 'user'})
+        writer.writerow({
+            'field': 'username', 'type': 'string', 'type_arg': 16,
+            'is_unique': True, 'doc': '用户名', 'test': 'admin',
+        })
+        writer.writerow({
+            'field': 'age', 'type': 'integer', 'is_null': True,
+            'doc': '年龄', 'test': 35,
+        })
+        writer.writerow({
+            'field': 'is_admin', 'type': 'boolean',
+            'doc': '是否管理员', 'test': True,
+        })
+        writer.writerow({
+            'field': 'role_id', 'type': 'ref', 'type_arg': 'roles',
+            'doc': '角色id', 'is_null': True,
+        })
+        writer.writerow({'field': 'role'})
+        writer.writerow({
+            'field': 'name', 'type': 'string', 'type_arg': 16,
+            'is_unique': True, 'doc': '角色名', 'test': 'admin',
+        })

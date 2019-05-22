@@ -18,3 +18,4 @@ dist/*
 build/*
 
 tests/tst_app.sqlite
+models.csv

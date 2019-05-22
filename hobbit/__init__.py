@@ -5,6 +5,7 @@ from click import Command
 
 import inflect
 
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 inflect_engine = inflect.engine()
 
@@ -28,7 +29,7 @@ class HobbitCommand(Command):
                 formatter.write_dl(opts)
 
 
-class CLI(click.MultiCommand, HobbitCommand):
+class CLI(click.Group, HobbitCommand):
 
     def list_commands(self, ctx):
         return sorted(self.cmds.keys())
@@ -88,14 +89,16 @@ class CLI(click.MultiCommand, HobbitCommand):
                     formatter.write_dl(rows)
 
 
-@click.command(cls=CLI)
+@click.group(
+    cls=CLI,
+    epilog='More details: https://hobbit-core.readthedocs.io/zh/latest/',
+    context_settings=CONTEXT_SETTINGS)
 @click.version_option()
 @click.option('--echo/--no-echo', default=False,
               help='Show the logs of commnad.')
 @click.pass_context
 def main(ctx, echo):
-    if ctx.obj is None:
-        ctx.obj = dict()
+    ctx.obj = dict()
     ctx.obj['ECHO'] = echo
 
 

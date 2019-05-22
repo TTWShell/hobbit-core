@@ -6,29 +6,31 @@ import pkg_resources
 import click
 
 from .handlers.bootstrap import echo, render_project, gen_metadata_by_name, \
-    validate_template_path, validate_csv_file, MetaModel
-from . import HobbitCommand
+    validate_template_path, validate_csv_file, MetaModel, create_models_csv
+from . import HobbitCommand, main as cli
 
 templates = ['shire', 'expirement']
 
 
-@click.group()
-@click.pass_context
-def cli(ctx, force):
-    pass
+def common_options(func):
+    func = click.option(
+        '-f', '--force', default=False, is_flag=True,
+        help='Covered if file exist.')(func)
+    func = click.option(
+        '-t', '--template', type=click.Choice(templates),
+        default='shire', callback=validate_template_path,
+        help='Template name.')(func)
+    func = click.option(
+        '-d', '--dist', type=click.Path(), required=False,
+        help='Target path.')(func)
+    return func
 
 
 @cli.command(cls=HobbitCommand)
 @click.option('-n', '--name', help='Name of project.', required=True)
 @click.option('-p', '--port', help='Port of web server.', required=True,
               type=click.IntRange(1024, 65535))
-@click.option('-d', '--dist', type=click.Path(), required=False,
-              help='Dir for new project.')
-@click.option('-t', '--template', type=click.Choice(templates),
-              default='shire', callback=validate_template_path,
-              help='Template name.')
-@click.option('-f', '--force', default=False, is_flag=True,
-              help='Force render files, covered if file exist.')
+@common_options
 @click.option('--celery/--no-celery', default=False,
               help='Generate celery files or not.')
 @click.pass_context
@@ -37,12 +39,12 @@ def new(ctx, name, port, dist, template, force, celery):
 
     Examples::
 
-        hobbit --echo new -n demo -d /tmp/test -p 1024
+        hobbit --echo new -n blog -d /tmp/test -p 1024
 
-    Other tips::
+    It is recommended to use pipenv to create venv::
 
-        hobbit --help
-    """
+        pipenv install -r requirements.txt && pipenv install --dev pytest pytest-cov pytest-env ipython flake8 ipdb
+    """  # noqa
     dist = os.getcwd() if dist is None else os.path.abspath(dist)
     ctx.obj['FORCE'] = force
     ctx.obj['CELERY'] = celery
@@ -55,21 +57,15 @@ def new(ctx, name, port, dist, template, force, celery):
         'celery': celery,
     }
 
-    echo('Start init a hobbit project `{}` to `{}`, use template {}',
-         (name, dist, template))
+    echo(f'Start init a hobbit project `{name}` to `{dist}`,'
+         f' use template {template}')
     render_project(dist, template)
-    echo('project `{}` render finished.', (name, ))
+    echo(f'project `{name}` render finished.')
 
 
 @cli.command(cls=HobbitCommand)
 @click.option('-n', '--name', help='Name of feature.', required=True)
-@click.option('-d', '--dist', type=click.Path(), required=False,
-              help='Dir for new feature.')
-@click.option('-t', '--template', type=click.Choice(templates),
-              default='shire', callback=validate_template_path,
-              help='Template name.')
-@click.option('-f', '--force', default=False, is_flag=True,
-              help='Force render files, covered if file exist.')
+@common_options
 @click.option('-c', '--csv-path', required=False, type=click.Path(exists=True),
               callback=validate_csv_file,
               help='A csv file that defines some models.')
@@ -97,4 +93,22 @@ def gen(ctx, name, template, dist, force, csv_path):
     render_project(dist, template)
 
 
-CMDS = [new, gen]
+@cli.command(
+    cls=HobbitCommand,
+    short_help='Create {name}.csv file for gen --csv-path option.',
+    help=f"""Create {{name}}.csv file for gen --csv-path option.
+
+    Support type:
+
+        {', '.join(MetaModel.ORM_TYPES + [MetaModel.TYPE_REF])}
+
+    ref type (hobbit_core.db.reference_col) used for ForeignKey.
+    """
+)
+@click.option('-n', '--name', help='Name of csv file.', required=True)
+@click.pass_context
+def create(ctx, name):
+    create_models_csv(name)
+
+
+CMDS = [new, gen, create]
