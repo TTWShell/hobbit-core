@@ -88,7 +88,9 @@ class CLI(click.MultiCommand, HobbitCommand):
                     formatter.write_dl(rows)
 
 
-@click.command(cls=CLI)
+@click.command(
+    cls=CLI,
+    epilog='More details: https://hobbit-core.readthedocs.io/zh/latest/')
 @click.version_option()
 @click.option('--echo/--no-echo', default=False,
               help='Show the logs of commnad.')
