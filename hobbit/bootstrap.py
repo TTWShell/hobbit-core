@@ -6,29 +6,23 @@ import pkg_resources
 import click
 
 from .handlers.bootstrap import echo, render_project, gen_metadata_by_name, \
-    validate_template_path, validate_csv_file, MetaModel
-from . import HobbitCommand
+    validate_template_path, validate_csv_file, MetaModel, create_models_csv
+from . import HobbitCommand, main as cli
 
 templates = ['shire', 'expirement']
 
 
-@click.group()
-@click.pass_context
-def cli(ctx, force):
-    pass
-
-
 def common_options(func):
     func = click.option(
-        '-d', '--dist', type=click.Path(), required=False,
-        help='Target path.')(func)
+        '-f', '--force', default=False, is_flag=True,
+        help='Covered if file exist.')(func)
     func = click.option(
         '-t', '--template', type=click.Choice(templates),
         default='shire', callback=validate_template_path,
         help='Template name.')(func)
     func = click.option(
-        '-f', '--force', default=False, is_flag=True,
-        help='Force render files, covered if file exist.')(func)
+        '-d', '--dist', type=click.Path(), required=False,
+        help='Target path.')(func)
     return func
 
 
@@ -99,4 +93,22 @@ def gen(ctx, name, template, dist, force, csv_path):
     render_project(dist, template)
 
 
-CMDS = [new, gen]
+@cli.command(
+    cls=HobbitCommand,
+    short_help='Create {name}.csv file for gen --csv-path option.',
+    help=f"""Create {{name}}.csv file for gen --csv-path option.
+
+    Support type:
+
+        {', '.join(MetaModel.ORM_TYPES + [MetaModel.TYPE_REF])}
+
+    ref type (hobbit_core.db.reference_col) used for ForeignKey.
+    """
+)
+@click.option('-n', '--name', help='Name of csv file.', required=True)
+@click.pass_context
+def create(ctx, name):
+    create_models_csv(name)
+
+
+CMDS = [new, gen, create]

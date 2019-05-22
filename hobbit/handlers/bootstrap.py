@@ -234,3 +234,32 @@ def validate_csv_file(ctx, param, value):
                 raise click.UsageError(
                     click.style(f'csv file err: `{row}`.', fg='red'))
     return value
+
+
+def create_models_csv(name):
+    with open(name, 'w') as csvfile:
+        fieldnames = MetaModel.Column._fields
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerow({'field': 'user'})
+        writer.writerow({
+            'field': 'username', 'type': 'string', 'type_arg': 16,
+            'is_unique': True, 'doc': '用户名', 'test': 'admin',
+        })
+        writer.writerow({
+            'field': 'age', 'type': 'integer', 'is_null': True,
+            'doc': '年龄', 'test': 35,
+        })
+        writer.writerow({
+            'field': 'is_admin', 'type': 'boolean',
+            'doc': '是否管理员', 'test': True,
+        })
+        writer.writerow({
+            'field': 'role_id', 'type': 'ref', 'type_arg': 'roles',
+            'doc': '角色id', 'is_null': True,
+        })
+        writer.writerow({'field': 'role'})
+        writer.writerow({
+            'field': 'name', 'type': 'string', 'type_arg': 16,
+            'is_unique': True, 'doc': '角色名', 'test': 'admin',
+        })

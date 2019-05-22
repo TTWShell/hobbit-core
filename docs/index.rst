@@ -35,6 +35,10 @@ Hobbit-core中文文档
 
     hobbit --echo new -n demo -d . -p 5000 --celery  # 建议试用 -t expirement 新模版
 
+建议使用pipenv创建虚拟环境::
+
+    pipenv install -r requirements.txt --pre && pipenv install --dev pytest pytest-cov pytest-env ipython flake8 ipdb
+
 该命令会生成一个完整的api及其测试范例，使用以下项目启动server::
 
     FLASK_APP=app/run.py flask run
