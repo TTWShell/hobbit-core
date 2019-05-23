@@ -1,7 +1,7 @@
 Change history
 ==============
 
-1.4.0 (2019-05-23)
+1.4.1 (2019-05-23)
 ******************
 
 * Add template for 4-layers (view、schema、service、model).
@@ -13,6 +13,9 @@ Change history
 * Enhance gen cmd: now can auto create CRUD API and tests.
 * Fix typo.
 * Update some test cases.
+
+1.4.0 (Obsolete version)
+************************
 
 1.3.1 (2019-02-26)
 ******************
