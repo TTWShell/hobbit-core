@@ -75,7 +75,7 @@ jobs:
             mkdir ~/haha && cd ~/haha
             hobbit --echo startproject -n demo -f -p 1024 --celery
             mkdir ~/hahaha && cd ~/hahaha
-            hobbit --echo startproject -n demo -t expirement -p 1025 --celery
+            hobbit --echo startproject -n demo -t rivendell -p 1025 --celery
       - run:
           name: tree flask project
           command: |

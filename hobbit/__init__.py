@@ -95,7 +95,7 @@ class CLI(click.Group, HobbitCommand):
     context_settings=CONTEXT_SETTINGS)
 @click.version_option()
 @click.option('--echo/--no-echo', default=False,
-              help='Show the logs of commnad.')
+              help='Show the logs of command.')
 @click.pass_context
 def main(ctx, echo):
     ctx.obj = dict()

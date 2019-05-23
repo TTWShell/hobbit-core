@@ -33,7 +33,7 @@ Hobbit-core中文文档
 
 使用 ``hobbit`` 命令自动生成你的flask项目::
 
-    hobbit --echo new -n demo -d . -p 5000 --celery  # 建议试用 -t expirement 新模版
+    hobbit --echo new -n demo -d . -p 5000 --celery  # 建议试用 -t rivendell 新模版
 
 建议使用pipenv创建虚拟环境::
 
@@ -59,11 +59,11 @@ Hobbit-core中文文档
 
 Hobbit最重要的一个目标就是快速生成可用可测试的项目。自动生成新的业务模块也是提高开发效率中重要的一环。
 
-``hobbit gen`` 命令可根据一个描叙models的csv文件，自动生成models.py、CRUD 的 API、unittest（目前仅支持expirement模版）。``hobbit create`` 命令可以生成一个csv文件，含有一些基本的例子。
+``hobbit gen`` 命令可根据一个描叙models的csv文件，自动生成models.py、CRUD 的 API、unittest（目前仅支持rivendell模版）。``hobbit create`` 命令可以生成一个csv文件，含有一些基本的例子。
 
 ::
 
-    hobbit --echo gen -n user -d /tmp/test -t expirement --csv-path xx
+    hobbit --echo gen -n user -d /tmp/test -t rivendell --csv-path xx
 
 模版文件说明
 ^^^^^^^^^^^^^
@@ -163,7 +163,7 @@ models
 services
 ^^^^^^^^
 
-使用expirement模版事会有此模块，类比java结构，这时候约定view不访问model层而去访问sevices层，由sevices层去访问model层。
+使用rivendell模版事会有此模块，类比java结构，这时候约定view不访问model层而去访问sevices层，由sevices层去访问model层。
 
 run.py
 ^^^^^^
