@@ -115,18 +115,18 @@ class TestHobbit(BaseTest):
         assert result.exit_code == 0
 
     @pytest.mark.parametrize("gen_cmd", [
-        ['--echo', 'gen', '-n', 'user', '-t', 'expirement'],
-        ['--echo', 'gen', '-n', 'user', '-t', 'expirement', '-f', '--csv-path',
+        ['--echo', 'gen', '-n', 'user', '-t', 'rivendell'],
+        ['--echo', 'gen', '-n', 'user', '-t', 'rivendell', '-f', '--csv-path',
          os.path.join(BaseTest.root_path, 'tests', 'models.csv')],
     ])
     @chdir(wkdir)
-    def test_new_expirement_tpl_and_gen_cmd(self, runner, gen_cmd, csv_file):
+    def test_new_rivendell_tpl_and_gen_cmd(self, runner, gen_cmd, csv_file):
         assert os.getcwd() == self.wkdir
 
-        # new project use expirement template
+        # new project use rivendell template
         cmd = [
             '--echo', 'new', '-n', 'haha', '-p', '1024',
-            '-t', 'expirement']
+            '-t', 'rivendell']
         result = runner.invoke(hobbit, cmd, obj={})
         # start + files + mkdir + tail
         assert result.exit_code == 0
