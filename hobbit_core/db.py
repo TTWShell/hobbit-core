@@ -3,11 +3,25 @@ from functools import wraps
 from mypy_extensions import TypedDict
 from typing import Any, Union, List, Dict
 
-from sqlalchemy import Integer, Column, ForeignKey, func, DateTime
+from flask import current_app
+from sqlalchemy import Integer, Column, ForeignKey, func, DateTime, Sequence
 from sqlalchemy.orm.session import Session
+from flask_sqlalchemy import DefaultMeta
+
+db = current_app.hobbit_manager.db
 
 
-class SurrogatePK:
+class SurrogatePKMeta(DefaultMeta):
+
+    def __new__(cls, name, bases, attrs):
+        attrs['id'] = Column(Integer, primary_key=True)
+        if name != 'SurrogatePK' and db.engine.name == 'oracle':
+            attrs['id'] = Column(
+                Integer, Sequence(f'{name}_id_seq'), primary_key=True)
+        return super().__new__(cls, name, bases, attrs)
+
+
+class SurrogatePK(db.Model, metaclass=SurrogatePKMeta):
     """A mixin that add ``id``、``created_at`` and ``updated_at`` columns
     to any declarative-mapped class.
 
@@ -17,19 +31,16 @@ class SurrogatePK:
 
     **updated_at**: Auto save ``datetime.now()`` when row updated.
     """
+    __abstract__ = True
+    __mapper_args__ = {
+        'order_by': 'id',
+    }
 
-    __table_args__ = {'extend_existing': True}  # type: ignore
-
-    id = Column(Integer, primary_key=True)
     created_at = Column(
         DateTime, index=True, nullable=False, server_default=func.now())
     updated_at = Column(
         DateTime, index=True, nullable=False, server_default=func.now(),
         onupdate=func.now())
-
-    __mapper_args__ = {
-        'order_by': 'id',
-    }
 
     def __repr__(self) -> str:
         """You can set label property.
