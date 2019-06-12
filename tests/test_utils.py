@@ -89,12 +89,17 @@ class TestUseKwargs(BaseTest):
 
 class TestImportSubs(BaseTest):
 
-    def test_import_subs(self):
-        from . import importsub
+    def test_import_subs(self, app):
+        with app.app_context():
+            from . import importsub
+            from .test_app.exts import db
+            db.create_all()
         all_ = getattr(importsub, '__all__')
         assert sorted(all_) == sorted([
             'A',
+            'BaseModel',
             'G_VAR',
+            'OtherUser',
             'PagedSchema',
             'PagedUserSchema',
             'User',

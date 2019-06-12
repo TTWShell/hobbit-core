@@ -17,24 +17,31 @@ class SurrogatePKMeta(DefaultMeta):
         attrs['id'] = Column(Integer, primary_key=True)
         if name != 'SurrogatePK' and db.engine.name == 'oracle':
             attrs['id'] = Column(
-                Integer, Sequence(f'{name}_id_seq'), primary_key=True)
+                Integer,
+                Sequence(cls.sequence_name or f'{name}_id_seq'),
+                primary_key=True)
         return super().__new__(cls, name, bases, attrs)
 
 
-class SurrogatePK(db.Model, metaclass=SurrogatePKMeta):
-    """A mixin that add ``id``、``created_at`` and ``updated_at`` columns
-    to any declarative-mapped class.
+class BaseModel(db.Model, metaclass=SurrogatePKMeta):
+    """Abstract base model class contains
+    ``id``、``created_at`` and ``updated_at`` columns.
 
     **id**: A surrogate integer 'primary key' column.
 
     **created_at**: Auto save ``datetime.now()`` when row created.
 
     **updated_at**: Auto save ``datetime.now()`` when row updated.
+
+    Support oracle id sequence, default name is ``{class_name}_id_seq``,
+     can changed by sequence_name.
     """
+
     __abstract__ = True
     __mapper_args__ = {
         'order_by': 'id',
     }
+    sequence_name = None
 
     created_at = Column(
         DateTime, index=True, nullable=False, server_default=func.now())
@@ -45,6 +52,42 @@ class SurrogatePK(db.Model, metaclass=SurrogatePKMeta):
     def __repr__(self) -> str:
         """You can set label property.
 
+        Returns:
+            str: ``<{classname}({pk}:{label!r})>``
+        """
+        return '<{classname}({pk}:{label!r})>'.format(
+            classname=type(self).__name__, pk=self.id,
+            label=getattr(self, 'label', ''))
+
+
+class SurrogatePK:
+    """A mixin that add ``id``、``created_at`` and ``updated_at`` columns
+    to any declarative-mapped class.
+
+    **id**: A surrogate integer 'primary key' column.
+
+    **created_at**: Auto save ``datetime.now()`` when row created.
+
+    **updated_at**: Auto save ``datetime.now()`` when row updated.
+
+    **It is not recommended. See hobbit_core.db.BaseModel**
+    """
+
+    __table_args__ = {'extend_existing': True}  # type: ignore
+
+    id = Column(Integer, primary_key=True)
+    created_at = Column(
+        DateTime, index=True, nullable=False, server_default=func.now())
+    updated_at = Column(
+        DateTime, index=True, nullable=False, server_default=func.now(),
+        onupdate=func.now())
+
+    __mapper_args__ = {
+        'order_by': 'id',
+    }
+
+    def __repr__(self) -> str:
+        """You can set label property.
         Returns:
             str: ``<{classname}({pk}:{label!r})>``
         """

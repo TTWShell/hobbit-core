@@ -7,17 +7,17 @@ from flask.helpers import get_env
 from hobbit_core.err_handler import ErrHandler
 
 from app.exts import db, migrate, ma, hobbit{% if celery %}, celery{% endif %}
-from app import views
 
 
 def register_extensions(app):
     db.init_app(app)
     migrate.init_app(app, db)
     ma.init_app(app)
-    hobbit.init_app(app)
+    hobbit.init_app(app, db)
 
 
 def register_blueprints(app):
+    from app import views
     for name in views.__all__:
         bp = getattr(importlib.import_module(f'app.views.{name}'), 'bp', None)
         if bp is not None:
@@ -51,8 +51,9 @@ def create_app():
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object('app.configs.{}'.format(get_env()))
 
-    register_extensions(app)
-    register_blueprints(app)
+    with app.app_context():
+        register_extensions(app)
+        register_blueprints(app)
     register_error_handler(app)
     register_cmds(app)
     {%- if celery %}
