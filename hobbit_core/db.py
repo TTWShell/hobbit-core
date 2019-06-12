@@ -11,55 +11,6 @@ from flask_sqlalchemy import DefaultMeta
 db = current_app.hobbit_manager.db
 
 
-class SurrogatePKMeta(DefaultMeta):
-
-    def __new__(cls, name, bases, attrs):
-        attrs['id'] = Column(Integer, primary_key=True)
-        if name != 'SurrogatePK' and db.engine.name == 'oracle':
-            attrs['id'] = Column(
-                Integer,
-                Sequence(cls.sequence_name or f'{name}_id_seq'),
-                primary_key=True)
-        return super().__new__(cls, name, bases, attrs)
-
-
-class BaseModel(db.Model, metaclass=SurrogatePKMeta):  # type: ignore
-    """Abstract base model class contains
-    ``id``、``created_at`` and ``updated_at`` columns.
-
-    **id**: A surrogate integer 'primary key' column.
-
-    **created_at**: Auto save ``datetime.now()`` when row created.
-
-    **updated_at**: Auto save ``datetime.now()`` when row updated.
-
-    Support oracle id sequence, default name is ``{class_name}_id_seq``,
-     can changed by sequence_name.
-    """
-
-    __abstract__ = True
-    __mapper_args__ = {
-        'order_by': 'id',
-    }
-    sequence_name = None
-
-    created_at = Column(
-        DateTime, index=True, nullable=False, server_default=func.now())
-    updated_at = Column(
-        DateTime, index=True, nullable=False, server_default=func.now(),
-        onupdate=func.now())
-
-    def __repr__(self) -> str:
-        """You can set label property.
-
-        Returns:
-            str: ``<{classname}({pk}:{label!r})>``
-        """
-        return '<{classname}({pk}:{label!r})>'.format(
-            classname=type(self).__name__, pk=self.id,
-            label=getattr(self, 'label', ''))
-
-
 class SurrogatePK:
     """A mixin that add ``id``、``created_at`` and ``updated_at`` columns
     to any declarative-mapped class.
@@ -94,6 +45,35 @@ class SurrogatePK:
         return '<{classname}({pk}:{label!r})>'.format(
             classname=type(self).__name__, pk=self.id,
             label=getattr(self, 'label', ''))
+
+
+class SurrogatePKMeta(DefaultMeta):
+
+    def __new__(cls, name, bases, attrs):
+        if name != 'SurrogatePK' and db.engine.name == 'oracle':
+            attrs['id'] = Column(
+                Integer,
+                Sequence(cls.sequence_name or f'{name}_id_seq'),
+                primary_key=True)
+        return super().__new__(cls, name, bases, attrs)
+
+
+class BaseModel(SurrogatePK, db.Model, metaclass=SurrogatePKMeta):  # type: ignore # noqa
+    """Abstract base model class contains
+    ``id``、``created_at`` and ``updated_at`` columns.
+
+    **id**: A surrogate integer 'primary key' column.
+
+    **created_at**: Auto save ``datetime.now()`` when row created.
+
+    **updated_at**: Auto save ``datetime.now()`` when row updated.
+
+    Support oracle id sequence, default name is ``{class_name}_id_seq``,
+     can changed by sequence_name.
+    """
+
+    __abstract__ = True
+    sequence_name = None
 
 
 def reference_col(tablename: str, nullable: bool = False, pk_name: str = 'id',
