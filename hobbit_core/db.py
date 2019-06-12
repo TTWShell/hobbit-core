@@ -50,15 +50,33 @@ class SurrogatePK:
 class SurrogatePKMeta(DefaultMeta):
 
     def __new__(cls, name, bases, attrs):
-        if name != 'SurrogatePK' and db.engine.name == 'oracle':
-            attrs['id'] = Column(
+        if name in ('SurrogatePKMeta', 'BaseModel'):
+            return super().__new__(cls, name, bases, attrs)
+
+        primary_key_name = attrs.get('primary_key_name', 'id')
+
+        attrs[primary_key_name] = Column(Integer, primary_key=True)
+        attrs['created_at'] = Column(
+            DateTime, index=True, nullable=False, server_default=func.now())
+        attrs['updated_at'] = Column(
+            DateTime, index=True, nullable=False, server_default=func.now(),
+            onupdate=func.now())
+
+        if db.engine.name == 'oracle':
+            sequence_name = attrs.get('sequence_name', name)
+            attrs[primary_key_name] = Column(
                 Integer,
-                Sequence(cls.sequence_name or f'{name}_id_seq'),
+                Sequence(f'{sequence_name}_id_seq'),
                 primary_key=True)
+
+        exclude_columns = attrs.get('exclude_columns', [])
+        for column in exclude_columns:
+            attrs.pop(column)
+
         return super().__new__(cls, name, bases, attrs)
 
 
-class BaseModel(SurrogatePK, db.Model, metaclass=SurrogatePKMeta):  # type: ignore # noqa
+class BaseModel(db.Model, metaclass=SurrogatePKMeta):  # type: ignore
     """Abstract base model class contains
     ``id``、``created_at`` and ``updated_at`` columns.
 
@@ -73,7 +91,6 @@ class BaseModel(SurrogatePK, db.Model, metaclass=SurrogatePKMeta):  # type: igno
     """
 
     __abstract__ = True
-    sequence_name = None
 
 
 def reference_col(tablename: str, nullable: bool = False, pk_name: str = 'id',
