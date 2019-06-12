@@ -23,7 +23,7 @@ class SurrogatePKMeta(DefaultMeta):
         return super().__new__(cls, name, bases, attrs)
 
 
-class BaseModel(db.Model, metaclass=SurrogatePKMeta):
+class BaseModel(db.Model, metaclass=SurrogatePKMeta):  # type: ignore
     """Abstract base model class contains
     ``id``、``created_at`` and ``updated_at`` columns.
 
