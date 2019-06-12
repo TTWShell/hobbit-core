@@ -1,5 +1,6 @@
 from enum import Enum, EnumMeta
 from functools import wraps
+
 from mypy_extensions import TypedDict
 from typing import Any, Union, List, Dict
 
@@ -21,7 +22,7 @@ class SurrogatePK:
 
     **updated_at**: Auto save ``datetime.now()`` when row updated.
 
-    **It is not recommended. See hobbit_core.db.BaseModel**
+    **It is not recommended. See hobbit_core.db.BaseModel.**
     """
 
     __table_args__ = {'extend_existing': True}  # type: ignore
@@ -86,8 +87,46 @@ class BaseModel(db.Model, metaclass=SurrogatePKMeta):  # type: ignore
 
     **updated_at**: Auto save ``datetime.now()`` when row updated.
 
-    Support oracle id sequence, default name is ``{class_name}_id_seq``,
-     can changed by sequence_name.
+    Support **oracle id sequence**, default name is ``{class_name}_id_seq``,
+    can changed by ``sequence_name``.
+
+    Examples::
+
+        from hobbit_core.db import Column, BaseModel
+
+        class User(BaseModel):
+            username = Column(db.String(32), nullable=False, index=True)
+
+        print([i.name for i in User.__table__.columns])
+        # ['username', 'id', 'created_at', 'updated_at']
+
+    Can be blocked columns with **exclude_columns**::
+
+        class User(BaseModel):
+            exclude_columns = ['created_at', 'updated_at']
+            username = Column(db.String(32), nullable=False, index=True)
+
+        print([i.name for i in User.__table__.columns])
+        # ['username', 'id']
+
+    Can be changed primary_key's name using **primary_key_name**::
+
+        class User(BaseModel):
+            primary_key_name = 'user_id'
+            username = Column(db.String(32), nullable=False, index=True)
+
+        print([i.name for i in User.__table__.columns])
+        # ['username', 'user_id', 'created_at', 'updated_at']
+
+    Can be changed sequence's name using **sequence_name**
+    (worked with oracle)::
+
+        class User(BaseModel):
+            sequence_name = 'changed'
+            username = Column(db.String(32), nullable=False, index=True)
+
+        # print(User.__table__.columns['id'])
+        Column('id', ..., default=Sequence('changed_id_seq'))
     """
 
     __abstract__ = True
@@ -111,7 +150,7 @@ def reference_col(tablename: str, nullable: bool = False, pk_name: str = 'id',
 
     Others:
 
-    See ``sqlalchemy.Column``
+    See ``sqlalchemy.Column``.
 
     Examples::
 
