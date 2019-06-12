@@ -1,5 +1,6 @@
 from enum import Enum, EnumMeta
 from functools import wraps
+import warnings
 
 from mypy_extensions import TypedDict
 from typing import Any, Union, List, Dict
@@ -46,6 +47,11 @@ class SurrogatePK:
         return '<{classname}({pk}:{label!r})>'.format(
             classname=type(self).__name__, pk=self.id,
             label=getattr(self, 'label', ''))
+
+    def __init_subclass__(cls, **kwargs):
+        msg = 'SurrogatePK is Deprecated. See hobbit_core.db.BaseModel.'
+        warnings.warn(msg)
+        super().__init_subclass__(**kwargs)
 
 
 class SurrogatePKMeta(DefaultMeta):
