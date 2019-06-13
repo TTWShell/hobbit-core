@@ -8,9 +8,12 @@ from .exts import db, ma, hobbit
 ROOT_PATH = os.path.split(os.path.abspath(__file__))[0]
 
 
-class ConfigClass():
+class ConfigClass:
     SECRET_KEY = 'test secret key'
     SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/hobbit_core'
+    SQLALCHEMY_BINDS = {
+        'oracle': 'oracle://scott:tiger@localhost/test'
+    }
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # SQLALCHEMY_ECHO = True
     TESTING = True

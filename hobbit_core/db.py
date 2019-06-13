@@ -60,7 +60,7 @@ class SurrogatePKMeta(DefaultMeta):
         if name in ('SurrogatePKMeta', 'BaseModel'):
             return super().__new__(cls, name, bases, attrs)
 
-        primary_key_name = attrs.get('primary_key_name', 'id')
+        primary_key_name = attrs.get('primary_key_name') or 'id'
 
         attrs[primary_key_name] = Column(Integer, primary_key=True)
         attrs['created_at'] = Column(
@@ -69,8 +69,8 @@ class SurrogatePKMeta(DefaultMeta):
             DateTime, index=True, nullable=False, server_default=func.now(),
             onupdate=func.now())
 
-        if db.engine.name == 'oracle':
-            sequence_name = attrs.get('sequence_name', name)
+        if db.get_engine(bind=attrs.get('__bind_key__')).name == 'oracle':
+            sequence_name = attrs.get('sequence_name') or name
             attrs[primary_key_name] = Column(
                 Integer,
                 Sequence(f'{sequence_name}_id_seq'),
