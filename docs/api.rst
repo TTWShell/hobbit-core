@@ -26,6 +26,9 @@ db
    :undoc-members:
    :exclude-members: SurrogatePK, EnumExt, EnumExtMeta
 
+   .. autoclass:: BaseModel
+       :members: __repr__
+
    .. autoclass:: SurrogatePK
        :members: __repr__
 

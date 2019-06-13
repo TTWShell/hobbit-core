@@ -6,21 +6,22 @@
 """
 
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
 
-class HobbitManager(object):
+class HobbitManager:
     """Customizable utils management.
     """
 
-    def __init__(self, app=None, **kwargs):
+    def __init__(self, app=None, db=None, **kwargs):
         """
         app: The Flask application instance.
         """
         self.app = app
         if app is not None:
-            self.init_app(app, **kwargs)
+            self.init_app(app, db, **kwargs)
 
-    def init_app(self, app, **kwargs):
+    def init_app(self, app, db, **kwargs):
         """
         app: The Flask application instance.
         """
@@ -31,5 +32,9 @@ class HobbitManager(object):
                 'instead of a subclass of class "flask.Flask".'.format(
                     app.__class__.__name__))
 
-        # Bind Flask-Hobbit to app
+        if not isinstance(db, SQLAlchemy):
+            raise TypeError('hobbit-core be dependent on SQLAlchemy.')
+        self.db = db
+
+        # Bind hobbit-core to app
         app.hobbit_manager = self

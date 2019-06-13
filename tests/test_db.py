@@ -1,9 +1,11 @@
 import time
 import pytest
+import random
 
 from sqlalchemy.exc import ResourceClosedError, InvalidRequestError
 
 from hobbit_core.db import EnumExt, transaction
+from hobbit_core.db import BaseModel, Column
 
 from .test_app.exts import db
 from .test_app.models import User
@@ -15,6 +17,7 @@ class TestSurrogatePK(BaseTest):
 
     def test_surrogate_pk(self, assert_session):
         user = User(username='test1', email='1@b.com', password='1')
+        assert str(user).startswith('<User(')
         db.session.add(user)
         db.session.commit()
         user_id = user.id
@@ -30,6 +33,32 @@ class TestSurrogatePK(BaseTest):
 
         user = assert_session.query(User).get(user_id)
         assert user.created_at < user.updated_at
+
+
+class TestBaseModel(BaseTest):
+
+    @pytest.mark.parametrize('conf, excepted', [
+        [(None, None, []), ['username', 'id', 'created_at', 'updated_at']],
+        [(None, 'user_id', []), [
+            'username', 'user_id', 'created_at', 'updated_at']],
+        [('chenged', None, ['created_at', 'updated_at']), ['username', 'id']],
+    ])
+    def test_oracle(self, app, conf, excepted):
+
+        class TestUser(BaseModel):
+            __bind_key__ = 'oracle'
+            __tablename__ = f'{random.random()}'
+
+            sequence_name, primary_key_name, exclude_columns = conf
+
+            username = Column(db.String(32), nullable=False, index=True)
+
+        assert sorted([
+            i.name for i in TestUser.__table__.columns]) == sorted(excepted)
+        real_sequence_name = TestUser.__table__.columns[
+            TestUser.primary_key_name or 'id'].default.name
+        assert real_sequence_name == \
+            f'{TestUser.sequence_name or "TestUser"}_id_seq'
 
 
 class TestEnumExt(BaseTest):

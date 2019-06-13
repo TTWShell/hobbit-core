@@ -9,8 +9,8 @@ ma = Marshmallow()
 class UserSchema(ma.ModelSchema):  # type: ignore
 
     class Meta:
-        from .models import User
-        model = User
+        from .models import OtherUser
+        model = OtherUser
 
 
 class PagedUserSchema(PagedSchema):

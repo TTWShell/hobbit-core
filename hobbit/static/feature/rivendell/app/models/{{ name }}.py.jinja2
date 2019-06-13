@@ -1,12 +1,12 @@
 from sqlalchemy.orm import relationship  # NOQA F401
 
-from hobbit_core.db import Column, SurrogatePK, reference_col  # NOQA F401
+from hobbit_core.db import BaseModel, Column, reference_col  # NOQA F401
 
 from app.exts import db
 
 
 {% for model_name, Model in metadata.items() -%}
-class {{ model_name }}(SurrogatePK, db.Model):
+class {{ model_name }}(BaseModel):
     __tablename__ = '{{ Model.plural }}'
     {% for c in Model.columns -%}
     {{ c.field }} = Column(db.{{ c.type }}

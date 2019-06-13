@@ -7,6 +7,7 @@ name = "pypi"
 tox = "*"
 ipython = "*"
 hobbit-core = {editable = true,extras = ["hobbit", "hobbit_core"],path = "."}
+cx-oracle = "*"
 
 [dev-packages]
 sphinx = "==2.0.1"

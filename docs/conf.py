@@ -201,3 +201,18 @@ intersphinx_mapping = {'python': ('https://docs.python.org/3', None)}
 todo_include_todos = True
 
 autodoc_member_order = 'bysource'
+
+
+# patch for flask app_context
+from flask import Flask  # noqa
+from flask_sqlalchemy import SQLAlchemy  # noqa
+from hobbit_core import HobbitManager  # noqa
+
+app = Flask('', root_path='.')
+db = SQLAlchemy()
+db.init_app(app)
+hobbit = HobbitManager()
+
+with app.app_context():
+    hobbit.init_app(app, db)
+    from hobbit_core import db
