@@ -17,6 +17,7 @@ class TestSurrogatePK(BaseTest):
 
     def test_surrogate_pk(self, assert_session):
         user = User(username='test1', email='1@b.com', password='1')
+        assert str(user).startswith('<User(')
         db.session.add(user)
         db.session.commit()
         user_id = user.id

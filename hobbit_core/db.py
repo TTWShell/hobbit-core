@@ -13,7 +13,25 @@ from flask_sqlalchemy import DefaultMeta
 db = current_app.hobbit_manager.db
 
 
-class SurrogatePK:
+class _BaseModel:
+
+    __mapper_args__ = {
+        'order_by': 'id',
+    }
+
+    def __repr__(self) -> str:
+        """You can set label property.
+
+        Returns:
+            str: ``<{classname}({pk}:{label!r})>``
+        """
+        class_name = self.__class__.__name__
+        pk = self.id  # type: ignore
+        label = getattr(self, "label", "")
+        return f'<{class_name}({pk}:{label!r})>'
+
+
+class SurrogatePK(_BaseModel):
     """A mixin that add ``id``、``created_at`` and ``updated_at`` columns
     to any declarative-mapped class.
 
@@ -34,19 +52,6 @@ class SurrogatePK:
     updated_at = Column(
         DateTime, index=True, nullable=False, server_default=func.now(),
         onupdate=func.now())
-
-    __mapper_args__ = {
-        'order_by': 'id',
-    }
-
-    def __repr__(self) -> str:
-        """You can set label property.
-        Returns:
-            str: ``<{classname}({pk}:{label!r})>``
-        """
-        return '<{classname}({pk}:{label!r})>'.format(
-            classname=type(self).__name__, pk=self.id,
-            label=getattr(self, 'label', ''))
 
     def __init_subclass__(cls, **kwargs):
         msg = 'SurrogatePK is Deprecated. See hobbit_core.db.BaseModel.'
@@ -83,7 +88,7 @@ class SurrogatePKMeta(DefaultMeta):
         return super().__new__(cls, name, bases, attrs)
 
 
-class BaseModel(db.Model, metaclass=SurrogatePKMeta):  # type: ignore
+class BaseModel(_BaseModel, db.Model, metaclass=SurrogatePKMeta):  # type: ignore # noqa
     """Abstract base model class contains
     ``id``、``created_at`` and ``updated_at`` columns.
 
