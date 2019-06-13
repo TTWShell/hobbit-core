@@ -59,10 +59,10 @@ class SurrogatePK(_BaseModel):
         super().__init_subclass__(**kwargs)
 
 
-class SurrogatePKMeta(DefaultMeta):
+class BaseModelMeta(DefaultMeta):
 
     def __new__(cls, name, bases, attrs):
-        if name in ('SurrogatePKMeta', 'BaseModel'):
+        if name in ('BaseModelMeta', 'BaseModel'):
             return super().__new__(cls, name, bases, attrs)
 
         primary_key_name = attrs.get('primary_key_name') or 'id'
@@ -88,7 +88,7 @@ class SurrogatePKMeta(DefaultMeta):
         return super().__new__(cls, name, bases, attrs)
 
 
-class BaseModel(_BaseModel, db.Model, metaclass=SurrogatePKMeta):  # type: ignore # noqa
+class BaseModel(_BaseModel, db.Model, metaclass=BaseModelMeta):  # type: ignore # noqa
     """Abstract base model class contains
     ``id``、``created_at`` and ``updated_at`` columns.
 
