@@ -93,7 +93,7 @@ class TestImportSubs(BaseTest):
         with app.app_context():
             from . import importsub
             from .test_app.exts import db
-            db.create_all()
+            db.create_all(bind=None)
         all_ = getattr(importsub, '__all__')
         assert sorted(all_) == sorted([
             'A',
