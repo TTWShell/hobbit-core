@@ -41,6 +41,13 @@ setup(
     author='Legolas Bloom',
     author_email='zhanhsw@gmail.com',
     url='https://github.com/TTWShell/hobbit-core',
+    classifiers=[
+        'Topic :: Utilities',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: Implementation :: CPython',
+        'License :: OSI Approved :: MIT License',
+    ],
     zip_safe=False,
     packages=find_packages(),
     package_data={'hobbit': package_data},
