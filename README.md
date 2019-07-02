@@ -2,7 +2,6 @@
 
 [![CircleCI](https://circleci.com/gh/TTWShell/hobbit-core.svg?style=svg)](https://circleci.com/gh/TTWShell/hobbit-core)
 [![Documentation Status](https://readthedocs.org/projects/hobbit-core/badge/?version=latest)](https://hobbit-core.readthedocs.io/zh/latest/?badge=latest)
-[![Coverage](https://img.shields.io/codecov/c/github/TTWShell/hobbit-core.svg)](https://img.shields.io/codecov/c/github/TTWShell/hobbit-core.svg)
 [![PyPi-Version](https://img.shields.io/pypi/v/hobbit-core.svg)](https://img.shields.io/pypi/v/hobbit-core.svg)
 [![Python-version](https://img.shields.io/pypi/pyversions/hobbit-core.svg)](https://img.shields.io/pypi/pyversions/hobbit-core.svg)
 [![codecov](https://codecov.io/gh/TTWShell/hobbit-core/branch/master/graph/badge.svg)](https://codecov.io/gh/TTWShell/hobbit-core)
