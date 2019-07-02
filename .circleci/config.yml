@@ -20,7 +20,12 @@ jobs:
           name: Waiting for Postgres to be ready
           command: sleep 10
       - run:
-          command: tox
+          command: pip install codecov
+      - run:
+          command: |
+            tox -- --cov-report=xml
+            codecov
+
   test-py36:
     docker:
       - image: circleci/python:3.6
