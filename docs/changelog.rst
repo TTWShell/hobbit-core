@@ -2,6 +2,7 @@ Change history
 ==============
 
 1.4.2 (2019-06-13)
+******************
 
 * Add `db.BaseModel` for support Oracle id sequence.
 
