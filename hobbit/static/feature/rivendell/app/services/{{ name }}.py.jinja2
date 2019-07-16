@@ -11,7 +11,7 @@ class {{ model_name }}Service:
 
     @classmethod
     def list(cls, page, page_size, order_by):
-        qexp = cls.model.query.all()
+        qexp = cls.model.query
         paged_ret = pagination(
             cls.model, page, page_size, order_by, query_exp=qexp)
         return paged_ret
