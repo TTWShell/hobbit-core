@@ -86,6 +86,11 @@ class TestUseKwargs(BaseTest):
         resp = client.post('/base_use_kwargs_dictargmap_partial/', json={})
         assert resp.json == {'username': None}
 
+    def test_auto_trim(self, client):
+        payload = {'username': '  username', 'email': ' email  '}
+        resp = client.post('/use_kwargs_with_partial/', json=payload)
+        assert resp.json == {'username': 'username', 'email': 'email'}
+
 
 class TestImportSubs(BaseTest):
 
