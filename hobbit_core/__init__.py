@@ -36,5 +36,7 @@ class HobbitManager:
             raise TypeError('hobbit-core be dependent on SQLAlchemy.')
         self.db = db
 
+        app.config.setdefault('HOBBIT_UPPER_SEQUENCE_NAME', False)
+
         # Bind hobbit-core to app
         app.hobbit_manager = self
