@@ -12,7 +12,7 @@ from flask import request
 from flask_sqlalchemy import model
 import marshmallow
 from marshmallow import Schema
-from webargs.flaskparser import use_kwargs as base_use_kwargs, parser
+from .webargs import use_kwargs as base_use_kwargs, parser
 
 
 class ParamsDict(dict):
