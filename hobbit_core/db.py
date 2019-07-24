@@ -75,10 +75,13 @@ class BaseModelMeta(DefaultMeta):
             onupdate=func.now())
 
         if db.get_engine(bind=attrs.get('__bind_key__')).name == 'oracle':
-            sequence_name = attrs.get('sequence_name') or name
+            sequence_name = attrs.get('sequence_name') or \
+                f'{name}_{primary_key_name}_seq'
+            if current_app.config['HOBBIT_UPPER_SEQUENCE_NAME']:
+                sequence_name = sequence_name.upper()
             attrs[primary_key_name] = Column(
                 Integer,
-                Sequence(f'{sequence_name}_id_seq'),
+                Sequence(sequence_name),
                 primary_key=True)
 
         exclude_columns = attrs.get('exclude_columns', [])
@@ -99,7 +102,8 @@ class BaseModel(_BaseModel, db.Model, metaclass=BaseModelMeta):  # type: ignore 
     **updated_at**: Auto save ``datetime.now()`` when row updated.
 
     Support **oracle id sequence**, default name is ``{class_name}_id_seq``,
-    can changed by ``sequence_name``.
+    can changed by ``sequence_name`` and ``HOBBIT_UPPER_SEQUENCE_NAME`` config.
+    Default value of app.config['HOBBIT_UPPER_SEQUENCE_NAME'] is False.
 
     Examples::
 

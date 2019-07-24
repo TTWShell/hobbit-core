@@ -37,13 +37,18 @@ class TestSurrogatePK(BaseTest):
 
 class TestBaseModel(BaseTest):
 
+    @pytest.fixture(scope='class', params=[True, False])
+    def upper_conf(self, app, request):
+        app.config['HOBBIT_UPPER_SEQUENCE_NAME'] = request.param
+        return request.param
+
     @pytest.mark.parametrize('conf, excepted', [
         [(None, None, []), ['username', 'id', 'created_at', 'updated_at']],
         [(None, 'user_id', []), [
             'username', 'user_id', 'created_at', 'updated_at']],
-        [('chenged', None, ['created_at', 'updated_at']), ['username', 'id']],
+        [('changed', None, ['created_at', 'updated_at']), ['username', 'id']],
     ])
-    def test_oracle(self, app, conf, excepted):
+    def test_oracle(self, app, conf, excepted, upper_conf):
 
         class TestUser(BaseModel):
             __bind_key__ = 'oracle'
@@ -57,8 +62,13 @@ class TestBaseModel(BaseTest):
             i.name for i in TestUser.__table__.columns]) == sorted(excepted)
         real_sequence_name = TestUser.__table__.columns[
             TestUser.primary_key_name or 'id'].default.name
-        assert real_sequence_name == \
-            f'{TestUser.sequence_name or "TestUser"}_id_seq'
+
+        excepted_name = TestUser.sequence_name if TestUser.sequence_name else \
+            'TestUser_{}_seq'.format(TestUser.primary_key_name or 'id')
+        if upper_conf:
+            assert real_sequence_name == excepted_name.upper()
+        else:
+            assert real_sequence_name == excepted_name
 
 
 class TestEnumExt(BaseTest):

@@ -1,6 +1,13 @@
 Change history
 ==============
 
+1.4.3 (2019-07-24)
+******************
+
+* Add CustomParser for automatically trim leading/trailing whitespace from argument values(`from hobbit_core.webargs import use_args, use_kwargs`).
+* Add `HOBBIT_UPPER_SEQUENCE_NAME` config for upper db's sequence name.
+* Fixs some err in template.
+
 1.4.2 (2019-06-13)
 ******************
 
