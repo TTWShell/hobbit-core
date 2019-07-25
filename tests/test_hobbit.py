@@ -49,21 +49,17 @@ class TestHobbit(BaseTest):
         assert result.exit_code == 0, result.output
         assert 'mkdir\t{}'.format(self.wkdir) in result.output
         assert 'render\t{}'.format(self.wkdir) in result.output
-        if template == 'shire':
-            if celery_ == '--no-celery':
-                # start + 29 files + 11 dir + 1 end + empty
-                # in this test case. main dir exists, so mkdir - 1
-                assert len(result.output.split('\n')) == \
-                    1 + 29 + 11 + 1 + 1 - 1
-            else:
-                # start + files + mkdir + tail
-                assert len(result.output.split('\n')) == 1 + 30 + 12 + 1
-        else:
-            if celery_ == '--no-celery':
-                assert len(result.output.split('\n')) == \
-                    1 + 31 + 11 + 1
-            else:
-                assert len(result.output.split('\n')) == 1 + 32 + 12 + 1
+
+        file_nums = {
+            # tart + 29 files + 11 dir + 1 end + empty
+            'shire | --no-celery':  1 + 29 + 11 + 1 + 1 - 1,
+            # start + files + mkdir + tail
+            'shire | --celery': 1 + 30 + 12 + 1,
+            'rivendell | --no-celery':  1 + 31 + 11 + 1,
+            'rivendell | --celery':  1 + 32 + 12 + 1,
+        }
+        assert len(result.output.split('\n')) == file_nums[
+            f'{template} | {celery_}']
 
         assert subprocess.call(['flake8', '.']) == 0
         assert subprocess.call(
@@ -102,7 +98,6 @@ class TestHobbit(BaseTest):
         result = runner.invoke(hobbit, cmd, obj={})
         # start + files + mkdir + tail
         assert result.exit_code == 0
-        assert len(result.output.split('\n')) == 1 + 31 + 11 + 1
 
         # gen new module
         result = runner.invoke(hobbit, gen_cmd, obj={})
