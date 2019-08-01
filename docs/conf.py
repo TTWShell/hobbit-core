@@ -14,6 +14,9 @@
 
 import os
 import sys
+from datetime import datetime
+
+from webargs.flaskparser import FlaskParser  # noqa
 
 ROOT_PATH = os.path.split(os.path.abspath('.'))[0]
 sys.path.insert(0, os.path.join(ROOT_PATH, 'hobbit_core'))
@@ -22,7 +25,8 @@ sys.path.insert(0, os.path.join(ROOT_PATH, 'hobbit_core'))
 # -- Project information -----------------------------------------------------
 
 project = 'hobbit-core'
-copyright = '2019, Legolas Bloom'
+modified_at = datetime.utcfromtimestamp(os.path.getmtime("changelog.rst"))
+copyright = f'2018-{modified_at:%Y}, Legolas Bloom'
 author = 'Legolas Bloom'
 
 # The short X.Y version
