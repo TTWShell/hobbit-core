@@ -1,4 +1,6 @@
 import os
+
+from pathlib import Path, PurePath
 from setuptools import setup, find_packages
 
 SUFFIX = '.jinja2'
@@ -9,13 +11,8 @@ src_path = os.path.join(ROOT_PATH, 'hobbit')
 def gen_data(data_root='static'):
     """just for collect static files.
     """
-    data = []
-    for fn in os.listdir(os.path.join(src_path, data_root)):
-        if os.path.isdir(os.path.join(src_path, data_root, fn)):
-            data.extend(gen_data(os.path.join(data_root, fn)))
-        if fn.endswith(SUFFIX):
-            data.append(os.path.join(data_root, fn))
-    return data
+    return [fpath for fpath in Path(
+        PurePath(src_path) / data_root).glob(f'**/*{SUFFIX}')]
 
 
 package_data = gen_data()
