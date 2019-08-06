@@ -1,5 +1,4 @@
 import os
-
 from pathlib import Path, PurePath
 from setuptools import setup, find_packages
 
