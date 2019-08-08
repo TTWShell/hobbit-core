@@ -83,7 +83,7 @@ class TestHobbit(BaseTest):
         assert result.exit_code == 0
 
     @pytest.mark.parametrize("gen_cmd", [
-        ['--echo', 'gen', '-n', 'user', '-t', 'rivendell'],
+        ['--echo', 'gen', '-n', 'user', '-t', 'rivendell', '-s'],
         ['--echo', 'gen', '-n', 'user', '-t', 'rivendell', '-f', '--csv-path',
          os.path.join(BaseTest.root_path, 'tests', 'models.csv')],
     ])

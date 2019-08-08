@@ -69,8 +69,10 @@ def new(ctx, name, port, dist, template, force, celery):
 @click.option('-c', '--csv-path', required=False, type=click.Path(exists=True),
               callback=validate_csv_file,
               help='A csv file that defines some models.')
+@click.option('-s', '--tail-slash', default=False, is_flag=True,
+              help='Whether to use the trailing slash.')
 @click.pass_context
-def gen(ctx, name, template, dist, force, csv_path):
+def gen(ctx, name, template, dist, force, csv_path, tail_slash):
     """Generator new feature. Auto gen models/{name}.py, schemas/{name}.py,
     views/{name}.py, services/{name.py}, tests/test_{name}.py etc.
     """
@@ -88,6 +90,7 @@ def gen(ctx, name, template, dist, force, csv_path):
         'name': name,
         'module': module,
         'metadata': metadata,
+        'tail_slash': '/' if tail_slash else '',
     }
 
     render_project(dist, template)
