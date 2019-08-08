@@ -15,14 +15,14 @@ bp = Blueprint('{{ module }}', __name__)
 
 
 {% for model_name, Model in metadata.items() -%}
-@bp.route('/{{ Model.plural }}/', methods=['GET'])
+@bp.route('/{{ Model.plural }}{{ tail_slash }}', methods=['GET'])
 @use_kwargs(PageParams)
 def list_{{ Model.plural }}(page, page_size, order_by):
     page_ret = {{ model_name }}Service.list(page, page_size, order_by)
     return jsonify(schemas.paged_{{ Model.singular }}_schemas.dump(page_ret))
 
 
-@bp.route('/{{ Model.plural }}/', methods=['POST'])
+@bp.route('/{{ Model.plural }}{{ tail_slash }}', methods=['POST'])
 @use_kwargs(schemas.{{ Model.singular }}_schema)
 @transaction(db.session)
 def create_{{ Model.singular }}(**kwargs):
@@ -30,13 +30,13 @@ def create_{{ Model.singular }}(**kwargs):
     return jsonify(schemas.{{ Model.singular }}_schema.dump(instance)), 201
 
 
-@bp.route('/{{ Model.plural }}/<int:pk>/', methods=['GET'])
+@bp.route('/{{ Model.plural }}/<int:pk>{{ tail_slash }}', methods=['GET'])
 def retrieve_{{ Model.singular }}(pk):
     instance = {{ model_name }}Service.get_or_404(pk)
     return jsonify(schemas.{{ Model.singular }}_schema.dump(instance))
 
 
-@bp.route('/{{ Model.plural }}/<int:pk>/', methods=['PUT'])
+@bp.route('/{{ Model.plural }}/<int:pk>{{ tail_slash }}', methods=['PUT'])
 @use_kwargs(schemas.{{ Model.singular }}_schema)
 @transaction(db.session)
 def update_{{ Model.singular }}(pk, **kwargs):
@@ -44,7 +44,7 @@ def update_{{ Model.singular }}(pk, **kwargs):
     return jsonify(schemas.{{ Model.singular }}_schema.dump(instance))
 
 
-@bp.route('/{{ Model.plural }}/', methods=['DELETE'])
+@bp.route('/{{ Model.plural }}{{ tail_slash }}', methods=['DELETE'])
 @use_kwargs({'ids': DelimitedList(fields.Int())})
 @transaction(db.session)
 def delete_{{ Model.plural }}(ids):
