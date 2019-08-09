@@ -36,4 +36,6 @@ def init(ctx):
     if 'requirements.txt' in os.listdir():
         pipenv_cmds.insert(0, 'pipenv install -r requirements.txt --pre')
 
-    run(' && '.join(pipenv_cmds), shell=True)
+    cmd = ' && '.join(pipenv_cmds)
+    # force pipenv to ignore that environment and create its own instead
+    run(cmd, shell=True, env={'PIPENV_IGNORE_VIRTUALENVS': '1'})
