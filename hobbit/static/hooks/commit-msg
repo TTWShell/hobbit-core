@@ -1,0 +1,44 @@
+#!/bin/sh
+#
+# An example hook script to check the commit log message.
+# Called by "git commit" with one argument, the name of the file
+# that has the commit message.  The hook should exit with non-zero
+# status after issuing an appropriate message if it wants to stop the
+# commit.  The hook is allowed to edit the commit message file.
+#
+# To enable this hook, rename this file to "commit-msg".
+
+# Uncomment the below to add a Signed-off-by line to the message.
+# Doing this in a hook is a bad idea in general, but the prepare-commit-msg
+# hook is more suited to it.
+#
+# SOB=$(git var GIT_AUTHOR_IDENT | sed -n 's/^\(.*>\).*$/Signed-off-by: \1/p')
+# grep -qs "^$SOB" "$1" || echo "$SOB" >> "$1"
+
+# This example catches duplicate Signed-off-by lines.
+
+CURRENT_BRANCH=`git branch | grep \* | cut -d ' ' -f2`
+JIRA_ID_REGEX='[A-Za-z0-9]+-[0-9]+'
+JIRA_ID=`echo $CURRENT_BRANCH | grep -oE '${JIRA_ID_REGEX}$'`
+if [[ -z $JIRA_ID ]]; then
+    echo "Warning: 'jira id' not found in current branch name, example: feature/test-SKYF-458"
+fi
+
+COMMENT=`cat $1 | head -n 1`
+if [[ -z $COMMENT ]]; then
+    echo "Error: comment can't be empty"
+    exit 1
+fi
+
+hasHead=`echo $COMMENT | grep -oE '^\(${JIRA_ID_REGEX}\)'`
+if [[ -z $hasHead && ! -z $JIRA_ID ]]; then
+    COMMENT_TAIL=`tail -n +2 $1`
+    COMMENT="($JIRA_ID) $COMMENT\n${COMMENT_TAIL}"
+    printf "$COMMENT" > "$1"
+fi
+
+isOK=`echo $COMMENT | grep -oE '^\(${JIRA_ID_REGEX}\) .+'`
+if [[ -z $isOK ]]; then
+    echo "Error: comment should be in format: (jira-id) comment msg. Example: (SKYF-458) finished xx"
+    exit 1
+fi
