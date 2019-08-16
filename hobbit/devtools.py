@@ -20,14 +20,20 @@ def dev():
 
 
 @dev.command()
+@click.option('-a', '--all', 'all_', default=False, is_flag=True,
+              help='Run all.')
+@click.option('--hooks', default=False, is_flag=True, help='Install hooks.')
+@click.option('--pipenv', default=False, is_flag=True,
+              help='Create virtualenv by pipenv.')
 @click.pass_context
-def init(ctx):
+def init(ctx, all_, hooks, pipenv):
     """Init dev env: git hooks, pyenv install etc.
     """
     run('git init', shell=True)
 
-    HOOKS_PATH = os.path.join(ROOT_PATH, 'static', 'hooks')
-    run(f'cp -r {HOOKS_PATH}/* .git/hooks', shell=True)
+    if all_ or hooks:
+        HOOKS_PATH = os.path.join(ROOT_PATH, 'static', 'hooks')
+        run(f'cp -r {HOOKS_PATH}/* .git/hooks', shell=True)
 
     pipenv_cmds = [
         'pipenv install --dev pytest pytest-cov pytest-env flake8',
@@ -38,4 +44,5 @@ def init(ctx):
 
     cmd = ' && '.join(pipenv_cmds)
     # force pipenv to ignore that environment and create its own instead
-    run(cmd, shell=True, env={'PIPENV_IGNORE_VIRTUALENVS': '1'})
+    if all_ or pipenv:
+        run(cmd, shell=True)

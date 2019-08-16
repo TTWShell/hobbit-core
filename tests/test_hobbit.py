@@ -115,5 +115,5 @@ class TestHobbit(BaseTest):
         result = runner.invoke(hobbit, cmd, obj={})
         assert result.exit_code == 0
 
-        result = runner.invoke(hobbit, ['dev', 'init'], obj={})
+        result = runner.invoke(hobbit, ['dev', 'init', '--all'], obj={})
         assert result.exit_code == 0, result.output
