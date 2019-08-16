@@ -5,7 +5,8 @@ import pkg_resources
 
 import click
 
-from .handlers.bootstrap import echo, render_project, gen_metadata_by_name, \
+from .handlers import echo
+from .handlers.bootstrap import render_project, gen_metadata_by_name, \
     validate_template_path, validate_csv_file, MetaModel, create_models_csv
 from . import HobbitCommand, HobbitGroup, CONTEXT_SETTINGS
 

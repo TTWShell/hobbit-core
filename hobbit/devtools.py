@@ -2,6 +2,7 @@ import os
 import click
 from subprocess import run
 
+from .handlers import echo
 from . import HobbitGroup, CONTEXT_SETTINGS, ROOT_PATH
 
 
@@ -37,7 +38,6 @@ def init(ctx, all_, hooks, pipenv):
 
     pipenv_cmds = [
         'pipenv install --dev pytest pytest-cov pytest-env flake8',
-        'pipenv shell',
     ]
     if 'requirements.txt' in os.listdir():
         pipenv_cmds.insert(0, 'pipenv install -r requirements.txt --pre')
@@ -46,3 +46,4 @@ def init(ctx, all_, hooks, pipenv):
     # force pipenv to ignore that environment and create its own instead
     if all_ or pipenv:
         run(cmd, shell=True)
+        echo('Please run: pipenv shell')

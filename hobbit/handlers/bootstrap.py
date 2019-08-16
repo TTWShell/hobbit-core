@@ -8,6 +8,7 @@ import click
 from jinja2 import Environment, FileSystemLoader, Template
 
 from hobbit import inflect_engine
+from . import echo
 
 SUFFIX = '.jinja2'
 
@@ -15,13 +16,6 @@ SUFFIX = '.jinja2'
 def regex_replace(s, find, replace):
     """A non-optimal implementation of a regex filter"""
     return re.sub(find, replace, s)
-
-
-@click.pass_context
-def echo(ctx, msg):
-    if not ctx.obj['ECHO']:
-        return
-    click.echo(msg)
 
 
 @contextmanager
