@@ -92,9 +92,7 @@ class TestHobbit(BaseTest):
         assert os.getcwd() == self.wkdir
 
         # new project use rivendell template
-        cmd = [
-            '--echo', 'new', '-n', 'haha', '-p', '1024',
-            '-t', 'rivendell']
+        cmd = ['--echo', 'new', '-n', 'haha', '-p', '1024', '-t', 'rivendell']
         result = runner.invoke(hobbit, cmd, obj={})
         # start + files + mkdir + tail
         assert result.exit_code == 0
@@ -109,3 +107,13 @@ class TestHobbit(BaseTest):
         # pytest
         assert subprocess.call(
             ['pytest', '--no-cov'], stdout=subprocess.DEVNULL) == 0
+
+    @chdir(wkdir)
+    def test_dev_init_cmd(self, runner):
+        # new project use rivendell template
+        cmd = ['--echo', 'new', '-n', 'haha', '-p', '1024', '-t', 'rivendell']
+        result = runner.invoke(hobbit, cmd, obj={})
+        assert result.exit_code == 0
+
+        result = runner.invoke(hobbit, ['dev', 'init', '--all'], obj={})
+        assert result.exit_code == 0, result.output

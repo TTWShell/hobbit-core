@@ -5,11 +5,17 @@ import pkg_resources
 
 import click
 
-from .handlers.bootstrap import echo, render_project, gen_metadata_by_name, \
+from .handlers import echo
+from .handlers.bootstrap import render_project, gen_metadata_by_name, \
     validate_template_path, validate_csv_file, MetaModel, create_models_csv
-from . import HobbitCommand, main as cli
+from . import HobbitCommand, HobbitGroup, CONTEXT_SETTINGS
 
 templates = ['shire', 'rivendell']
+
+
+@click.group(cls=HobbitGroup, context_settings=CONTEXT_SETTINGS)
+def cli():
+    pass
 
 
 def common_options(func):
@@ -114,4 +120,4 @@ def create(ctx, name):
     create_models_csv(name)
 
 
-CMDS = [new, gen, create]
+cmd_list = [new, gen, create]

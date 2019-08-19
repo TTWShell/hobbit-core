@@ -10,7 +10,7 @@ src_path = os.path.join(ROOT_PATH, 'hobbit')
 def gen_data(data_root='static'):
     """just for collect static files.
     """
-    return [fpath for fpath in Path(
+    return [fpath.as_posix() for fpath in Path(
         PurePath(src_path) / data_root).glob(f'**/*{SUFFIX}')]
 
 

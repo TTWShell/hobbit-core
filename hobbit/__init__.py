@@ -29,7 +29,7 @@ class HobbitCommand(Command):
                 formatter.write_dl(opts)
 
 
-class CLI(click.Group, HobbitCommand):
+class HobbitGroup(click.Group, HobbitCommand):
 
     def list_commands(self, ctx):
         return sorted(self.cmds.keys())
@@ -47,8 +47,10 @@ class CLI(click.Group, HobbitCommand):
 
     @property
     def cmds(self):
-        from . import bootstrap
-        return {func.name: func for func in bootstrap.CMDS}
+        from .bootstrap import cmd_list
+        from .devtools import dev
+        cmd_list.append(dev)
+        return {func.name: func for func in cmd_list}
 
     def format_options(self, ctx, formatter):
         HobbitCommand.format_options(self, ctx, formatter)
@@ -90,7 +92,7 @@ class CLI(click.Group, HobbitCommand):
 
 
 @click.group(
-    cls=CLI,
+    cls=HobbitGroup,
     epilog='More details: https://hobbit-core.readthedocs.io/zh/latest/',
     context_settings=CONTEXT_SETTINGS)
 @click.version_option()
