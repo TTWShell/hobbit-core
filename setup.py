@@ -57,7 +57,7 @@ setup(
             'Flask-SQLAlchemy>=2.3.2',
             'marshmallow-enum>=1.4.1',
             'marshmallow-sqlalchemy>=0.14.1',
-            'webargs>=5.1.3',
+            'webargs>=5.1.3, <6',
             'mypy-extensions==0.4.1',
             'pyyaml>=4.2b1',
             'marshmallow==v3.0.0rc6',
