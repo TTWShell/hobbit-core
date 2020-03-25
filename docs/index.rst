@@ -41,6 +41,7 @@ Hobbit-core中文文档
 
 该命令会生成一个完整的api及其测试范例，使用以下项目启动server::
 
+    pipenv shell  # 使用虚拟环境
     FLASK_APP=app/run.py flask run
 
 你可以在控制台看到类似如下信息::
