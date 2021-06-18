@@ -1,7 +1,7 @@
 import pytest
 from unittest import mock
 
-from webargs.core import Parser, get_value
+from webargs.core import Parser
 
 from .test_app.run import app as tapp
 from .test_app.exts import db as tdb
@@ -62,14 +62,14 @@ def session(request):
 class MockRequestParser(Parser):
     """A minimal parser implementation that parses mock requests."""
 
-    def parse_querystring(self, req, name, field):
-        return get_value(req.query, name, field)
+    def parse_querystring(self, req, schema):
+        return self.load_json(req, schema)
 
-    def parse_json(self, req, name, field):
-        return get_value(req.json, name, field)
+    def parse_json(self, req, schema):
+        return self.load_json(req, schema)
 
-    def parse_cookies(self, req, name, field):
-        return get_value(req.cookies, name, field)
+    def parse_cookies(self, req, schema):
+        return self.load_json(req, schema)
 
 
 @pytest.yield_fixture(scope="function")
