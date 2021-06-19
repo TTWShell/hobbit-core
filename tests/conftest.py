@@ -63,22 +63,26 @@ def session(request):
 class MockRequestParser(Parser):
     """A minimal parser implementation that parses mock requests."""
 
-    def parse_querystring(self, req, schema):
-        return self.load_json(req, schema)
+    def load_querystring(self, req, schema):
+        return req.query
 
-    def parse_json(self, req, schema):
-        return self.load_json(req, schema)
 
-    def parse_cookies(self, req, schema):
-        return self.load_json(req, schema)
+@pytest.fixture
+def request_context(app):
+    """create the app and return the request context as a fixture
+       so that this process does not need to be repeated in each test
+    """
+    return app.test_request_context
 
 
 @pytest.yield_fixture(scope="function")
-def web_request():
-    req = mock.Mock()
-    req.query = {}
-    yield req
-    req.query = {}
+def web_request(request_context):
+    with request_context():
+        from flask import request
+        req = request  # mock.Mock()
+        req.query = {}
+        yield req
+        req.query = {}
 
 
 @pytest.fixture

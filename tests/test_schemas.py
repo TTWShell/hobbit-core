@@ -15,9 +15,12 @@ class TestSchema(BaseTest):
 
         class UserSchema(ModelSchema):
             role = EnumField(RoleEnum)
+            pass
 
             class Meta:
                 model = User
+                include_relationships = True
+                load_instance = True
 
         assert UserSchema.Meta.dateformat == '%Y-%m-%d %H:%M:%S'
 
@@ -26,6 +29,7 @@ class TestSchema(BaseTest):
         db.session.commit()
 
         data = UserSchema().dump(user)
+        print(data)
         assert data['role'] == {'key': 1, 'label': 'admin', 'value': '管理员'}
 
         class UserSchema(ModelSchema):

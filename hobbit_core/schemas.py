@@ -30,7 +30,7 @@ class ORMSchema(SQLAlchemyAutoSchema_):
     """
 
     @post_load()
-    def make_instance(self, data):
+    def make_instance(self, data, many, **kwargs):
         return data
 
 
@@ -101,7 +101,7 @@ class EnumSetMeta(SQLAlchemyAutoSchemaMeta):
     def gen_func(cls, decorator, field_name, enum, verbose=True):
 
         @decorator
-        def wrapper(self, data):
+        def wrapper(self, data, many, **kwargs):
             if data.get(field_name) is None:
                 return data
 

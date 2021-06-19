@@ -8,6 +8,7 @@ tox = "*"
 ipython = "*"
 cx-Oracle = "*"
 zipp = {extras = ["hobbit", "hobbit_core"], path = "."}
+hobbit-core = {extras = ["hobbit", "hobbit_core"], version = "==2.0.0"}
 
 [dev-packages]
 sphinx = "==2.0.1"
