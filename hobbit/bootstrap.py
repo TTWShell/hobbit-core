@@ -6,8 +6,7 @@ import pkg_resources
 import click
 
 from .handlers import echo
-from .handlers.bootstrap import render_project, gen_metadata_by_name, \
-    validate_template_path, validate_csv_file, MetaModel, create_models_csv
+from .handlers.bootstrap import render_project, validate_template_path
 from . import HobbitCommand, HobbitGroup, CONTEXT_SETTINGS
 
 templates = ['shire', 'rivendell']
@@ -69,55 +68,4 @@ def new(ctx, name, port, dist, template, force, celery):
     echo(f'project `{name}` render finished.')
 
 
-@cli.command(cls=HobbitCommand)
-@click.option('-n', '--name', help='Name of feature.', required=True)
-@common_options
-@click.option('-c', '--csv-path', required=False, type=click.Path(exists=True),
-              callback=validate_csv_file,
-              help='A csv file that defines some models.')
-@click.option('-s', '--tail-slash', default=False, is_flag=True,
-              help='Whether to use the trailing slash.')
-@click.pass_context
-def gen(ctx, name, template, dist, force, csv_path, tail_slash):
-    """Generator new feature. Auto gen models/{name}.py, schemas/{name}.py,
-    views/{name}.py, services/{name.py}, tests/test_{name}.py etc.
-    """
-    dist = os.getcwd() if dist is None else os.path.abspath(dist)
-    module, _ = gen_metadata_by_name(name)
-
-    if csv_path:
-        metadata = {m.name: m for m in MetaModel.csv2model(csv_path)}
-    else:
-        default = MetaModel.gen_default(name)
-        metadata = {default.name: default}
-
-    ctx.obj['FORCE'] = force
-    ctx.obj['JINJIA_CONTEXT'] = {
-        'name': name,
-        'module': module,
-        'metadata': metadata,
-        'tail_slash': '/' if tail_slash else '',
-    }
-
-    render_project(dist, template)
-
-
-@cli.command(
-    cls=HobbitCommand,
-    short_help='Create {name}.csv file for gen --csv-path option.',
-    help=f"""Create {{name}}.csv file for gen --csv-path option.
-
-    Support type:
-
-        {', '.join(MetaModel.ORM_TYPES + [MetaModel.TYPE_REF])}
-
-    ref type (hobbit_core.db.reference_col) used for ForeignKey.
-    """
-)
-@click.option('-n', '--name', help='Name of csv file.', required=True)
-@click.pass_context
-def create(ctx, name):
-    create_models_csv(name)
-
-
-cmd_list = [new, gen, create]
+cmd_list = [new]

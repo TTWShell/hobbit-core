@@ -76,38 +76,6 @@ class TestHobbit(BaseTest):
         result = runner.invoke(hobbit, options, obj={})
         assert any([i in result.output for i in ['exists ', 'ignore ...']])
 
-    @pytest.fixture
-    def csv_file(self, runner):
-        cmd = ['create', '-n', 'tests/models.csv']
-        result = runner.invoke(hobbit, cmd, obj={})
-        assert result.exit_code == 0
-
-    @pytest.mark.parametrize("gen_cmd", [
-        ['--echo', 'gen', '-n', 'user', '-t', 'rivendell', '-s'],
-        ['--echo', 'gen', '-n', 'user', '-t', 'rivendell', '-f', '--csv-path',
-         os.path.join(BaseTest.root_path, 'tests', 'models.csv')],
-    ])
-    @chdir(wkdir)
-    def test_new_rivendell_tpl_and_gen_cmd(self, runner, gen_cmd, csv_file):
-        assert os.getcwd() == self.wkdir
-
-        # new project use rivendell template
-        cmd = ['--echo', 'new', '-n', 'haha', '-p', '1024', '-t', 'rivendell']
-        result = runner.invoke(hobbit, cmd, obj={})
-        # start + files + mkdir + tail
-        assert result.exit_code == 0
-
-        # gen new module
-        result = runner.invoke(hobbit, gen_cmd, obj={})
-        assert result.exit_code == 0
-        assert len(result.output.split('\n')) == 5 + 1, result.output  # files
-
-        # flake8 check
-        assert subprocess.call(['flake8', '.']) == 0
-        # pytest
-        assert subprocess.call(
-            ['pytest', '--no-cov'], stdout=subprocess.DEVNULL) == 0
-
     @chdir(wkdir)
     def test_dev_init_cmd(self, runner):
         # new project use rivendell template
