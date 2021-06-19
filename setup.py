@@ -15,8 +15,8 @@ def gen_data(data_root='static'):
 
 
 package_data = gen_data()
-# The amount files of `shire[new,gen]` + `rivendell[...]`
-assert len(package_data) == 30 + 4 + 31 + 5, \
+# The amount files of `shire[new]` + `rivendell[new]`
+assert len(package_data) == 30 + 31, \
     'nums of tepl files error, {}'.format(len(package_data))
 package_data.append('py.typed')
 

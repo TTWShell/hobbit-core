@@ -1,5 +1,4 @@
 import pytest
-from unittest import mock
 
 from webargs.core import Parser
 

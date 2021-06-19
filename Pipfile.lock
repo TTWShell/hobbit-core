@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c448e4e530f6ed17b5fcbca29ae487b28eb219fbecfb2ea41f11d16f1835ced9"
+            "sha256": "eb1e9742b054ac45307a6d1630341e09af07bee607754dd0adfcc3b10d5c6eed"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -131,6 +131,14 @@
             ],
             "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==2.5.1"
+        },
+        "hobbit-core": {
+            "editable": true,
+            "extras": [
+                "hobbit",
+                "hobbit_core"
+            ],
+            "path": "."
         },
         "inflect": {
             "hashes": [
@@ -955,11 +963,11 @@
         },
         "sphinx": {
             "hashes": [
-                "sha256:423280646fb37944dd3c85c58fb92a20d745793a9f6c511f59da82fa97cd404b",
-                "sha256:de930f42600a4fef993587633984cc5027dedba2464bcf00ddace26b40f8d9ce"
+                "sha256:b5c2ae4120bf00c799ba9b3699bc895816d272d120080fbc967292f29b52b48c",
+                "sha256:d1cb10bee9c4231f1700ec2e24a91be3f3a3aba066ea4ca9f3bbe47e59d5a1d4"
             ],
             "index": "pypi",
-            "version": "==2.0.1"
+            "version": "==4.0.2"
         },
         "sphinx-autobuild": {
             "hashes": [

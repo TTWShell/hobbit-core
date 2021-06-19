@@ -1,13 +1,10 @@
-from collections import namedtuple
 from contextlib import contextmanager
-import csv
 import os
 import re
 
 import click
 from jinja2 import Environment, FileSystemLoader, Template
 
-from hobbit import inflect_engine
 from . import echo
 
 SUFFIX = '.jinja2'
