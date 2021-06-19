@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "00fc72f38d23f0bf59e6a8ee3cbc4a09afd24563a5ba64daf8626ec4d5f33e8c"
+            "sha256": "c448e4e530f6ed17b5fcbca29ae487b28eb219fbecfb2ea41f11d16f1835ced9"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -500,12 +500,12 @@
             "version": "==1.0.1"
         },
         "zipp": {
+            "editable": true,
             "extras": [
                 "hobbit",
                 "hobbit_core"
             ],
-            "path": ".",
-            "version": "==2.0.0"
+            "path": "."
         }
     },
     "develop": {
@@ -1112,12 +1112,12 @@
             "version": "==0.5.1"
         },
         "zipp": {
+            "editable": true,
             "extras": [
                 "hobbit",
                 "hobbit_core"
             ],
-            "path": ".",
-            "version": "==2.0.0"
+            "path": "."
         }
     }
 }

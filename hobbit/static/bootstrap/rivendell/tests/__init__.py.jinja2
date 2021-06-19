@@ -24,7 +24,7 @@ class BaseTest:
         pass
 
     def teardown_method(self, method):
-        for m in [m for m in db.Model.registry._class_registry.values()
+        for m in [m for m in db.Model._decl_class_registry.values()
                   if isinstance(m, model.DefaultMeta)]:
             db.session.query(m).delete()
         db.session.commit()
