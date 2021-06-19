@@ -30,7 +30,7 @@ except(OSError, ImportError):
 
 setup(
     name='hobbit-core',
-    version='1.4.4',
+    version='2.0.0.rc1',
     python_requires='>=3.6, <4',
     description='Hobbit - A flask project generator.',
     long_description=long_description,
@@ -54,6 +54,7 @@ setup(
             'flask-marshmallow>=0.14.0, <1',
             'Flask-Migrate>=3.0.1, <4',
             'flask-shell-ipython>=0.4.1',
+            'SQLAlchemy>=1.3.0, < 1.4.0',
             'Flask-SQLAlchemy>=2.5.1, <3',
             'marshmallow-enum>=1.5.1, <2',
             'marshmallow-sqlalchemy>=0.26.1, <3',

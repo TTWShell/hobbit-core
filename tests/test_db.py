@@ -160,7 +160,6 @@ class TestTransaction(BaseTest):
             session.commit()
 
         msg = 'This transaction is closed'
-        create_user()
         with pytest.raises(ResourceClosedError, match=msg):
             create_user()
         assert assert_session.query(User).all() == []

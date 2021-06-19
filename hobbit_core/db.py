@@ -358,10 +358,8 @@ def transaction(session: Session, nested: bool = False):
     def wrapper(func):
         @wraps(func)
         def inner(*args, **kwargs):
-            print(session.autocommit, "session.autocommit")
             if session.autocommit is True and nested is False:
                 session.begin()  # start a transaction
-
             try:
                 with session.begin_nested():
                     resp = func(*args, **kwargs)

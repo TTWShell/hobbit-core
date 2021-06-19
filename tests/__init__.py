@@ -22,11 +22,10 @@ class BaseTest(object):
 
     def teardown_method(self, method):
         with app.app_context():
-            print(">>>>>>", [m for m in db.Model.registry._class_registry.values()])
-            for m in [m for m in db.Model.registry._class_registry.values()
+            for m in [m for m in db.Model._decl_class_registry.values()
+                      # db.Model.registry._class_registry.values()
                       if isinstance(m, model.DefaultMeta) and
                       getattr(m, '__bind_key__', None) != 'oracle']:
-                print(m)
                 db.session.query(m).delete()
                 db.session.commit()
 

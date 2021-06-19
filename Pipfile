@@ -6,8 +6,8 @@ name = "pypi"
 [packages]
 tox = "*"
 ipython = "*"
-hobbit-core = {version = "==1.4.4", extras = ["hobbit", "hobbit_core"]}
 cx-Oracle = "*"
+zipp = {extras = ["hobbit", "hobbit_core"], path = "."}
 
 [dev-packages]
 sphinx = "==2.0.1"
