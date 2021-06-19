@@ -30,7 +30,7 @@ except(OSError, ImportError):
 
 setup(
     name='hobbit-core',
-    version='2.0.0.rc1',
+    version='2.0.0',
     python_requires='>=3.6, <4',
     description='Hobbit - A flask project generator.',
     long_description=long_description,
@@ -50,18 +50,18 @@ setup(
     install_requires=[],
     extras_require={
         'hobbit_core': [
-            'Flask>=2.0.1, <3',
-            'flask-marshmallow>=0.14.0, <1',
-            'Flask-Migrate>=3.0.1, <4',
+            'Flask>=1.0.0,<2',
+            'flask-marshmallow>=0.14.0,<1',
+            'Flask-Migrate>=3.0.1,<4',
             'flask-shell-ipython>=0.4.1',
-            'SQLAlchemy>=1.3.0, < 1.4.0',
-            'Flask-SQLAlchemy>=2.5.1, <3',
-            'marshmallow-enum>=1.5.1, <2',
-            'marshmallow-sqlalchemy>=0.26.1, <3',
-            'webargs>=8.0.0, <9',
+            'SQLAlchemy>=1.3.0,< 1.4.0',
+            'Flask-SQLAlchemy>=2.5.1,<3',
+            'marshmallow-enum>=1.5.1,<2',
+            'marshmallow-sqlalchemy>=0.26.1,<3',
+            'webargs>=8.0.0,<9',
             'mypy-extensions>=0.4.3',
-            'pyyaml>=5.4.1, <6',
-            'marshmallow>=3.0.0, <4',
+            'pyyaml>=5.4.1,<6',
+            'marshmallow>=3.0.0,<4',
         ],
         'hobbit': [
             'Click>=6.7',
