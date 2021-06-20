@@ -15,9 +15,9 @@ db = current_app.hobbit_manager.db
 
 class _BaseModel:
 
-    # __mapper_args__ = {
-    #     'order_by': 'id',
-    # }
+    __mapper_args__ = {
+        'order_by': 'id',
+    }
 
     def __repr__(self) -> str:
         """You can set label property.
