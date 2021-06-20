@@ -21,7 +21,8 @@ class TestPagination(BaseTest):
 
         # test page_size_range
         web_request.query = {'page_size': 101}
-        msg = r".*page_size': .*Must be greater than or equal to 5 and less than or equal to 100.*"
+        msg = r".*page_size': .*Must be greater than or equal to 5 and" + \
+            " less than or equal to 100.*"
         with pytest.raises(ValidationError, match=msg):
             print(viewfunc())
 

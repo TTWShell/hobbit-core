@@ -8,6 +8,7 @@ __pycache__/*
 .pytest_cache/*
 .tox/*
 .mypy_cache/*
+.vscode/*
 
 docs/_build/*
 docs/_static/*

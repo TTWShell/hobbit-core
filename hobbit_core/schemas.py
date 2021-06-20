@@ -2,7 +2,8 @@ from marshmallow import (
     Schema as Schema_, fields, pre_load, post_load, post_dump,
 )
 from marshmallow_sqlalchemy.schema import SQLAlchemyAutoSchemaMeta
-from flask_marshmallow.sqla import SQLAlchemyAutoSchema as SQLAlchemyAutoSchema_
+from flask_marshmallow.sqla import \
+    SQLAlchemyAutoSchema as SQLAlchemyAutoSchema_
 from marshmallow_enum import EnumField
 
 
@@ -118,7 +119,8 @@ class EnumSetMeta(SQLAlchemyAutoSchemaMeta):
         return wrapper
 
     def __new__(cls, name, bases, attrs):
-        schema = SQLAlchemyAutoSchemaMeta.__new__(cls, name, tuple(bases), attrs)
+        schema = SQLAlchemyAutoSchemaMeta.__new__(
+            cls, name, tuple(bases), attrs)
         verbose = getattr(schema.Meta, 'verbose', True)
 
         setattr(schema.Meta, 'dateformat', '%Y-%m-%d %H:%M:%S')
