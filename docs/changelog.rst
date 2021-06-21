@@ -1,6 +1,12 @@
 Change history
 ==============
 
+2.0.1 (2021-06-21)
+******************
+
+* Add data field for response.Result: return Real response payload.
+* Bugfix: tests.BaseTest.teardown_method miss `app.app_context()`.
+
 2.0.0 (2021-06-20)
 ******************
 

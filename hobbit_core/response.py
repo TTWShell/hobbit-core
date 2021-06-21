@@ -20,14 +20,15 @@ class RespType(TypedDict):
     detail: Any
 
 
-def gen_response(code: int, message: str = '', detail: Optional[str] = None) \
-        -> RespType:
+def gen_response(code: int, message: str = '', detail: Optional[str] = None,
+                 data=None) -> RespType:
     """Func for generate response body.
 
     Args:
         code (string, int): Extension to interact with web pages. Default is \
             http response ``status_code`` like 200、404.
         message (string): For popup windows.
+        data (object): Real response payload.
         detail (object): For debug, detail server error msg.
 
     Returns:
@@ -37,6 +38,7 @@ def gen_response(code: int, message: str = '', detail: Optional[str] = None) \
     return {
         'code': str(code),
         'message': message or RESP_MSGS.get(code, '未知错误'),  # type: ignore
+        'data': data,
         'detail': detail,
     }
 
@@ -49,8 +51,9 @@ class Result(Response):
     def __init__(self, response=None, status=None, headers=None,
                  mimetype='application/json', content_type=None,
                  direct_passthrough=False):
-        assert sorted(response.keys()) == ['code', 'detail', 'message'], \
-            'Error response, must include keys: code, detail, message'
+        assert sorted(response.keys()) == [
+            'code', 'data', 'detail', 'message'], \
+            'Error response, must include keys: code, data, detail, message'
         super(Result, self).__init__(
             response=dumps(response, indent=0, separators=(',', ':')) + '\n',
             status=status or self.status, headers=headers, mimetype=mimetype,
@@ -63,9 +66,9 @@ class SuccessResult(Result):
     status = 200
 
     def __init__(self, message: str = '', code: Optional[int] = None,
-                 detail: Any = None, status: Optional[int] = None):
+                 detail: Any = None, status: Optional[int] = None, data=None):
         super(SuccessResult, self).__init__(
-            gen_response(code or self.status, message, detail),
+            gen_response(code or self.status, message, detail, data),
             status or self.status)
 
 
