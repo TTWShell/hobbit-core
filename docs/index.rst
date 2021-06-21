@@ -55,17 +55,6 @@ Hobbit-core中文文档
 
 访问 ``http://127.0.0.1:5000/api/ping/``
 
-模版文件说明
-^^^^^^^^^^^^^
-
-1. 支持多models，你只需要使用单行定义一次model，紧随其后是model的列定义。
-2. type列和 ``sqlalchemy.types`` 对应（除了ref，ref是 ``hobbit-core`` 定义的外键写法）。有些type需要参数，例如string类型需要一个length，这需要你自己保证定义的正确性。
-3. 支持测试数据的生成，最后一列test的值即为单元测试需要。
-
-有关 ``hobbit`` 的使用，直接查看帮助文档::
-
-    hobbit --help
-
 自动补全
 ^^^^^^^^^
 
