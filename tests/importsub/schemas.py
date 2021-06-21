@@ -6,7 +6,7 @@ from hobbit_core.schemas import PagedSchema
 ma = Marshmallow()
 
 
-class UserSchema(ma.ModelSchema):  # type: ignore
+class UserSchema(ma.SQLAlchemyAutoSchema):  # type: ignore
 
     class Meta:
         from .models import OtherUser

@@ -1,12 +1,13 @@
 from marshmallow import (
     Schema as Schema_, fields, pre_load, post_load, post_dump,
 )
-from marshmallow_sqlalchemy.schema import ModelSchemaMeta
-from flask_marshmallow.sqla import ModelSchema as ModelSchema_
+from marshmallow_sqlalchemy.schema import SQLAlchemyAutoSchemaMeta
+from flask_marshmallow.sqla import \
+    SQLAlchemyAutoSchema as SQLAlchemyAutoSchema_
 from marshmallow_enum import EnumField
 
 
-class ORMSchema(ModelSchema_):
+class ORMSchema(SQLAlchemyAutoSchema_):
     """Base schema for ModelSchema. See `webargs/issues/126
     <https://github.com/sloria/webargs/issues/126>`_.
 
@@ -30,7 +31,7 @@ class ORMSchema(ModelSchema_):
     """
 
     @post_load()
-    def make_instance(self, data):
+    def make_instance(self, data, many, **kwargs):
         return data
 
 
@@ -92,7 +93,7 @@ class PagedSchema(Schema_):
         strict = True
 
 
-class EnumSetMeta(ModelSchemaMeta):
+class EnumSetMeta(SQLAlchemyAutoSchemaMeta):
     """EnumSetMeta is a metaclass that can be used to auto generate load and
     dump func for EnumField.
     """
@@ -101,7 +102,7 @@ class EnumSetMeta(ModelSchemaMeta):
     def gen_func(cls, decorator, field_name, enum, verbose=True):
 
         @decorator
-        def wrapper(self, data):
+        def wrapper(self, data, many, **kwargs):
             if data.get(field_name) is None:
                 return data
 
@@ -118,7 +119,8 @@ class EnumSetMeta(ModelSchemaMeta):
         return wrapper
 
     def __new__(cls, name, bases, attrs):
-        schema = ModelSchemaMeta.__new__(cls, name, tuple(bases), attrs)
+        schema = SQLAlchemyAutoSchemaMeta.__new__(
+            cls, name, tuple(bases), attrs)
         verbose = getattr(schema.Meta, 'verbose', True)
 
         setattr(schema.Meta, 'dateformat', '%Y-%m-%d %H:%M:%S')

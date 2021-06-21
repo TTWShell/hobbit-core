@@ -1,7 +1,6 @@
 import pytest
-from unittest import mock
 
-from webargs.core import Parser, get_value
+from webargs.core import Parser
 
 from .test_app.run import app as tapp
 from .test_app.exts import db as tdb
@@ -30,6 +29,7 @@ def assert_session(app):
         conn = tdb.engine.connect()
         options = dict(bind=conn, binds={})
         sess = tdb.create_scoped_session(options=options)
+        assert sess.autocommit is False
         yield sess
         sess.remove()
 
@@ -62,22 +62,26 @@ def session(request):
 class MockRequestParser(Parser):
     """A minimal parser implementation that parses mock requests."""
 
-    def parse_querystring(self, req, name, field):
-        return get_value(req.query, name, field)
+    def load_querystring(self, req, schema):
+        return req.query
 
-    def parse_json(self, req, name, field):
-        return get_value(req.json, name, field)
 
-    def parse_cookies(self, req, name, field):
-        return get_value(req.cookies, name, field)
+@pytest.fixture
+def request_context(app):
+    """create the app and return the request context as a fixture
+       so that this process does not need to be repeated in each test
+    """
+    return app.test_request_context
 
 
 @pytest.yield_fixture(scope="function")
-def web_request():
-    req = mock.Mock()
-    req.query = {}
-    yield req
-    req.query = {}
+def web_request(request_context):
+    with request_context():
+        from flask import request
+        req = request  # mock.Mock()
+        req.query = {}
+        yield req
+        req.query = {}
 
 
 @pytest.fixture

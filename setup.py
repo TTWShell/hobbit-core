@@ -15,8 +15,8 @@ def gen_data(data_root='static'):
 
 
 package_data = gen_data()
-# The amount files of `shire[new,gen]` + `rivendell[...]`
-assert len(package_data) == 30 + 4 + 31 + 5, \
+# The amount files of `shire[new]` + `rivendell[new]`
+assert len(package_data) == 30 + 31, \
     'nums of tepl files error, {}'.format(len(package_data))
 package_data.append('py.typed')
 
@@ -30,7 +30,7 @@ except(OSError, ImportError):
 
 setup(
     name='hobbit-core',
-    version='1.4.4',
+    version='2.0.0',
     python_requires='>=3.6, <4',
     description='Hobbit - A flask project generator.',
     long_description=long_description,
@@ -41,6 +41,8 @@ setup(
         'Topic :: Utilities',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: Implementation :: CPython',
         'License :: OSI Approved :: MIT License',
     ],
@@ -50,17 +52,18 @@ setup(
     install_requires=[],
     extras_require={
         'hobbit_core': [
-            'Flask>=1.0.2',
-            'flask-marshmallow>=0.9.0',
-            'Flask-Migrate>=2.2.1',
-            'flask-shell-ipython>=0.3.1',
-            'Flask-SQLAlchemy>=2.3.2',
-            'marshmallow-enum>=1.4.1',
-            'marshmallow-sqlalchemy>=0.14.1',
-            'webargs>=5.1.3, <6',
-            'mypy-extensions==0.4.1',
-            'pyyaml>=4.2b1',
-            'marshmallow==v3.0.0rc6',
+            'Flask>=1.0.0,<2',
+            'flask-marshmallow>=0.14.0,<1',
+            'Flask-Migrate>=3.0.1,<4',
+            'flask-shell-ipython>=0.4.1',
+            'SQLAlchemy>=1.3.0,< 1.4.0',
+            'Flask-SQLAlchemy>=2.5.1,<3',
+            'marshmallow-enum>=1.5.1,<2',
+            'marshmallow-sqlalchemy>=0.26.1,<3',
+            'webargs>=8.0.0,<9',
+            'mypy-extensions>=0.4.3',
+            'pyyaml>=5.4.1,<6',
+            'marshmallow>=3.0.0,<4',
         ],
         'hobbit': [
             'Click>=6.7',

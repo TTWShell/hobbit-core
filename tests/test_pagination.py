@@ -13,7 +13,7 @@ class TestPagination(BaseTest):
 
     def test_page_params(self, web_request, parser):
         # test default
-        @parser.use_kwargs(PageParams, web_request, locations=('query', ))
+        @parser.use_kwargs(PageParams, web_request, location='query')
         def viewfunc(page, page_size, order_by):
             return {'page': page, 'page_size': page_size, 'order_by': order_by}
 
@@ -21,9 +21,10 @@ class TestPagination(BaseTest):
 
         # test page_size_range
         web_request.query = {'page_size': 101}
-        msg = r".*page_size': .*Must be between 5 and 100.*"
+        msg = r".*page_size': .*Must be greater than or equal to 5 and" + \
+            " less than or equal to 100.*"
         with pytest.raises(ValidationError, match=msg):
-            viewfunc()
+            print(viewfunc())
 
         # test order_by
         web_request.query = {'order_by': 'id,-11'}

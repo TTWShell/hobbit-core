@@ -1,6 +1,14 @@
 Change history
 ==============
 
+2.0.0 (2021-06-20)
+
+* Upgrade webargs to version 8.x.x.
+* Lock SQLAlchemy version less than 1.4.0 (session.autobegin feature doesn't look like a good idea).
+* Lock Flask version less than 2.x.x (because some bugs).
+* Upgrade and lock marshmallow>=3.0.0,<4.
+* Remove hobbit gen cmd.
+
 1.4.4 (2020-03-25)
 
 * Fix webargs 6.x.x: limit version < 6.

@@ -7,12 +7,10 @@ name = "pypi"
 tox = "*"
 ipython = "*"
 hobbit-core = {editable = true,extras = ["hobbit", "hobbit_core"],path = "."}
-cx-oracle = "*"
+cx-Oracle = "*"
 
 [dev-packages]
-sphinx = "==2.0.1"
 sphinx-autobuild = "*"
-flask-sphinx-themes = "*"
 psycopg2-binary = "*"
 pytest = "*"
 pytest-cov = "*"
@@ -20,10 +18,12 @@ pytest-env = "*"
 flake8 = "*"
 twine = "*"
 mypy = "*"
-mypy-extensions = "==0.4.1"
+mypy-extensions = "*"
+Sphinx = "*"
+Flask-Sphinx-Themes = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.9"
 
 [pipenv]
 allow_prereleases = true

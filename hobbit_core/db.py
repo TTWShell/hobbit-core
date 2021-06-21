@@ -6,7 +6,7 @@ from mypy_extensions import TypedDict
 from typing import Any, Union, List, Dict
 
 from flask import current_app
-from sqlalchemy import Integer, Column, ForeignKey, func, DateTime, Sequence
+from sqlalchemy import BigInteger, Column, ForeignKey, func, DateTime, Sequence
 from sqlalchemy.orm.session import Session
 from flask_sqlalchemy import DefaultMeta
 
@@ -35,7 +35,7 @@ class SurrogatePK(_BaseModel):
     """A mixin that add ``id``、``created_at`` and ``updated_at`` columns
     to any declarative-mapped class.
 
-    **id**: A surrogate integer 'primary key' column.
+    **id**: A surrogate biginteger 'primary key' column.
 
     **created_at**: Auto save ``datetime.now()`` when row created.
 
@@ -46,7 +46,7 @@ class SurrogatePK(_BaseModel):
 
     __table_args__ = {'extend_existing': True}  # type: ignore
 
-    id = Column(Integer, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
     created_at = Column(
         DateTime, index=True, nullable=False, server_default=func.now())
     updated_at = Column(
@@ -67,7 +67,7 @@ class BaseModelMeta(DefaultMeta):
 
         primary_key_name = attrs.get('primary_key_name') or 'id'
 
-        attrs[primary_key_name] = Column(Integer, primary_key=True)
+        attrs[primary_key_name] = Column(BigInteger, primary_key=True)
         attrs['created_at'] = Column(
             DateTime, index=True, nullable=False, server_default=func.now())
         attrs['updated_at'] = Column(
@@ -80,7 +80,7 @@ class BaseModelMeta(DefaultMeta):
             if current_app.config['HOBBIT_UPPER_SEQUENCE_NAME']:
                 sequence_name = sequence_name.upper()
             attrs[primary_key_name] = Column(
-                Integer,
+                BigInteger,
                 Sequence(sequence_name),
                 primary_key=True)
 
@@ -95,7 +95,7 @@ class BaseModel(_BaseModel, db.Model, metaclass=BaseModelMeta):  # type: ignore 
     """Abstract base model class contains
     ``id``、``created_at`` and ``updated_at`` columns.
 
-    **id**: A surrogate integer 'primary key' column.
+    **id**: A surrogate biginteger 'primary key' column.
 
     **created_at**: Auto save ``datetime.now()`` when row created.
 
@@ -360,7 +360,6 @@ def transaction(session: Session, nested: bool = False):
         def inner(*args, **kwargs):
             if session.autocommit is True and nested is False:
                 session.begin()  # start a transaction
-
             try:
                 with session.begin_nested():
                     resp = func(*args, **kwargs)

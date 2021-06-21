@@ -110,19 +110,20 @@ def _get_init_args(instance, base_class):
     """Get instance's __init__ args and it's value when __call__.
     """
     getargspec = inspect.getfullargspec
-
     argspec = getargspec(base_class.__init__)
-    no_defaults = argspec.args[:-len(argspec.defaults)]
-    has_defaults = argspec.args[-len(argspec.defaults):]
 
-    kwargs = {k: getattr(instance, k) for k in no_defaults
-              if k != 'self' and hasattr(instance, k)}
-    kwargs.update({k: getattr(instance, k) if hasattr(instance, k) else
-                   getattr(instance, k, argspec.defaults[i])
-                   for i, k in enumerate(has_defaults)})
+    defaults = argspec.defaults
+    kwargs = {}
+    if defaults is not None:
+        no_defaults = argspec.args[:-len(defaults)]
+        has_defaults = argspec.args[-len(defaults):]
 
-    assert len(kwargs) == len(argspec.args) - 1, 'exclude `self`'
-
+        kwargs = {k: getattr(instance, k) for k in no_defaults
+                  if k != 'self' and hasattr(instance, k)}
+        kwargs.update({k: getattr(instance, k) if hasattr(instance, k) else
+                      getattr(instance, k, defaults[i])
+                      for i, k in enumerate(has_defaults)})
+        assert len(kwargs) == len(argspec.args) - 1, 'exclude `self`'
     return kwargs
 
 

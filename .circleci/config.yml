@@ -6,7 +6,7 @@ version: 2
 jobs:
   tox:
     docker:
-      - image: themattrix/tox-base
+      - image: ttwshell/pyenv-tox:latest
         user: root
       - image: circleci/postgres:alpine
         environment:
@@ -15,6 +15,7 @@ jobs:
 
     working_directory: ~/repo
     steps:
+      - run: pyenv global 3.9.5 py36 py37 py38 py39
       - checkout
       - run:
           name: Waiting for Postgres to be ready
@@ -28,7 +29,7 @@ jobs:
 
   test-py36:
     docker:
-      - image: circleci/python:3.6
+      - image: circleci/python:3.6.13
         user: root
     working_directory: ~/repo
     steps:
@@ -60,7 +61,7 @@ jobs:
             py.test
   test-py37:
     docker:
-      - image: circleci/python:3.7
+      - image: circleci/python:3.7.10
         user: root
     working_directory: ~/repo
     steps:
