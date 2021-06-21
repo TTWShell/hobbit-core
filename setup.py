@@ -21,9 +21,11 @@ assert len(package_data) == 30 + 31, \
 package_data.append('py.typed')
 
 
+long_description_content_type = 'text/markdown'
 try:
     import pypandoc
     long_description = pypandoc.convert_file('README.md', 'rst')
+    long_description_content_type = 'text/x-rst'
 except(OSError, ImportError):
     long_description = open('README.md').read()
 
@@ -34,6 +36,7 @@ setup(
     python_requires='>=3.6, <4',
     description='Hobbit - A flask project generator.',
     long_description=long_description,
+    long_description_content_type=long_description_content_type,
     author='Legolas Bloom',
     author_email='zhanhsw@gmail.com',
     url='https://github.com/TTWShell/hobbit-core',
