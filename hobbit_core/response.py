@@ -5,6 +5,8 @@ from flask.json import dumps
 from werkzeug import Response
 
 RESP_MSGS = {
+    200: 'ok',
+    400: 'failed',
     401: '未登录',
     403: '未授权',
     404: '不正确的链接地址',
