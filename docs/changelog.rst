@@ -1,6 +1,12 @@
 Change history
 ==============
 
+2.0.2 (2021-07-08)
+******************
+
+* Fix response message err when code is 200 or 400.
+* Support set `HOBBIT_USE_CODE_ORIGIN_TYPE = True` to return origin type of code in response.
+
 2.0.1 (2021-06-21)
 ******************
 
