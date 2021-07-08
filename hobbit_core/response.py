@@ -37,7 +37,7 @@ def gen_response(code: int, message: str = '', detail: Optional[str] = None,
     Returns:
         dict: A dict contains all args.
 
-    2021-06-08 Updated:
+    2021-07-08 Updated:
         Default type of `code` in response is force conversion to `str`, now
         support set `HOBBIT_USE_CODE_ORIGIN_TYPE = True` to return origin type.
     """
