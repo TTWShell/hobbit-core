@@ -2,6 +2,7 @@ from typing import Optional, Any
 from mypy_extensions import TypedDict
 
 from flask.json import dumps
+from flask import current_app
 from werkzeug import Response
 
 RESP_MSGS = {
@@ -36,9 +37,14 @@ def gen_response(code: int, message: str = '', detail: Optional[str] = None,
     Returns:
         dict: A dict contains all args.
 
+    2021-06-08 Updated:
+        Default type of `code` in response is force conversion to `str`, now
+        support set `HOBBIT_USE_CODE_ORIGIN_TYPE = True` to return origin type.
     """
+    use_origin_type = current_app.config.get(
+        'HOBBIT_USE_CODE_ORIGIN_TYPE', False)
     return {
-        'code': str(code),
+        'code': str(code) if use_origin_type is False else code,
         'message': message or RESP_MSGS.get(code, '未知错误'),  # type: ignore
         'data': data,
         'detail': detail,
