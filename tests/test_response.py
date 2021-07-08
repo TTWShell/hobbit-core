@@ -18,7 +18,7 @@ class TestResponse(BaseTest):
         ((1, '测试', ['1'], []), {
             'code': '1', 'message': '测试', 'detail': ['1'], 'data': []}),
     ])
-    def test_gen_response(self, input_, excepted):
+    def test_gen_response(self, app, input_, excepted):
         assert excepted == gen_response(*input_)
 
     def test_result(self):
@@ -34,7 +34,7 @@ class TestResponse(BaseTest):
         result = Result(response, status=201)
         assert result.status_code == 201
 
-    def test_success_result(self):
+    def test_success_result(self, app):
         # assert status can rewrite
         excepted = b'{\n"code":"200",\n"data":null,\n"detail":null,\n"message":"message"\n}\n'  # NOQA
         result = SuccessResult('message', status=301)
@@ -44,6 +44,14 @@ class TestResponse(BaseTest):
         # assert default is 200
         result = SuccessResult()
         assert result.status_code == 200
+
+        app.config['HOBBIT_USE_CODE_ORIGIN_TYPE'] = True
+        result = SuccessResult(code=0)
+        assert b'"code":0' in result.data
+
+        app.config['HOBBIT_USE_CODE_ORIGIN_TYPE'] = False
+        result = SuccessResult(code=0)
+        assert b'"code":"0"' in result.data
 
     def test_failed_result(self):
         result = FailedResult()
