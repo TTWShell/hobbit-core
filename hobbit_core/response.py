@@ -64,7 +64,8 @@ class Result(Response):
             'Error response, must include keys: code, data, detail, message'
         super(Result, self).__init__(
             response=dumps(response, indent=0, separators=(',', ':')) + '\n',
-            status=status or self.status, headers=headers, mimetype=mimetype,
+            status=status if status is not None else self.status,
+            headers=headers, mimetype=mimetype,
             content_type=content_type, direct_passthrough=direct_passthrough)
 
 
@@ -76,7 +77,8 @@ class SuccessResult(Result):
     def __init__(self, message: str = '', code: Optional[int] = None,
                  detail: Any = None, status: Optional[int] = None, data=None):
         super(SuccessResult, self).__init__(
-            gen_response(code or self.status, message, detail, data),
+            gen_response(code if code is not None else self.status,
+                         message, detail, data),
             status or self.status)
 
 
@@ -88,7 +90,9 @@ class FailedResult(Result):
     def __init__(self, message: str = '', code: Optional[int] = None,
                  detail: Any = None):
         super(FailedResult, self).__init__(
-            gen_response(code or self.status, message, detail), self.status)
+            gen_response(
+                code if code is not None else self.status, message, detail),
+            self.status)
 
 
 class UnauthorizedResult(FailedResult):
