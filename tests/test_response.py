@@ -12,7 +12,7 @@ class TestResponse(BaseTest):
 
     @pytest.mark.parametrize('input_, excepted', [
         ((1, ), {
-            'code': '1', 'message': '未知错误', 'detail': None, 'data': None}),
+            'code': '1', 'message': 'unknown', 'detail': None, 'data': None}),
         ((1, '测试', ['1'], {}), {
             'code': '1', 'message': '测试', 'detail': ['1'], 'data': {}}),
         ((1, '测试', ['1'], []), {
@@ -27,7 +27,7 @@ class TestResponse(BaseTest):
             Result({})
 
         response = {
-            'code': '1', 'message': u'未知错误', 'detail': None, 'data': None}
+            'code': '1', 'message': u'unknown', 'detail': None, 'data': None}
         result = Result(response)
         assert result.status_code == 200
 
@@ -52,6 +52,11 @@ class TestResponse(BaseTest):
         app.config['HOBBIT_USE_CODE_ORIGIN_TYPE'] = False
         result = SuccessResult(code=0)
         assert b'"code":"0"' in result.data
+
+        app.config['HOBBIT_RESPONSE_MESSAGE_MAPS'] = {100: 'testmsg'}
+        result = SuccessResult(code=100)
+        assert b'"message":"testmsg"' in result.data
+        app.config['HOBBIT_RESPONSE_MESSAGE_MAPS'] = {}
 
     def test_failed_result(self):
         result = FailedResult()
