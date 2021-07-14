@@ -192,6 +192,23 @@ tests
 所有的测试case. 推荐使用 `pytest <https://docs.pytest.org/en/latest/>`_ 测试，项目也会自动生成基本的pytest配置。
 
 
+配置
+====
+
+.. list-table:: Configuration
+  :widths: 25 25 50
+  :header-rows: 1
+
+  * - Key
+    - Value
+    - Description
+  * - HOBBIT_USE_CODE_ORIGIN_TYPE
+    - `True` or `False`
+    - Return origin type of code in response. Default is `False`.
+  * - HOBBIT_RESPONSE_MESSAGE_MAPS
+    -  `dict`, `{code: message}`
+    - Self-defined response message. Set to `{200: "success"}` will return `{"code": 200, "message": "success"}` in response.
+
 Others
 ======
 

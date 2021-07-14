@@ -1,6 +1,11 @@
 Change history
 ==============
 
+2.0.4 (2021-07-13)
+******************
+
+* Support set `HOBBIT_RESPONSE_MESSAGE_MAPS` to use self-defined response message.
+
 2.0.3 (2021-07-08)
 ******************
 

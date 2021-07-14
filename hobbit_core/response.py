@@ -7,6 +7,7 @@ from werkzeug import Response
 
 RESP_MSGS = {
     200: 'ok',
+
     400: 'failed',
     401: '未登录',
     403: '未授权',
@@ -23,7 +24,7 @@ class RespType(TypedDict):
     detail: Any
 
 
-def gen_response(code: int, message: str = '', detail: Optional[str] = None,
+def gen_response(code: int, message: str = None, detail: Optional[str] = None,
                  data=None) -> RespType:
     """Func for generate response body.
 
@@ -40,12 +41,24 @@ def gen_response(code: int, message: str = '', detail: Optional[str] = None,
     2021-07-08 Updated:
         Default type of `code` in response is force conversion to `str`, now
         support set `HOBBIT_USE_CODE_ORIGIN_TYPE = True` to return origin type.
+
+    2021-07-13 Updated:
+        Support set `HOBBIT_RESPONSE_MESSAGE_MAPS` to use self-defined
+        response message. `HOBBIT_RESPONSE_MESSAGE_MAPS` must be dict.
     """
     use_origin_type = current_app.config.get(
         'HOBBIT_USE_CODE_ORIGIN_TYPE', False)
+
+    resp_msgs = current_app.config.get('HOBBIT_RESPONSE_MESSAGE_MAPS', {})
+    assert isinstance(resp_msgs, dict), \
+        'HOBBIT_RESPONSE_MESSAGE_MAPS must be dict type.'
+    if not message:
+        message = resp_msgs.get(code)
+        if message is None:
+            message = RESP_MSGS.get(code, 'unknown')
     return {
         'code': str(code) if use_origin_type is False else code,
-        'message': message or RESP_MSGS.get(code, '未知错误'),  # type: ignore
+        'message': message,  # type: ignore
         'data': data,
         'detail': detail,
     }
