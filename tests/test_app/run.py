@@ -12,7 +12,8 @@ class ConfigClass:
     SECRET_KEY = 'test secret key'
     SQLALCHEMY_DATABASE_URI = 'postgresql://localhost/hobbit_core'
     SQLALCHEMY_BINDS = {
-        'oracle': 'oracle://scott:tiger@localhost/test'
+        'oracle': 'oracle://scott:tiger@localhost/test',
+        'mysql': 'mysql+pymysql://root:root@localhost/hobbit_core',
     }
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # SQLALCHEMY_ECHO = True

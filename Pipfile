@@ -7,11 +7,11 @@ name = "pypi"
 tox = "*"
 ipython = "*"
 hobbit-core = {editable = true,extras = ["hobbit", "hobbit_core"],path = "."}
-cx-Oracle = "*"
 
 [dev-packages]
 sphinx-autobuild = "*"
 psycopg2-binary = "*"
+cx-Oracle = "*"
 pytest = "*"
 pytest-cov = "*"
 pytest-env = "*"
@@ -21,6 +21,8 @@ mypy = "*"
 mypy-extensions = "*"
 Sphinx = "*"
 Flask-Sphinx-Themes = "*"
+PyMySQL = "*"
+cryptography = "*"
 
 [requires]
 python_version = "3.9"

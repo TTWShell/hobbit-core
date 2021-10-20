@@ -1,7 +1,13 @@
 import pytest
 from importlib import reload
+import random
+import string
 
 from hobbit_core import utils
+
+from .test_app.exts import db
+from .test_app.models import BulkModel, BulkModel2, \
+    BulkModelMysql, BulkModel2Mysql
 
 from . import BaseTest
 
@@ -127,3 +133,38 @@ class TestImportSubs(BaseTest):
             "in __all__, must contain only strings."
         with pytest.raises(Exception, match=msg):
             reload(importsub)
+
+
+class TestBulkInsertOrUpdate(BaseTest):
+
+    @pytest.mark.parametrize('item_length', [0, 1, 2, 501])
+    @pytest.mark.parametrize(
+        'model_cls, updated_at_field_name', [
+            (BulkModel, None),
+            (BulkModel2, 'update'),
+            (BulkModelMysql, None),
+            (BulkModel2Mysql, 'update'),
+        ])
+    def test_bulk_create_or_update_on_duplicate(
+            self, item_length, model_cls, updated_at_field_name):
+        items = []
+        for i in range(item_length):
+            items.append({key: ''.join(random.choices(
+                string.ascii_letters + "'" + '"', k=50)) for key in (
+                    'x', 'y', 'z')})
+
+        params = {
+            'db': db, 'model_cls': model_cls, 'items': items,
+        }
+        if updated_at_field_name:
+            params['updated_at'] = updated_at_field_name
+
+        result = utils.bulk_create_or_update_on_duplicate(**params)
+        assert result['items_count'] == item_length and \
+            result['rowcount'] == item_length, result
+
+        result = utils.bulk_create_or_update_on_duplicate(**params)
+        assert result['items_count'] == item_length and result['rowcount'] \
+            == item_length, result
+
+        assert db.session.query(model_cls).count() == item_length

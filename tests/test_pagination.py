@@ -37,8 +37,7 @@ class TestPagination(BaseTest):
             'order_by': ['id', '-aaa'], 'page': 1, 'page_size': 10}
 
         web_request.query = {'order_by': ''}
-        assert viewfunc() == {
-            'order_by': [''], 'page': 1, 'page_size': 10}
+        assert viewfunc() == {'order_by': [], 'page': 1, 'page_size': 10}
 
     def test_pagination(self, client):
         user1 = User(username='test1', email='1@b.com', password='1')
