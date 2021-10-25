@@ -7,12 +7,18 @@ import sys
 from typing import Any, Dict, List, Optional
 from unicodedata import normalize
 from distutils.version import LooseVersion
+import logging
+import datetime
 
 from flask import request
 from flask_sqlalchemy import model
+from sqlalchemy import UniqueConstraint
 import marshmallow
 from marshmallow import Schema
+
 from .webargs import use_kwargs as base_use_kwargs, parser
+
+logger = logging.getLogger(__name__)
 
 
 class ParamsDict(dict):
@@ -220,3 +226,82 @@ def import_subs(locals_, modules_only: bool = False) -> List[str]:
                     setattr(top_mudule, name, obj)
                     all_.append(name)
     return all_
+
+
+def bulk_create_or_update_on_duplicate(
+        db, model_cls, items, updated_at='updated_at', batch_size=500):
+    """ Support mysql and postgreSQL.
+    https://dev.mysql.com/doc/refman/8.0/en/insert-on-duplicate.html
+
+    Args:
+
+        db: Instance of `SQLAlchemy`.
+        model_cls: Model object.
+        items: List of data,[ example: `[{key: value}, {key: value}, ...]`.
+        updated_at: Field which recording row update time.
+        batch_size: Batch size is max rows per execute.
+
+    Returns:
+        dict: A dictionary contains rowcount and items_count.
+    """
+    if not items:
+        logger.warning("bulk_create_or_update_on_duplicate save to "
+                       f"{model_cls} failed, empty items")
+        return {'rowcount': 0, 'items_count': 0}
+
+    items_count = len(items)
+    db_name = model_cls.__tablename__
+    fields = list(items[0].keys())
+    unique_keys = [c.name for i in model_cls.__table_args__ if isinstance(
+        i, UniqueConstraint) for c in i]
+    columns = [c.name for c in model_cls.__table__.columns if c.name not in (
+        'id', 'created_at')]
+
+    if updated_at in columns and updated_at not in fields:
+        fields.append(updated_at)
+        updated_at_time = datetime.datetime.now()
+        for item in items:
+            item[updated_at] = updated_at_time
+
+    assert set(fields) == set(columns), \
+        'item fields not equal to columns in models：new: ' + \
+        f'{set(fields)-set(columns)}, delete: {set(columns)-set(fields)}'
+
+    for item in items:
+        for column in unique_keys:
+            if column in item and item[column] is None:
+                item[column] = ''
+
+    engine = db.get_engine(bind=getattr(model_cls, '__bind_key__', None))
+    if engine.name == 'postgresql':
+        sql_on_update = ', '.join([
+            f' {field} = excluded.{field}'
+            for field in fields if field not in unique_keys])
+        sql = f"""INSERT INTO {db_name} ({", ".join(fields)}) VALUES
+            ({", ".join([f':{key}' for key in fields])})
+            ON CONFLICT ({", ".join(unique_keys)}) DO UPDATE SET
+            {sql_on_update}"""
+    elif engine.name == 'mysql':
+        sql_on_update = '`, `'.join([
+            f' `{field}` = new.{field}' for field in fields
+            if field not in unique_keys])
+        sql = f"""INSERT INTO {db_name} (`{"`, `".join(fields)}`) VALUES
+            ({", ".join([f':{key}' for key in fields])}) AS new
+            ON DUPLICATE KEY UPDATE
+            {sql_on_update}"""
+    else:
+        raise Exception(f'not support db: {engine.name}')
+
+    rowcounts = 0
+    while len(items) > 0:
+        batch, items = items[:batch_size], items[batch_size:]
+        try:
+            result = db.session.execute(sql, batch, bind=engine)
+        except Exception as e:
+            logger.error(e, exc_info=True)
+            logger.info(sql)
+            raise e
+        rowcounts += result.rowcount
+    logger.info(f'{model_cls} save_data: rowcount={rowcounts}, '
+                f'items_count: {items_count}')
+    return {'rowcount': rowcounts, 'items_count': items_count}

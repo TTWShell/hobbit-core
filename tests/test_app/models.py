@@ -1,4 +1,6 @@
 # -*- encoding: utf-8 -*-
+from sqlalchemy import UniqueConstraint, func, DateTime, BigInteger
+
 from hobbit_core.db import Column, BaseModel, EnumExt
 
 from .exts import db
@@ -18,3 +20,43 @@ class User(BaseModel):
 
 class Role(BaseModel):  # just for assert multi model worked
     name = Column(db.String(50), nullable=False, unique=True)
+
+
+class BulkModelMixin:
+    x = Column(db.String(50), nullable=False)
+    y = Column(db.String(50), nullable=False)
+    z = Column(db.String(50), nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint('x', 'y', 'z', name='bulk_model_main_unique_key'),
+    )
+
+
+class BulkModel2Mixin:
+    id = Column(BigInteger, primary_key=True)
+    update = Column(
+        DateTime, index=True, nullable=False, server_default=func.now(),
+        onupdate=func.now())
+    x = Column(db.String(50), nullable=False)
+    y = Column(db.String(50), nullable=False)
+    z = Column(db.String(50), nullable=False)
+
+    __table_args__ = (
+        UniqueConstraint('x', 'y', 'z', name='bulk_model2_main_unique_key'),
+    )
+
+
+class BulkModel(BaseModel, BulkModelMixin):
+    pass
+
+
+class BulkModel2(db.Model, BulkModel2Mixin):
+    pass
+
+
+class BulkModelMysql(BaseModel, BulkModelMixin):
+    __bind_key__ = 'mysql'
+
+
+class BulkModel2Mysql(db.Model, BulkModel2Mixin):
+    __bind_key__ = 'mysql'

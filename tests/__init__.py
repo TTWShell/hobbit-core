@@ -14,11 +14,13 @@ class BaseTest(object):
     def setup_class(cls):
         with app.app_context():
             db.create_all(bind=None)
+            db.create_all(bind='mysql')
 
     @classmethod
     def teardown_class(cls):
         with app.app_context():
             db.drop_all(bind=None)
+            db.drop_all(bind='mysql')
 
     def teardown_method(self, method):
         with app.app_context():

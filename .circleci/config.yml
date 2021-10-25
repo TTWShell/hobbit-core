@@ -12,7 +12,11 @@ jobs:
         environment:
           POSTGRES_USER: root
           POSTGRES_DB: hobbit_core
-
+      - image: circleci/mysql:latest
+        environment:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: hobbit_core
+          MYSQL_PORT: 3306
     working_directory: ~/repo
     steps:
       - run: pyenv global 3.9.5 py36 py37 py38 py39
