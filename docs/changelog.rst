@@ -1,10 +1,14 @@
 Change history
 ==============
 
-2.1.0 (2021-10-25)
+2.1.1 (2021-10-25)
 ******************
 
 * Add util `bulk_create_or_update_on_duplicate`, support MySQL and postgreSQL.
+
+2.1.0 (2021-10-25, unused)
+
+* This filename has already been used (Wrong file pushed to pypi.org).
 
 2.0.4 (2021-07-13)
 ******************
