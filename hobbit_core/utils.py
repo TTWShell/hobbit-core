@@ -230,7 +230,7 @@ def import_subs(locals_, modules_only: bool = False) -> List[str]:
 
 def bulk_create_or_update_on_duplicate(
         db, model_cls, items, updated_at='updated_at', batch_size=500):
-    """ Support mysql and postgreSQL.
+    """ Support MySQL and postgreSQL.
     https://dev.mysql.com/doc/refman/8.0/en/insert-on-duplicate.html
 
     Args:

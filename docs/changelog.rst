@@ -1,6 +1,11 @@
 Change history
 ==============
 
+2.1.0 (2021-10-25)
+******************
+
+* Add util `bulk_create_or_update_on_duplicate`, support MySQL and postgreSQL.
+
 2.0.4 (2021-07-13)
 ******************
 
