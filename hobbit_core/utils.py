@@ -1,4 +1,7 @@
-from collections import Mapping
+try:
+    from collections import Mapping
+except:  # noqa E722
+    from collections.abc import Mapping
 import inspect
 import importlib
 import os
