@@ -19,7 +19,7 @@ jobs:
           MYSQL_PORT: 3306
     working_directory: ~/repo
     steps:
-      - run: pyenv global 3.9.5 py36 py37 py38 py39
+      - run: pyenv global 3.10.0 py36 py37 py38 py39 py310
       - checkout
       - run:
           name: Waiting for Postgres to be ready
