@@ -4,12 +4,22 @@ from hobbit_core.db import EnumExt
 
 from flask import Blueprint, jsonify
 
+from hobbit_core.pagination import PageParams, pagination  # NOQA
 
-bp = Blueprint('option', __name__)
+bp = Blueprint('tools', __name__)
 
 
-@bp.route('/options/', methods=['GET'])
+@bp.route('/ping', methods=['GET'])
+def ping():
+    """ For health check.
+    """
+    return jsonify({'ping': 'ok'})
+
+
+@bp.route('/options', methods=['GET'])
 def option():
+    """ List all enums for frontend.
+    """
     return jsonify({
         name: obj.to_opts(verbose=True)
         for name, obj in importlib.import_module(
