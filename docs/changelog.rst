@@ -1,6 +1,11 @@
 Change history
 ==============
 
+2.2.1 (2021-12-01)
+******************
+
+* Add `err_handler.HobbitException`: Base class for all hobbitcore-related errors.
+
 2.2.0 (2021-11-18)
 ******************
 

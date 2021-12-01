@@ -2,9 +2,14 @@ import logging
 
 from sqlalchemy.orm import exc as orm_exc
 
-from .response import Result, ServerErrorResult, gen_response, RESP_MSGS
+from .response import Result, FailedResult, ServerErrorResult, \
+    gen_response, RESP_MSGS
 
 logger = logging.getLogger(__name__)
+
+
+class HobbitException(Exception):
+    """Base class for all hobbitcore-related errors."""
 
 
 class ErrHandler(object):
@@ -44,6 +49,10 @@ you can change it
         return Result(gen_response(code, message, detail), status=code)
 
     @classmethod
+    def handler_hobbit_core_err_handler(cls, e):
+        return FailedResult(code=400, message=str(e), detail=repr(e))
+
+    @classmethod
     def handler_others(cls, e):
         logging.error('UncheckedException:', exc_info=1)
         return ServerErrorResult(code=500, detail=repr(e))
@@ -51,8 +60,8 @@ you can change it
     @classmethod
     def handler(cls, e):
         exc = 'others'
-        if hasattr(e, '__module__'):
-            exc = e.__module__.replace('.', '_')
-        elif isinstance(e, AssertionError):
+        if isinstance(e, AssertionError):
             exc = 'assertion_error'
+        elif hasattr(e, '__module__'):
+            exc = e.__module__.replace('.', '_')
         return getattr(cls, 'handler_{}'.format(exc), cls.handler_others)(e)

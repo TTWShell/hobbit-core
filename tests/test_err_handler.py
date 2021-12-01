@@ -3,7 +3,7 @@ import json
 from sqlalchemy.orm import exc as orm_exc
 from werkzeug import exceptions as wkz_exc
 
-from hobbit_core.err_handler import ErrHandler
+from hobbit_core.err_handler import ErrHandler, HobbitException
 
 from . import BaseTest
 
@@ -32,6 +32,15 @@ class TestErrHandler(BaseTest):
         assert resp.status_code == 401
         data = json.loads(resp.get_data())
         assert data['message'] == u'未登录'
+
+    def test_hobbit_exception(self, app):
+        resp = ErrHandler.handler(HobbitException('msg'))
+        assert resp.status_code == 400
+        data = json.loads(resp.get_data())
+        assert data['message'] == 'msg'
+        # py27,py36 == "Exception('msg',)"
+        # py37 == "Exception('msg')"
+        assert data['detail'].startswith("HobbitException('msg'")
 
     def test_others(self, app):
         resp = ErrHandler.handler(Exception('msg'))
