@@ -52,11 +52,11 @@ class TestHobbit(BaseTest):
 
         file_nums = {
             # tart + 29 files + 11 dir + 1 end + empty
-            'shire | --no-celery':  1 + 29 + 11 + 1 + 1 - 1,
+            'shire | --no-celery':  1 + 27 + 11 + 1 + 1 - 1,
             # start + files + mkdir + tail
-            'shire | --celery': 1 + 30 + 12 + 1,
-            'rivendell | --no-celery':  1 + 31 + 11 + 1,
-            'rivendell | --celery':  1 + 32 + 12 + 1,
+            'shire | --celery': 1 + 28 + 12 + 1,
+            'rivendell | --no-celery':  1 + 29 + 11 + 1,
+            'rivendell | --celery':  1 + 30 + 12 + 1,
         }
         assert len(result.output.split('\n')) == file_nums[
             f'{template} | {celery_}']

@@ -21,7 +21,8 @@ def register_blueprints(app):
     for name in views.__all__:
         bp = getattr(importlib.import_module(f'app.views.{name}'), 'bp', None)
         if bp is not None:
-            app.register_blueprint(bp, url_prefix='/api')
+            app.register_blueprint(
+                bp, url_prefix=f"/api{bp.url_prefix if bp.url_prefix else ''}")
 
 
 def register_error_handler(app):
