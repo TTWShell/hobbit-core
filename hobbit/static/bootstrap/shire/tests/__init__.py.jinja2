@@ -24,9 +24,18 @@ class BaseTest:
         pass
 
     def teardown_method(self, method):
+        exclude_tables = []
+        models = {
+            m.__tablename__: m
+            for m in db.Model._decl_class_registry.values()
+            if isinstance(m, model.DefaultMeta)
+        }
+        tables = db.metadata.sorted_tables
+        tables.reverse()
         with app.app_context():
-            for m in [m for m in db.Model._decl_class_registry.values()
-                      if isinstance(m, model.DefaultMeta)]:
-                db.session.query(m).delete()
-            db.session.commit()
+            for table in tables:
+                if table.name in exclude_tables:
+                    continue
+                db.session.query(models[table.name]).delete()
+                db.session.commit()
 
