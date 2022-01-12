@@ -253,7 +253,7 @@ def bulk_create_or_update_on_duplicate(
         return {'rowcount': 0, 'items_count': 0}
 
     items_count = len(items)
-    db_name = model_cls.__tablename__
+    table_name = model_cls.__tablename__
     fields = list(items[0].keys())
     unique_keys = [c.name for i in model_cls.__table_args__ if isinstance(
         i, UniqueConstraint) for c in i]
@@ -280,7 +280,7 @@ def bulk_create_or_update_on_duplicate(
         sql_on_update = ', '.join([
             f' {field} = excluded.{field}'
             for field in fields if field not in unique_keys])
-        sql = f"""INSERT INTO {db_name} ({", ".join(fields)}) VALUES
+        sql = f"""INSERT INTO {table_name} ({", ".join(fields)}) VALUES
             ({", ".join([f':{key}' for key in fields])})
             ON CONFLICT ({", ".join(unique_keys)}) DO UPDATE SET
             {sql_on_update}"""
@@ -288,7 +288,7 @@ def bulk_create_or_update_on_duplicate(
         sql_on_update = '`, `'.join([
             f' `{field}` = new.{field}' for field in fields
             if field not in unique_keys])
-        sql = f"""INSERT INTO {db_name} (`{"`, `".join(fields)}`) VALUES
+        sql = f"""INSERT INTO {table_name} (`{"`, `".join(fields)}`) VALUES
             ({", ".join([f':{key}' for key in fields])}) AS new
             ON DUPLICATE KEY UPDATE
             {sql_on_update}"""
