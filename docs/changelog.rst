@@ -1,6 +1,14 @@
 Change history
 ==============
 
+2.2.2 (2022-02-17)
+******************
+
+* Refactor tpl: Auto nested blueprint.
+* Refactor tpl: ping and options api were merged into tools.
+* Enhance teardown_method in test: auto handle deps when delete table.
+* Fix some typo.
+
 2.2.1 (2021-12-01)
 ******************
 
