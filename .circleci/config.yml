@@ -44,6 +44,7 @@ jobs:
             pip install flake8 pytest pytest-cov pytest-env
             pip install --editable ".[hobbit,hobbit_core]"
             pip install celery
+            pip install "MarkupSafe==2.0.1" blinker[flask]
       - run:
           name: use flake8 check self
           command: flake8 .
@@ -76,6 +77,7 @@ jobs:
             pip install flake8 pytest pytest-cov pytest-env
             pip install --editable ".[hobbit,hobbit_core]"
             pip install celery
+            pip install "MarkupSafe==2.0.1" blinker[flask]
       - run:
           name: use flake8 check self
           command: flake8 .

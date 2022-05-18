@@ -15,7 +15,7 @@ class ConfigClass:
         'oracle': 'oracle://scott:tiger@localhost/test',
         'mysql': 'mysql+pymysql://root:root@localhost/hobbit_core',
     }
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
     # SQLALCHEMY_ECHO = True
     TESTING = True
 
