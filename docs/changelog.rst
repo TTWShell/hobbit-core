@@ -1,6 +1,11 @@
 Change history
 ==============
 
+2.2.3 (2022-05-18)
+******************
+
+* Support use nested=None(`@transaction(db.session, nested=None)`) to avoid bug from `flask_sqlalchemy.models_committed` signal.
+
 2.2.2 (2022-02-17)
 ******************
 

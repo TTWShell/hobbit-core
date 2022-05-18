@@ -301,3 +301,22 @@ class TestTransaction(BaseTest):
 
         # assert not rollback. Be very careful when using commit. 😒😒😒😒
         assert len(assert_session.query(User).all()) == 1
+
+
+class TestNestedSessionSignal(BaseTest):
+
+    def test_transaction_signal_success(self, client, assert_session):
+        email = "test@test.com"
+        resp = client.post('/create_user/success/', json={"email": email})
+        assert resp.status_code == 200
+
+        user = assert_session.query(User).filter(User.email == email).first()
+        assert user and user.username == "signalling_ok"
+
+    def test_transaction_signal_dailed(self, client, assert_session):
+        email = "test@test.com"
+        resp = client.post('/create_user/failed/', json={"email": email})
+        assert resp.status_code == 200
+
+        user = assert_session.query(User).filter(User.email == email).first()
+        assert user and user.username != "signalling_ok"

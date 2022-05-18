@@ -312,6 +312,9 @@ def transaction(session: Session, nested: bool = False):
     or ``session.autocommit=True``.
     See more: http://flask-sqlalchemy.pocoo.org/2.3/api/#sessions
 
+    2022-05-18 Updated: Use `nested=None` to prevent signal bug, See more:
+    https://github.com/pallets-eco/flask-sqlalchemy/issues/645
+
     Tips:
         * **Can't** do ``session.commit()`` **in func**, **otherwise raise**
           ``sqlalchemy.exc.ResourceClosedError``: `This transaction is closed`.
@@ -361,8 +364,11 @@ def transaction(session: Session, nested: bool = False):
             if session.autocommit is True and nested is False:
                 session.begin()  # start a transaction
             try:
-                with session.begin_nested():
+                if nested is None:
                     resp = func(*args, **kwargs)
+                else:
+                    with session.begin_nested():
+                        resp = func(*args, **kwargs)
                 if not nested:
                     # commit - begin(), transaction finished
                     session.commit()

@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 from sqlalchemy import UniqueConstraint, func, DateTime, BigInteger
+from flask_sqlalchemy import models_committed
 
 from hobbit_core.db import Column, BaseModel, EnumExt
 
@@ -16,6 +17,22 @@ class User(BaseModel):
     email = Column(db.String(50), nullable=False, unique=True)
     password = Column(db.String(255), nullable=False, server_default='')
     role = Column(db.Enum(RoleEnum), doc='角色', default=RoleEnum.admin)
+
+
+@models_committed.connect
+def signalling(app, changes, **kwargs):
+    for instance, operation in changes:
+        if instance.__tablename__ in [i.__tablename__ for i in [User]]:
+            models_committed.disconnect(signalling)
+            session = db.create_scoped_session()
+            user = session.query(User).first()
+            if user and user.username == 'signalling_test':
+                user.username = 'signalling_ok'
+                session.merge(user)
+                session.commit()
+            session.remove()
+            models_committed.connect(signalling)
+            break
 
 
 class Role(BaseModel):  # just for assert multi model worked

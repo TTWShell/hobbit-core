@@ -4,8 +4,11 @@ from marshmallow.utils import missing
 from webargs.flaskparser import use_kwargs as base_use_kwargs
 
 from hobbit_core.utils import use_kwargs
+from hobbit_core.db import transaction
 
 from .schemas import UserSchema
+from .exts import db
+from .models import User
 
 bp = Blueprint('test', __name__)
 
@@ -48,3 +51,27 @@ def use_kwargs_dictargmap_partial(**kwargs):
 })
 def base_use_kwargs_dictargmap_partial(**kwargs):
     return jsonify(wrapper_kwargs(kwargs))
+
+
+@bp.route('/create_user/success/', methods=['POST'])
+@base_use_kwargs({'email': fields.Str()})
+def create_user_success(email):
+    @transaction(db.session, nested=None)
+    def create_user():
+        user1 = User(username='signalling_test', email=email, password='1')
+        db.session.add(user1)
+
+    create_user()
+    return jsonify({})
+
+
+@bp.route('/create_user/failed/', methods=['POST'])
+@base_use_kwargs({'email': fields.Str()})
+def create_user_failed(email):
+    @transaction(db.session)
+    def create_user():
+        user1 = User(username='signalling_test', email=email, password='1')
+        db.session.add(user1)
+
+    create_user()
+    return jsonify({})
