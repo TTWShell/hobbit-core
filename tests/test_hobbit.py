@@ -33,14 +33,14 @@ class TestHobbit(BaseTest):
         assert 'Error: cmd not exist: doesnotexistcmd' in result.output
 
     @pytest.mark.parametrize(
-        'name,template,celery_,dist',
+        'name,template,dist',
         itertools.product(
-            ['haha'], templates, ['--celery', '--no-celery'],
+            ['haha'], templates,
             [None, '.', wkdir]))
     @chdir(wkdir)
-    def test_new_cmd(self, runner, name, template, celery_, dist):
+    def test_new_cmd(self, runner, name, template, dist):
         options = [
-            '--echo', 'new', '-p 1024', '-n', name,  '-t', template, celery_]
+            '--echo', 'new', '-p 1024', '-n', name,  '-t', template]
         if dist:
             assert os.getcwd() == os.path.abspath(dist)
             options.extend(['-d', dist])
@@ -52,14 +52,10 @@ class TestHobbit(BaseTest):
 
         file_nums = {
             # tart + 29 files + 11 dir + 1 end + empty
-            'shire | --no-celery':  1 + 27 + 11 + 1 + 1 - 1,
-            # start + files + mkdir + tail
-            'shire | --celery': 1 + 28 + 12 + 1,
-            'rivendell | --no-celery':  1 + 29 + 11 + 1,
-            'rivendell | --celery':  1 + 30 + 12 + 1,
+            'shire':  1 + 27 + 11 + 1 + 1 - 1,
+            'rivendell':  1 + 29 + 11 + 1,
         }
-        assert len(result.output.split('\n')) == file_nums[
-            f'{template} | {celery_}']
+        assert len(result.output.split('\n')) == file_nums[f'{template}']
 
         assert subprocess.call(['flake8', '.']) == 0
         assert subprocess.call(

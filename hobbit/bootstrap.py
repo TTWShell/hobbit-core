@@ -36,10 +36,8 @@ def common_options(func):
 @click.option('-p', '--port', help='Port of web server.', required=True,
               type=click.IntRange(1024, 65535))
 @common_options
-@click.option('--celery/--no-celery', default=False,
-              help='Generate celery files or not.')
 @click.pass_context
-def new(ctx, name, port, dist, template, force, celery):
+def new(ctx, name, port, dist, template, force):
     """Create a new flask project, render from different template.
 
     Examples::
@@ -52,14 +50,12 @@ def new(ctx, name, port, dist, template, force, celery):
     """  # noqa
     dist = os.getcwd() if dist is None else os.path.abspath(dist)
     ctx.obj['FORCE'] = force
-    ctx.obj['CELERY'] = celery
     ctx.obj['JINJIA_CONTEXT'] = {
         'project_name': name,
         'port': port,
         'secret_key': ''.join(random.choice(
             string.ascii_letters) for i in range(38)),
         'version': pkg_resources.get_distribution("hobbit-core").version,
-        'celery': celery,
     }
 
     echo(f'Start init a hobbit project `{name}` to `{dist}`,'

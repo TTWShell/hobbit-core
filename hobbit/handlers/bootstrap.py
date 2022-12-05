@@ -29,7 +29,6 @@ def chdir(dist):
 
 @click.pass_context
 def render_project(ctx, dist, tpl_path):
-    celery = ctx.obj.get('CELERY')  # gen cmd not have this arg
     context = ctx.obj['JINJIA_CONTEXT']
 
     jinjia_env = Environment(loader=FileSystemLoader(tpl_path))
@@ -46,9 +45,6 @@ def render_project(ctx, dist, tpl_path):
                 data = jinjia_env.get_template(fn).render(context)
                 fn = Template(fn).render(context)
                 render_file(dist, fn[:-len(SUFFIX)], data)
-                continue
-
-            if not celery and origin_path.endswith('tasks'):
                 continue
 
             dir_name = Template(fn).render(context)

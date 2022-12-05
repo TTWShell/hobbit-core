@@ -43,13 +43,12 @@ jobs:
           command: |
             pip install flake8 pytest pytest-cov pytest-env
             pip install --editable ".[hobbit,hobbit_core]"
-            pip install celery
       - run:
           name: use flake8 check self
           command: flake8 .
       - run:
           name: run hobbit cmd
-          command: hobbit --echo startproject -n demo -d ~/haha -f -p 1024 --no-celery
+          command: hobbit --echo startproject -n demo -d ~/haha -f -p 1024
       - run:
           name: tree flask project
           command: |
@@ -75,7 +74,6 @@ jobs:
           command: |
             pip install flake8 pytest pytest-cov pytest-env
             pip install --editable ".[hobbit,hobbit_core]"
-            pip install celery
       - run:
           name: use flake8 check self
           command: flake8 .
@@ -83,9 +81,9 @@ jobs:
           name: run hobbit cmd
           command: |
             mkdir ~/haha && cd ~/haha
-            hobbit --echo startproject -n demo -f -p 1024 --celery
+            hobbit --echo startproject -n demo -f -p 1024
             mkdir ~/hahaha && cd ~/hahaha
-            hobbit --echo startproject -n demo -t rivendell -p 1025 --celery
+            hobbit --echo startproject -n demo -t rivendell -p 1025
       - run:
           name: tree flask project
           command: |
