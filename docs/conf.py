@@ -213,6 +213,7 @@ from flask_sqlalchemy import SQLAlchemy  # noqa
 from hobbit_core import HobbitManager  # noqa
 
 app = Flask('', root_path='.')
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory"
 db = SQLAlchemy()
 db.init_app(app)
 hobbit = HobbitManager()
