@@ -73,6 +73,7 @@ setup(
             'Click>=6.7',
             'Jinja2>=2.10',
             'inflect>=2.1.0',
+            'markupsafe==2.0.1',  # jinja2 deps: import error
         ],
     },
     entry_points={
