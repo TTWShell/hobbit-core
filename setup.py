@@ -26,14 +26,14 @@ try:
     import pypandoc
     long_description = pypandoc.convert_file('README.md', 'rst')
     long_description_content_type = 'text/x-rst'
-except(OSError, ImportError):
+except (OSError, ImportError):
     long_description = open('README.md').read()
 
 
 setup(
     name='hobbit-core',
-    version='2.2.3',
-    python_requires='>=3.6, <4',
+    version='3.0.0.rc1',
+    python_requires='>=3.7, <4',
     description='Hobbit - A flask project generator.',
     long_description=long_description,
     long_description_content_type=long_description_content_type,
@@ -42,7 +42,6 @@ setup(
     url='https://github.com/TTWShell/hobbit-core',
     classifiers=[
         'Topic :: Utilities',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
@@ -56,12 +55,12 @@ setup(
     install_requires=[],
     extras_require={
         'hobbit_core': [
-            'Flask>=1.0.0,<2',
+            'Flask>=2.0,<3',
             'flask-marshmallow>=0.14.0,<1',
             'Flask-Migrate>=3.0.1,<4',
             'flask-shell-ipython>=0.4.1',
-            'SQLAlchemy>=1.3.0,< 1.4.0',
-            'Flask-SQLAlchemy>=2.5.1,<3',
+            'SQLAlchemy>=1.4.0,< 2',
+            'Flask-SQLAlchemy>=3.0.0,<4',
             'marshmallow-enum>=1.5.1,<2',
             'marshmallow-sqlalchemy>=0.26.1,<3',
             'webargs>=8.0.0,<9',
@@ -71,8 +70,9 @@ setup(
         ],
         'hobbit': [
             'Click>=6.7',
-            'Jinja2>=2.10',
+            'Jinja2>=3.0',
             'inflect>=2.1.0',
+            'markupsafe>=2.0.1',
         ],
     },
     entry_points={

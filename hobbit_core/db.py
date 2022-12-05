@@ -15,10 +15,6 @@ db = current_app.hobbit_manager.db
 
 class _BaseModel:
 
-    __mapper_args__ = {
-        'order_by': 'id',
-    }
-
     def __repr__(self) -> str:
         """You can set label property.
 
@@ -74,7 +70,7 @@ class BaseModelMeta(DefaultMeta):
             DateTime, index=True, nullable=False, server_default=func.now(),
             onupdate=func.now())
 
-        if db.get_engine(bind=attrs.get('__bind_key__')).name == 'oracle':
+        if db.get_engine(bind_key=attrs.get('__bind_key__')).name == 'oracle':
             sequence_name = attrs.get('sequence_name') or \
                 f'{name}_{primary_key_name}_seq'
             if current_app.config['HOBBIT_UPPER_SEQUENCE_NAME']:
