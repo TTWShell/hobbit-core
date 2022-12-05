@@ -50,3 +50,4 @@ class TestSchema(BaseTest):
                 'role': RoleEnum.admin, 'email': 'admin@test',
                 'username': 'name',
             }
+        db.session.commit()

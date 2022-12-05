@@ -27,7 +27,7 @@ class BaseTest:
         exclude_tables = []
         models = {
             m.__tablename__: m
-            for m in db.Model._decl_class_registry.values()
+            for m in db.Model.registry._class_registry.values()
             if isinstance(m, model.DefaultMeta)
         }
         tables = db.metadata.sorted_tables

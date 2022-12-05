@@ -79,7 +79,8 @@ def pagination(obj: 'model.DefaultMeta', page: int, page_size: int,
                 order_exp.append(getattr(obj, column))
         qexp = qexp.order_by(*order_exp)
 
-    items = qexp.paginate(page, page_size, error_out=False)
+    items = qexp.paginate(page=page, per_page=page_size, error_out=False)
+
     return {
         'items': items.items, 'page': page, 'page_size': page_size,
         'total': items.total,

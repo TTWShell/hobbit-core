@@ -45,23 +45,26 @@ class TestPagination(BaseTest):
         db.session.add(user1)
         db.session.add(user2)
         db.session.commit()
+        db.session.refresh(user1)
+        db.session.refresh(user2)
 
         # test ?order_by= worked
         resp = pagination(User, 1, 10, order_by=[''])
+        print(resp)
         assert resp['total'] == 2
         assert resp['page_size'] == 10
         assert resp['page'] == 1
-        assert [i.id for i in resp['items']] == [1, 2]
+        assert [i.id for i in resp['items']] == [user1.id, user2.id]
 
         # test order_by: str
         resp = pagination(User, 1, 10, order_by='role')
-        assert [i.id for i in resp['items']] == [1, 2]
+        assert [i.id for i in resp['items']] ==[user1.id, user2.id]
 
         resp = pagination(User, 1, 10, order_by=['role', '-id'])
-        assert [i.id for i in resp['items']] == [2, 1]
+        assert [i.id for i in resp['items']] == [user2.id, user1.id]
 
         resp = pagination(User, 1, 10, order_by=['role', 'username'])
-        assert [i.id for i in resp['items']] == [1, 2]
+        assert [i.id for i in resp['items']] == [user1.id, user2.id]
 
         with pytest.raises(Exception, match='first arg obj must be model.'):
             pagination('User', 1, 10, order_by='role')
@@ -69,3 +72,4 @@ class TestPagination(BaseTest):
         msg = r'columns .*roles.* not exist in {} model'.format(User)
         with pytest.raises(Exception, match=msg):
             pagination(User, 1, 10, order_by='roles')
+        db.session.commit()

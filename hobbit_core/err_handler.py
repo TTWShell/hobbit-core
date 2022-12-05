@@ -35,7 +35,7 @@ you can change it
             status=e.code)
 
     @classmethod
-    def handler_sqlalchemy_orm_exc(cls, e):
+    def handler_sqlalchemy_exc(cls, e):
         code, message, detail = 500, RESP_MSGS[500], repr(e)
 
         if isinstance(e, orm_exc.NoResultFound):

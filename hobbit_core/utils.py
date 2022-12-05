@@ -275,7 +275,7 @@ def bulk_create_or_update_on_duplicate(
             if column in item and item[column] is None:
                 item[column] = ''
 
-    engine = db.get_engine(bind=getattr(model_cls, '__bind_key__', None))
+    engine = db.get_engine(bind_key=getattr(model_cls, '__bind_key__', None))
     if engine.name == 'postgresql':
         sql_on_update = ', '.join([
             f' {field} = excluded.{field}'

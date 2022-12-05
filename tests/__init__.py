@@ -13,19 +13,18 @@ class BaseTest(object):
     @classmethod
     def setup_class(cls):
         with app.app_context():
-            db.create_all(bind=None)
-            db.create_all(bind='mysql')
+            db.create_all(bind_key=None)
+            db.create_all(bind_key='mysql')
 
     @classmethod
     def teardown_class(cls):
         with app.app_context():
-            db.drop_all(bind=None)
-            db.drop_all(bind='mysql')
+            db.drop_all(bind_key=None)
+            db.drop_all(bind_key='mysql')
 
     def teardown_method(self, method):
         with app.app_context():
-            for m in [m for m in db.Model._decl_class_registry.values()
-                      # db.Model.registry._class_registry.values()
+            for m in [m for m in db.Model.registry._class_registry.values()
                       if isinstance(m, model.DefaultMeta) and
                       getattr(m, '__bind_key__', None) != 'oracle']:
                 db.session.query(m).delete()

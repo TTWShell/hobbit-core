@@ -24,7 +24,9 @@ def signalling(app, changes, **kwargs):
     for instance, operation in changes:
         if instance.__tablename__ in [i.__tablename__ for i in [User]]:
             models_committed.disconnect(signalling)
-            session = db.create_scoped_session()
+            conn = db.engine.connect()
+            options = dict(bind=conn, binds={})
+            session = db._make_scoped_session(options=options)
             user = session.query(User).first()
             if user and user.username == 'signalling_test':
                 user.username = 'signalling_ok'
