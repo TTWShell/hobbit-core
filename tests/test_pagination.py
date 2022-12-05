@@ -58,7 +58,7 @@ class TestPagination(BaseTest):
 
         # test order_by: str
         resp = pagination(User, 1, 10, order_by='role')
-        assert [i.id for i in resp['items']] ==[user1.id, user2.id]
+        assert [i.id for i in resp['items']] == [user1.id, user2.id]
 
         resp = pagination(User, 1, 10, order_by=['role', '-id'])
         assert [i.id for i in resp['items']] == [user2.id, user1.id]

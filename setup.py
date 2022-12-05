@@ -26,14 +26,14 @@ try:
     import pypandoc
     long_description = pypandoc.convert_file('README.md', 'rst')
     long_description_content_type = 'text/x-rst'
-except(OSError, ImportError):
+except (OSError, ImportError):
     long_description = open('README.md').read()
 
 
 setup(
     name='hobbit-core',
-    version='2.2.3',
-    python_requires='>=3.6, <4',
+    version='3.0.0.rc1',
+    python_requires='>=3.7, <4',
     description='Hobbit - A flask project generator.',
     long_description=long_description,
     long_description_content_type=long_description_content_type,
@@ -42,7 +42,6 @@ setup(
     url='https://github.com/TTWShell/hobbit-core',
     classifiers=[
         'Topic :: Utilities',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',

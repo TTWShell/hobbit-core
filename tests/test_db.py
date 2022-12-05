@@ -2,7 +2,7 @@ import time
 import pytest
 import random
 
-from sqlalchemy.exc import ResourceClosedError, InvalidRequestError
+from sqlalchemy.exc import InvalidRequestError
 
 from hobbit_core.db import EnumExt, transaction
 from hobbit_core.db import BaseModel, Column
