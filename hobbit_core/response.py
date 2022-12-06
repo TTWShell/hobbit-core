@@ -2,8 +2,7 @@ from typing import Optional, Any
 from mypy_extensions import TypedDict
 
 from flask.json import dumps
-from flask import current_app
-from werkzeug import Response
+from flask import current_app, Response
 
 RESP_MSGS = {
     200: 'ok',
@@ -67,7 +66,7 @@ def gen_response(code: int, message: str = None, detail: Optional[str] = None,
 class Result(Response):
     """Base json response.
     """
-    status = 200  # type: ignore
+    _hobbit_status = 200  # type: ignore
 
     def __init__(self, response=None, status=None, headers=None,
                  mimetype='application/json', content_type=None,
@@ -75,9 +74,9 @@ class Result(Response):
         assert sorted(response.keys()) == [
             'code', 'data', 'detail', 'message'], \
             'Error response, must include keys: code, data, detail, message'
-        super(Result, self).__init__(
+        super().__init__(
             response=dumps(response, indent=0, separators=(',', ':')) + '\n',
-            status=status if status is not None else self.status,
+            status=status if status is not None else self._hobbit_status,
             headers=headers, mimetype=mimetype,
             content_type=content_type, direct_passthrough=direct_passthrough)
 
@@ -85,40 +84,41 @@ class Result(Response):
 class SuccessResult(Result):
     """Success response. Default status is 200, you can cover it by status arg.
     """
-    status = 200
+    _hobbit_status = 200
 
     def __init__(self, message: str = '', code: Optional[int] = None,
                  detail: Any = None, status: Optional[int] = None, data=None):
-        super(SuccessResult, self).__init__(
-            gen_response(code if code is not None else self.status,
+        super().__init__(
+            gen_response(code if code is not None else self._hobbit_status,
                          message, detail, data),
-            status or self.status)
+            status or self._hobbit_status)
 
 
 class FailedResult(Result):
     """Failed response. status always 400.
     """
-    status = 400
+    _hobbit_status = 400
 
     def __init__(self, message: str = '', code: Optional[int] = None,
                  detail: Any = None):
-        super(FailedResult, self).__init__(
+        super().__init__(
             gen_response(
-                code if code is not None else self.status, message, detail),
-            self.status)
+                code if code is not None else self._hobbit_status,
+                message, detail),
+            self._hobbit_status)
 
 
 class UnauthorizedResult(FailedResult):
-    status = 401
+    _hobbit_status = 401
 
 
 class ForbiddenResult(FailedResult):
-    status = 403
+    _hobbit_status = 403
 
 
 class ValidationErrorResult(FailedResult):
-    status = 422
+    _hobbit_status = 422
 
 
 class ServerErrorResult(FailedResult):
-    status = 500
+    _hobbit_status = 500

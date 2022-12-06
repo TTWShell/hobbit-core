@@ -30,21 +30,21 @@ class TestResponse(BaseTest):
             'code': '1', 'message': u'unknown', 'detail': None, 'data': None}
         result = Result(response)
         print(result.__dict__)
-        assert result.status == 200
+        assert result.status_code == 200
 
         result = Result(response, status=201)
-        assert result.status == 201
+        assert result.status_code == 201
 
     def test_success_result(self, app):
         # assert status can rewrite
         excepted = b'{\n"code":"200",\n"data":null,\n"detail":null,\n"message":"message"\n}\n'  # NOQA
         result = SuccessResult('message', status=301)
-        assert result.status == 301
+        assert result.status_code == 301
         assert excepted == result.data
 
         # assert default is 200
         result = SuccessResult()
-        assert result.status == 200
+        assert result.status_code == 200
 
         app.config['HOBBIT_USE_CODE_ORIGIN_TYPE'] = True
         result = SuccessResult(code=0)
@@ -61,7 +61,7 @@ class TestResponse(BaseTest):
 
     def test_failed_result(self):
         result = FailedResult()
-        assert result.status == 400
+        assert result.status_code == 400
 
     @pytest.mark.parametrize('result, excepted_status', [
         (UnauthorizedResult, 401),
@@ -70,4 +70,4 @@ class TestResponse(BaseTest):
         (ServerErrorResult, 500),
     ])
     def test_results(self, result, excepted_status):
-        assert result().status == excepted_status
+        assert result().status_code == excepted_status
