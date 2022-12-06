@@ -6,7 +6,7 @@ from flask.helpers import get_env
 
 from hobbit_core.err_handler import ErrHandler
 
-from app.exts import db, migrate, ma, hobbit{% if celery %}, celery{% endif %}
+from app.exts import db, migrate, ma, hobbit
 
 
 def register_extensions(app):
@@ -33,21 +33,6 @@ def register_cmds(app):
     pass
 
 
-{% if celery -%}
-def make_celery(app):
-    celery.conf.update(app.config)
-
-    class ContextTask(celery.Task):
-        def __call__(self, *args, **kwargs):
-            with app.app_context():
-                return self.run(*args, **kwargs)
-
-    celery.Task = ContextTask
-    from app import tasks  # NOQA
-    return celery
-
-
-{% endif -%}
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object('app.configs.{}'.format(get_env()))
@@ -57,9 +42,6 @@ def create_app():
         register_blueprints(app)
     register_error_handler(app)
     register_cmds(app)
-    {%- if celery %}
-    make_celery(app)
-    {%- endif %}
 
     @app.before_request
     def log_request_info():

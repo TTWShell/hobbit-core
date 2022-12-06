@@ -16,7 +16,7 @@ def gen_data(data_root='static'):
 
 package_data = gen_data()
 # The amount files of `shire[new]` + `rivendell[new]`
-assert len(package_data) == 28 + 29, \
+assert len(package_data) == 27 + 28, \
     'nums of tepl files error, {}'.format(len(package_data))
 package_data.append('py.typed')
 
@@ -32,7 +32,7 @@ except (OSError, ImportError):
 
 setup(
     name='hobbit-core',
-    version='3.0.0.rc1',
+    version='3.0.0.rc2',
     python_requires='>=3.7, <4',
     description='Hobbit - A flask project generator.',
     long_description=long_description,
