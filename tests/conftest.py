@@ -42,18 +42,7 @@ def db_session(app):
         return sess
 
 
-@pytest.fixture(scope='function')
-def auto_session(app):
-    with app.app_context():
-        conn = tdb.engine.connect()
-        options = dict(bind=conn, binds={}, autocommit=True)
-        sess = tdb._make_scoped_session(options=options)
-        assert sess.autocommit is True
-        yield sess
-        sess.remove()
-
-
-@pytest.fixture(scope='function', params=['db_session', 'auto_session'])
+@pytest.fixture(scope='function', params=['db_session'])
 def session(request):
     return request.getfixturevalue(request.param)
 
