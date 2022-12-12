@@ -303,17 +303,15 @@ class EnumExt(Enum, metaclass=EnumExtMeta):
 
 
 def transaction(session: Session, nested: bool = False):
-    """Auto transaction commit or rollback. This worked with
-    ``session.autocommit=False`` (the default behavior of ``flask-sqlalchemy``)
-    or ``session.autocommit=True``.
-    See more: http://flask-sqlalchemy.pocoo.org/2.3/api/#sessions
+    """SQLAlchemy 1.4 deprecates “autocommit mode.
+    See more: https://docs.sqlalchemy.org/en/14/orm/session_transaction.html
 
     2022-05-18 Updated: Use `nested=None` to prevent signal bug, See more:
     https://github.com/pallets-eco/flask-sqlalchemy/issues/645
 
     Tips:
-        * **Can't** do ``session.commit()`` **in func**, **otherwise raise**
-          ``sqlalchemy.exc.ResourceClosedError``: `This transaction is closed`.
+        * **Can't** do ``session.commit()`` **in func**,
+        **otherwise unknown beloved**.
 
         * **Must use the same session in decorator and decorated function**.
 
@@ -333,7 +331,7 @@ def transaction(session: Session, nested: bool = False):
         def create(username, password):
             user = User(username=username, password=password)
             db.session.add(user)
-            # db.session.commit() error occurred
+            # db.session.commit() error
 
     We can nested use this decorator. Must set ``nested=True`` otherwise
     raise ``ResourceClosedError`` (session.autocommit=False) or
@@ -342,7 +340,7 @@ def transaction(session: Session, nested: bool = False):
         @transaction(db.session, nested=True)
         def set_role(user, role):
             user.role = role
-            # db.session.commit() error occurred
+            # db.session.commit() error
 
 
         @bp.route('/users/', methods=['POST'])
@@ -357,7 +355,7 @@ def transaction(session: Session, nested: bool = False):
     def wrapper(func):
         @wraps(func)
         def inner(*args, **kwargs):
-            if session.autocommit is True and nested is False:
+            if getattr(session, 'autocommit') is True and nested is False:
                 session.begin()  # start a transaction
             try:
                 if nested is None:

@@ -2,8 +2,6 @@ import time
 import pytest
 import random
 
-from sqlalchemy.exc import InvalidRequestError
-
 from hobbit_core.db import EnumExt, transaction
 from hobbit_core.db import BaseModel, Column
 
@@ -150,41 +148,40 @@ class TestTransaction(BaseTest):
             create_user(raise_exception=False)
             assert len(assert_session.query(User).all()) == 2
             create_user(raise_exception=False)
+
         assert len(assert_session.query(User).all()) == 2
 
-    # def test_used_with_commit_raised(self, session, assert_session):
-    #     @transaction(session)
-    #     def create_user():
-    #         user = User(username='test1', email='1@b.com', password='1')
-    #         session.add(user)
-    #         session.commit()
+    def test_used_with_commit_without_raised(self, session, assert_session):
+        # > 1.4
+        @transaction(session)
+        def create_user():
+            user = User(username='test1', email='1@b.com', password='1')
+            session.add(user)
+            session.commit()
 
-    #     msg = 'This transaction is closed'
-    #     with pytest.raises(ResourceClosedError, match=msg):
-    #         create_user()
-    #     assert assert_session.query(User).all() == []
+        create_user()
+        assert assert_session.query(User).all() != []
 
-    # def test_used_with_begin_nested(self, session, assert_session):
-    #     @transaction(session)
-    #     def create_user(commit_inner):
-    #         with session.begin_nested():
-    #             user = User(username='test1', email='1@b.com', password='1')
-    #             session.add(user)
+    def test_used_with_begin_nested(self, session, assert_session):
+        # > 1.4
+        @transaction(session)
+        def create_user(commit_inner):
+            with session.begin_nested():
+                user = User(username='test1', email='1@b.com', password='1')
+                session.add(user)
 
-    #         with session.begin_nested():
-    #             user = User(username='test2', email='2@b.com', password='1')
-    #             session.add(user)
-    #         if commit_inner:
-    #             session.commit()
+            with session.begin_nested():
+                user = User(username='test2', email='2@b.com', password='1')
+                session.add(user)
+            if commit_inner:
+                session.commit()
 
-    #     create_user(commit_inner=False)
-    #     assert len(assert_session.query(User).all()) == 2
+        create_user(commit_inner=False)
+        assert len(assert_session.query(User).all()) == 2
 
-    #     self.clear_user()
-    #     msg = 'This transaction is closed'
-    #     with pytest.raises(ResourceClosedError, match=msg):
-    #         create_user(commit_inner=True)
-    #     assert len(assert_session.query(User).all()) == 0
+        self.clear_user()
+        create_user(commit_inner=True)
+        assert len(assert_session.query(User).all()) == 2
 
     def test_fall_used(self, session, assert_session):
         @transaction(session)
@@ -217,27 +214,21 @@ class TestTransaction(BaseTest):
         assert len(assert_session.query(User).all()) == 1
         assert assert_session.query(User).first().username == 'test1'
 
-    # def test_nested_self_raise(self, session, assert_session):
-    #     @transaction(session)
-    #     def create_user():
-    #         user = User(username='test1', email='1@b.com', password='1')
-    #         db.session.add(user)
+    def test_nested_self_not_raise(self, session, assert_session):
+        # > 1.4
+        @transaction(session)
+        def create_user():
+            user = User(username='test1', email='1@b.com', password='1')
+            db.session.add(user)
 
-    #     @transaction(session)
-    #     def view_func():
-    #         user = User(username='test2', email='2@b.com', password='1')
-    #         db.session.add(user)
-    #         create_user()
+        @transaction(session)
+        def view_func():
+            user = User(username='test2', email='2@b.com', password='1')
+            db.session.add(user)
+            create_user()
 
-    #     if session.autocommit is False:
-    #         msg = 'This transaction is closed'
-    #         with pytest.raises(ResourceClosedError, match=msg):
-    #             view_func()
-    #     else:
-    #         msg = r'A transaction is already begun.*'
-    #         with pytest.raises(InvalidRequestError, match=msg):
-    #             view_func()
-    #     assert len(assert_session.query(User).all()) == 0
+        view_func()
+        assert len(assert_session.query(User).all()) == 2
 
     def test_nested_self_with_nested_arg_is_true(
             self, session, assert_session):
@@ -254,53 +245,19 @@ class TestTransaction(BaseTest):
         view_func()
         assert len(assert_session.query(User).all()) == 1
 
-    # def test_nested_self_with_nested_arg_is_true_commit_raise(
-    #         self, session, assert_session):
-    #     @transaction(session, nested=True)
-    #     def create_user():
-    #         user = User(username='test1', email='1@b.com', password='1')
-    #         session.add(user)
-    #         session.commit()
-
-    #     @transaction(session)
-    #     def view_func():
-    #         create_user()
-
-    #     msg = r'This transaction is closed'
-    #     with pytest.raises(ResourceClosedError, match=msg):
-    #         view_func()
-
-    # def test_notautocommit_use_nested_alone_commit_raise(self, db_session):
-    #     @transaction(db_session, nested=True)
-    #     def create_user():
-    #         user = User(username='test1', email='1@b.com', password='1')
-    #         db_session.add(user)
-    #         db_session.commit()
-
-    #     msg = 'This transaction is closed'
-    #     with pytest.raises(ResourceClosedError, match=msg):
-    #         create_user()
-
-    def test_autocommit_use_nested_alone_raise(self, auto_session):
-        @transaction(auto_session, nested=True)
+    def test_nested_self_with_nested_arg_is_true_commit_not_raise(
+            self, session, assert_session):
+        @transaction(session, nested=True)
         def create_user():
-            pass
+            user = User(username='test1', email='1@b.com', password='1')
+            session.add(user)
+            session.commit()
 
-        msg = "Can't start a SAVEPOINT transaction " + \
-            "when no existing transaction is in progress"
-        with pytest.raises(InvalidRequestError, match=msg):
+        @transaction(session)
+        def view_func():
             create_user()
 
-    # def test_autocommittrue_not_excepted(self, auto_session, assert_session):
-    #     msg = 'This transaction is closed'
-    #     with pytest.raises(ResourceClosedError, match=msg):
-    #         with auto_session.begin():  # start a transaction
-    #             user = User(username='test1', email='1@b.com', password='1')
-    #             auto_session.add(user)
-    #             auto_session.commit()
-
-    #     # assert not rollback. Be very careful when using commit. 😒😒😒😒
-    #     assert len(assert_session.query(User).all()) == 1
+        view_func()
 
 
 class TestNestedSessionSignal(BaseTest):
