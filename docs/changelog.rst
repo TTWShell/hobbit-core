@@ -1,6 +1,11 @@
 Change history
 ==============
 
+3.0.0 (2022-12-12)
+
+* Upgrade deps: Flask 1.x -> 2.x, SQLAlchemy 1.3.x -> 1.4.x, Flask-SQLAlchemy 2.5.1 -> 3.x.
+* **Notice:** [https://docs.sqlalchemy.org/en/14/tutorial/dbapi_transactions.html](https://docs.sqlalchemy.org/en/14/tutorial/dbapi_transactions.html).
+
 2.2.3 (2022-05-18)
 ******************
 
