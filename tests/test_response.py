@@ -59,6 +59,17 @@ class TestResponse(BaseTest):
         assert b'"message":"testmsg"' in result.data
         app.config['HOBBIT_RESPONSE_MESSAGE_MAPS'] = {}
 
+    def test_500_result(self, app):
+        result = ServerErrorResult('message', detail='detail')
+        assert result.status_code == 500
+        excepted = b'{\n"code":"500",\n"data":null,\n"detail":"detail",\n"message":"message"\n}\n'
+        assert excepted == result.data
+
+        app.config['HOBBIT_RESPONSE_DETAIL'] = False
+        result = ServerErrorResult('message', detail='detail')
+        excepted = b'{\n"code":"500",\n"data":null,\n"detail":null,\n"message":"message"\n}\n'
+        assert excepted == result.data
+
     def test_failed_result(self):
         result = FailedResult()
         assert result.status_code == 400

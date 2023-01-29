@@ -208,6 +208,9 @@ tests
   * - HOBBIT_RESPONSE_MESSAGE_MAPS
     -  `dict`, `{code: message}`
     - Self-defined response message. Set to `{200: "success"}` will return `{"code": 200, "message": "success"}` in response.
+  * - HOBBIT_RESPONSE_DETAIL
+    - `True` or `False`
+    - Default return detail and must set to `False` in production env. Default is `True`. Only used in 500 server error response.
 
 Others
 ======
