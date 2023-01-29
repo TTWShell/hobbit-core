@@ -55,6 +55,11 @@ def gen_response(code: int, message: str = None, detail: Optional[str] = None,
         message = resp_msgs.get(code)
         if message is None:
             message = RESP_MSGS.get(code, 'unknown')
+
+    if current_app.config.get("HOBBIT_RESPONSE_DETAIL", True) is False \
+            and code == 500:
+        detail = None
+
     return {
         'code': str(code) if use_origin_type is False else code,
         'message': message,  # type: ignore
