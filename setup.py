@@ -65,7 +65,7 @@ setup(
             'marshmallow-sqlalchemy>=0.26.1,<3',
             'webargs>=8.0.0,<9',
             'mypy-extensions>=0.4.3',
-            'pyyaml>=5.4.1,<6',
+            'pyyaml!=6.0.0,!=5.4.0,!=5.4.1',
             'marshmallow>=3.0.0,<4',
         ],
         'hobbit': [
