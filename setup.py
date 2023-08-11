@@ -55,7 +55,7 @@ setup(
     install_requires=[],
     extras_require={
         'hobbit_core': [
-            'Flask>=2.0,<3',
+            'Flask>=2.0,<2.3',
             'flask-marshmallow>=0.14.0,<1',
             'Flask-Migrate>=4,<5',
             'flask-shell-ipython>=0.4.1',
