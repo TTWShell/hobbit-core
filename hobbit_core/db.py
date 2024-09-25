@@ -8,7 +8,7 @@ from typing import Any, Union, List, Dict
 from flask import current_app
 from sqlalchemy import BigInteger, Column, ForeignKey, func, DateTime, Sequence
 from sqlalchemy.orm.session import Session
-from flask_sqlalchemy import DefaultMeta
+from flask_sqlalchemy.model import DefaultMeta
 
 db = current_app.hobbit_manager.db
 

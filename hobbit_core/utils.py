@@ -16,6 +16,7 @@ import datetime
 from flask import request
 from flask_sqlalchemy import model
 from sqlalchemy import UniqueConstraint
+from sqlalchemy.sql import text
 import marshmallow
 from marshmallow import Schema
 
@@ -299,7 +300,7 @@ def bulk_create_or_update_on_duplicate(
     while len(items) > 0:
         batch, items = items[:batch_size], items[batch_size:]
         try:
-            result = db.session.execute(sql, batch, bind=engine)
+            result = db.session.execute(text(sql), batch, bind_arguments={'bind': engine})
         except Exception as e:
             logger.error(e, exc_info=True)
             logger.info(sql)

@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 from sqlalchemy import UniqueConstraint, func, DateTime, BigInteger
-from flask_sqlalchemy import models_committed
+from flask_sqlalchemy.track_modifications import models_committed
 
 from hobbit_core.db import Column, BaseModel, EnumExt
 
