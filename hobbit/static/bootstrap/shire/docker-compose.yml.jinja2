@@ -9,7 +9,7 @@ services:
     environment:
       - LANG=C.UTF-8
       - FLASK_APP=app/run.py
-      - FLASK_ENV=production
+      - HOBBIT_ENV=production
     volumes:
       - ./logs:/logs
       - ./:/app

@@ -1,6 +1,12 @@
 Change history
 ==============
 
+4.0.0 (2024-09-25.rc0)
+
+* Upgraded dependencies: Flask to 3.x, SQLAlchemy to 2.x.
+* Fixed issue with `get_env` import from `flask.helpers`, now use `hobbit_core.utils.get_env` . `HOBBIT_ENV` is now only used to determine the configuration file.
+* Fixed `hobbit_core.db.transaction`.
+
 3.1.1 (2023-08-11)
 
 * Hotfix: lock flask version < 2.3 and pyyaml verison(https://github.com/yaml/pyyaml/issues/724)

@@ -122,7 +122,7 @@ app文件夹保存了所有业务层代码。基于 **约定优于配置** 范�
 configs
 ^^^^^^^
 
-基于flask设计，我们使用环境变量 ``FLASK_ENV`` 加载不同环境的配置文件。例如 ``FLASK_ENV=production`` ，会自动加载 ``configs/production.py`` 这个文件作为配置文件。
+基于flask设计，我们使用环境变量 ``HOBBIT_ENV`` 加载不同环境的配置文件。例如 ``HOBBIT_ENV=production`` ，会自动加载 ``configs/production.py`` 这个文件作为配置文件。
 
 core
 ^^^^

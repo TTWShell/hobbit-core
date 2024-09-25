@@ -3,7 +3,7 @@ image: ttwshell/hobbit-app:latest
 test_all:
   variables:
     FLASK_APP: 'app/run.py'
-    FLASK_ENV: 'testing'
+    HOBBIT_ENV: 'testing'
     LANG: C.UTF-8
   script:
     - flake8 . --max-line-length=120 --exclude migrations
