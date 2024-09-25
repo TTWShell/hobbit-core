@@ -63,15 +63,3 @@ def create_user_success(email):
 
     create_user()
     return jsonify({})
-
-
-@bp.route('/create_user/failed/', methods=['POST'])
-@base_use_kwargs({'email': fields.Str()})
-def create_user_failed(email):
-    @transaction(db.session)
-    def create_user():
-        user1 = User(username='signalling_test', email=email, password='1')
-        db.session.add(user1)
-
-    create_user()
-    return jsonify({})
