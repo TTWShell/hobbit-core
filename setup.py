@@ -78,6 +78,6 @@ setup(
         ],
     },
     entry_points={
-        'console_scripts': 'hobbit = hobbit:main [hobbit]'
+        'console_scripts': 'hobbit=hobbit:main'
     },
 )
