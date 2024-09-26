@@ -1,21 +1,25 @@
 Change history
 ==============
 
-4.0.0 (2024-09-25.rc0)
+4.0.0 (2024-09-26)
+**********************
 
 * Upgraded dependencies: Flask to 3.x, SQLAlchemy to 2.x.
 * Fixed issue with `get_env` import from `flask.helpers`, now use `hobbit_core.utils.get_env` . `HOBBIT_ENV` is now only used to determine the configuration file.
 * Fixed `hobbit_core.db.transaction`.
 
 3.1.1 (2023-08-11)
+******************
 
 * Hotfix: lock flask version < 2.3 and pyyaml verison(https://github.com/yaml/pyyaml/issues/724)
 
 3.1.0 (2023-01-29)
+******************
 
 * Support HOBBIT_RESPONSE_DETAIL config: Default return detail and must set to False in production env. Default is True. Only used in 500 server error response.
 
 3.0.0 (2022-12-12)
+******************
 
 * Upgrade deps: Flask 1.x -> 2.x, SQLAlchemy 1.3.x -> 1.4.x, Flask-SQLAlchemy 2.5.1 -> 3.x.
 * **Notice:** [https://docs.sqlalchemy.org/en/14/tutorial/dbapi_transactions.html](https://docs.sqlalchemy.org/en/14/tutorial/dbapi_transactions.html).
