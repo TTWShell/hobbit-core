@@ -32,7 +32,7 @@ except (OSError, ImportError):
 
 setup(
     name='hobbit-core',
-    version='4.0.0rc0',
+    version='4.0.0',
     python_requires='>=3.8, <4',
     description='Hobbit - A flask project generator.',
     long_description=long_description,
