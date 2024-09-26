@@ -2,9 +2,9 @@ import importlib
 import logging
 
 from flask import Flask, request
-from flask.helpers import get_env
 
 from hobbit_core.err_handler import ErrHandler
+from hobbit_core.utils import get_env
 
 from app.exts import db, migrate, ma, hobbit
 

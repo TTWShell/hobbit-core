@@ -29,7 +29,6 @@ def assert_session(app):
         conn = tdb.engine.connect()
         options = dict(bind=conn, binds={})
         sess = tdb._make_scoped_session(options=options)
-        assert sess.autocommit is False
         yield sess
         sess.remove()
 
@@ -38,7 +37,6 @@ def assert_session(app):
 def db_session(app):
     with app.app_context():
         sess = tdb.session
-        assert sess.autocommit is False
         return sess
 
 

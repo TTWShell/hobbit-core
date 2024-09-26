@@ -16,6 +16,7 @@ import datetime
 from flask import request
 from flask_sqlalchemy import model
 from sqlalchemy import UniqueConstraint
+from sqlalchemy.sql import text
 import marshmallow
 from marshmallow import Schema
 
@@ -299,7 +300,8 @@ def bulk_create_or_update_on_duplicate(
     while len(items) > 0:
         batch, items = items[:batch_size], items[batch_size:]
         try:
-            result = db.session.execute(sql, batch, bind=engine)
+            result = db.session.execute(
+                text(sql), batch, bind_arguments={'bind': engine})
         except Exception as e:
             logger.error(e, exc_info=True)
             logger.info(sql)
@@ -308,3 +310,20 @@ def bulk_create_or_update_on_duplicate(
     logger.info(f'{model_cls} save_data: rowcount={rowcounts}, '
                 f'items_count: {items_count}')
     return {'rowcount': rowcounts, 'items_count': items_count}
+
+
+def get_env():
+    """ Determine the current environment setting and
+    locate the configuration file.
+
+    This function checks the environment variable "HOBBIT_ENV" to determine
+    the current environment. The defaults to "production".
+
+    The corresponding configuration file should be located in `app.configs`
+    based on this environment.
+
+    Returns:
+        str: The current environment setting, either the value of
+             "HOBBIT_ENV" or "production" if the variable is not set.
+    """
+    return os.environ.get("HOBBIT_ENV") or "production"

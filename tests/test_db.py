@@ -2,6 +2,8 @@ import time
 import pytest
 import random
 
+from sqlalchemy.exc import InvalidRequestError
+
 from hobbit_core.db import EnumExt, transaction
 from hobbit_core.db import BaseModel, Column
 
@@ -119,10 +121,10 @@ class TestEnumExt(BaseTest):
 class TestTransaction(BaseTest):
 
     def clear_user(self):
-        User.query.delete()
-        db.session.commit()
-        db.session.remove()
-        assert User.query.all() == []
+        with db.session.begin():
+            User.query.delete()
+        with db.session.begin():
+            assert User.query.all() == []
 
     def test_transaction_decorator(self, session, assert_session):
         @transaction(session)
@@ -214,8 +216,8 @@ class TestTransaction(BaseTest):
         assert len(assert_session.query(User).all()) == 1
         assert assert_session.query(User).first().username == 'test1'
 
-    def test_nested_self_not_raise(self, session, assert_session):
-        # > 1.4
+    # v2.x should raise
+    def test_nested_self_raise(self, session, assert_session):
         @transaction(session)
         def create_user():
             user = User(username='test1', email='1@b.com', password='1')
@@ -227,8 +229,9 @@ class TestTransaction(BaseTest):
             db.session.add(user)
             create_user()
 
-        view_func()
-        assert len(assert_session.query(User).all()) == 2
+        with pytest.raises(InvalidRequestError, match='A transaction is already begun on this Session.'):  # NOQA E501
+            view_func()
+        assert len(assert_session.query(User).all()) == 0
 
     def test_nested_self_with_nested_arg_is_true(
             self, session, assert_session):
@@ -269,11 +272,3 @@ class TestNestedSessionSignal(BaseTest):
 
         user = assert_session.query(User).filter(User.email == email).first()
         assert user and user.username == "signalling_ok"
-
-    def test_transaction_signal_dailed(self, client, assert_session):
-        email = "test@test.com"
-        resp = client.post('/create_user/failed/', json={"email": email})
-        assert resp.status_code == 200
-
-        user = assert_session.query(User).filter(User.email == email).first()
-        assert user and user.username != "signalling_ok"

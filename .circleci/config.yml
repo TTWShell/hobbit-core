@@ -19,7 +19,7 @@ jobs:
           MYSQL_PORT: 3306
     working_directory: ~/repo
     steps:
-      - run: pyenv global 3.10.0 py36 py37 py38 py39 py310
+      - run: pyenv global 3.10.0 py38 py39 py310 py311 py312
       - checkout
       - run:
           name: Waiting for Postgres to be ready
@@ -31,9 +31,9 @@ jobs:
             tox -- --cov-report=xml
             codecov
 
-  test-py310:
+  test-py312:
     docker:
-      - image: circleci/python:3.10.0
+      - image: cimg/python:3.12.6
         user: root
     working_directory: ~/repo
     steps:
@@ -41,6 +41,7 @@ jobs:
       - run:
           name: install dependencies
           command: |
+            pip install --upgrade pip
             pip install flake8 pytest pytest-cov pytest-env
             pip install --editable ".[hobbit,hobbit_core]"
       - run:
@@ -53,6 +54,7 @@ jobs:
           name: tree flask project
           command: |
             cd ~/haha
+            apt-get update
             apt-get install -y tree
             tree
       - run:
@@ -62,9 +64,9 @@ jobs:
             FLASK_APP=app.run:app flask db init && FLASK_APP=app.run:app flask db migrate && FLASK_APP=app.run:app flask db upgrade
             flake8 . --exclude migrations
             py.test
-  test-py37:
+  test-py38:
     docker:
-      - image: circleci/python:3.7.10
+      - image: circleci/python:3.8.0
         user: root
     working_directory: ~/repo
     steps:
@@ -72,6 +74,7 @@ jobs:
       - run:
           name: install dependencies
           command: |
+            pip install --upgrade pip
             pip install flake8 pytest pytest-cov pytest-env
             pip install --editable ".[hobbit,hobbit_core]"
       - run:
@@ -109,9 +112,9 @@ workflows:
   test:
     jobs:
       - tox
-      - test-py310:
+      - test-py312:
           requires:
             - tox
-      - test-py37:
+      - test-py38:
           requires:
             - tox

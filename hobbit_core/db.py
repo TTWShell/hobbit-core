@@ -8,7 +8,7 @@ from typing import Any, Union, List, Dict
 from flask import current_app
 from sqlalchemy import BigInteger, Column, ForeignKey, func, DateTime, Sequence
 from sqlalchemy.orm.session import Session
-from flask_sqlalchemy import DefaultMeta
+from flask_sqlalchemy.model import DefaultMeta
 
 db = current_app.hobbit_manager.db
 
@@ -306,7 +306,7 @@ def transaction(session: Session, nested: bool = False):
     """SQLAlchemy 1.4 deprecates “autocommit mode.
     See more: https://docs.sqlalchemy.org/en/14/orm/session_transaction.html
 
-    2022-05-18 Updated: Use `nested=None` to prevent signal bug, See more:
+    2024-09-25 ignore signal bug, See more:
     https://github.com/pallets-eco/flask-sqlalchemy/issues/645
 
     Tips:
@@ -355,22 +355,15 @@ def transaction(session: Session, nested: bool = False):
     def wrapper(func):
         @wraps(func)
         def inner(*args, **kwargs):
-            if getattr(session, 'autocommit') is True and nested is False:
-                session.begin()  # start a transaction
             try:
-                if nested is None:
-                    resp = func(*args, **kwargs)
-                else:
+                if nested:
                     with session.begin_nested():
-                        resp = func(*args, **kwargs)
-                if not nested:
-                    # commit - begin(), transaction finished
-                    session.commit()
+                        return func(*args, **kwargs)
+                else:
+                    with session.begin():
+                        return func(*args, **kwargs)
             except Exception as e:
-                if not nested:
-                    session.rollback()
-                    session.remove()
+                session.rollback()
                 raise e
-            return resp
         return inner
     return wrapper

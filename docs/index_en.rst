@@ -102,7 +102,7 @@ App dir saved all business layer codes. You must ensure dir name is app based on
 configs
 ^^^^^^^
 
-In a hobbit app, we auto load config by FLASK_ENV. If FLASK_ENV=production, used ``configs/production.py`` file.
+In a hobbit app, we auto load config by HOBBIT_ENV. If HOBBIT_ENV=production, used ``configs/production.py`` file.
 
 core
 ^^^^
