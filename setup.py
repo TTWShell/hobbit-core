@@ -33,7 +33,7 @@ except (OSError, ImportError):
 setup(
     name='hobbit-core',
     version='4.0.0.rc0',
-    python_requires='>=3.7, <4',
+    python_requires='>=3.8, <4',
     description='Hobbit - A flask project generator.',
     long_description=long_description,
     long_description_content_type=long_description_content_type,
@@ -42,7 +42,6 @@ setup(
     url='https://github.com/TTWShell/hobbit-core',
     classifiers=[
         'Topic :: Utilities',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
