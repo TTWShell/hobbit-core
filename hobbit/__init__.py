@@ -95,7 +95,7 @@ class HobbitGroup(click.Group, HobbitCommand):
     cls=HobbitGroup,
     epilog='More details: https://hobbit-core.readthedocs.io/zh/latest/',
     context_settings=CONTEXT_SETTINGS)
-@click.version_option()
+@click.version_option(package_name='hobbit_core')
 @click.option('--echo/--no-echo', default=False,
               help='Show the logs of command.')
 @click.pass_context
