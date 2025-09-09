@@ -91,6 +91,7 @@ jobs:
           name: tree flask project
           command: |
             cd ~/haha
+            apt-get update
             apt-get install -y tree
             tree
             cd ~/hahaha
