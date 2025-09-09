@@ -87,15 +87,15 @@ jobs:
             hobbit --echo startproject -n demo -f -p 1024
             mkdir ~/hahaha && cd ~/hahaha
             hobbit --echo startproject -n demo -t rivendell -p 1025
-      - run:
-          name: tree flask project
-          command: |
-            cd ~/haha
-            apt-get update
-            apt-get install -y tree
-            tree
-            cd ~/hahaha
-            tree
+      # - run:
+      #     name: tree flask project
+      #     command: |
+      #       cd ~/haha
+      #       apt-get update
+      #       apt-get install -y tree
+      #       tree
+      #       cd ~/hahaha
+      #       tree
       - run:
           name: run tests
           command: |
