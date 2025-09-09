@@ -27,7 +27,11 @@ class TestHobbit(BaseTest):
 
     def test_not_exist_cmd(self, runner):
         result = runner.invoke(hobbit)
-        assert result.exit_code == 0
+        # https://github.com/pallets/click/releases/tag/8.2.0
+        # If help is shown because no_args_is_help is enabled
+        # (defaults to True for groups, False for commands),
+        # the exit code is 2 instead of 0.
+        assert result.exit_code in [0, 2]
 
         result = runner.invoke(hobbit, ['doesnotexistcmd'], obj={})
         assert 'Error: cmd not exist: doesnotexistcmd' in result.output
